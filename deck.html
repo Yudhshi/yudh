@@ -1,0 +1,2722 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>この会社は、何を売っていたのか。｜社内研修</title>
+
+<!--
+  ==========================================================================
+  社内研修デッキ ── 整合版（2026-09-23）
+  本編 S00〜S18（19枚）。附録は無い。
+  発表 25分。聴衆は経営層（社長を含む）＋社員。日本語が母語でない参加者が複数いる。
+  ==========================================================================
+
+  ■ 主線（この一本だけ）
+    問い（S00）→ 本の一行（S01）→ 一枚の絵：建前／物語／実感（S02）
+    → 三社をその絵で描く（任天堂 S03–05 ／ Cyberpunk S06–10 ／ 原神 S11–14）
+    → 三つの絵を並べる（S15）→ お客さんのズレ（S16）→ 私たちは何を売っているのか（S17）
+    → 問い、もう一度（S18）
+    各章は 前提 → やったこと → 結果 → 絵 の順。絵の枚は必ず「売っていたのは、Xではなく、Y」で締める。
+
+  ■ 構造
+    .viewport > .stage(1280x720) > section.slide > .canvas
+    番号は JS が data-no から埋め直す。分母は 18。
+
+  ■ クラス接頭辞 → 枚（旧番号の接頭辞をそのまま使っている枚がある）
+      .question           S00 / S18（座標は両方で同一）
+      .s01- / .s00-band   S01
+      .s-pic / .pic-*     S02 / S05 / S10 / S14 / S17（絵の枚。v-gap--full を同じ座標で四回）
+      .s03-               S03（旧 S04 の組み）
+      .s04-               S04（旧 S05 の表）
+      .s08-               S06（旧 S10）
+      .s09-               S07（旧 S11）
+      .s10-               S08（旧 S12）
+      .chart / .band      S09（旧 S13。.s-chart）
+      .s16-gen- / .v-nav  S11（旧 S16）／ .stn  S12・S13
+      .cmp / .co-         S15（三列）・S16（二列 .cmp-row--2）
+      .s23-bk             S18
+
+  ■ 色の設計（変えていない）
+    章ごとに1色。--c-nin 煉瓦（S03–05）／--c-cyb 琥珀（S06–10）／--c-gen 青碧（S11–14）／--accent オリーブ（デッキ自身の声）。
+    章の色が乗るのは .key と em だけ。主題語「物語」は .term で常にオリーブ。
+    章の入り口（S03 / S06 / S11）は .s-open。
+
+  ■ 書体（変えていない）
+    明朝 ＝ 声（問い・主張・結論。30px 以上だけ）。ゴシック ＝ 情報。
+    Noto が無い機械では左下に警告が出る。Keynote 版は macdeck.js がヒラギノに写す。
+
+  ■ pptx への写し方
+    pptx-build/README.txt の「mac 版」の手順どおり。ノートは持たない（Keynote 側でも空）。
+    Keynote では S01 の本を表紙の実写に差し替えてよい（pptx には画像を載せられない）。
+  ==========================================================================
+-->
+
+<!--
+  Tailwind CDN は外した。マークアップ 227 クラスを全件照合したところ、
+  ユーティリティクラスは1つも使っておらず（座標・字送りは全部下の <style>）、
+  render-blocking な外部スクリプトのリスクだけが残っていたため。
+  戻す必要はない。
+-->
+
+<!--
+  Google Fonts の <link> を3本外した。本文書体を外から読んでいたので、
+  当日ネットワークが無い会議室では本文がフォールバック（游ゴシック等）に落ち、
+  字送りが変わって全28枚の行分割がやり直しになるところだった。
+  外す前に、webfont を無効化して全361要素を測り直してある：
+  幅の最大差 8px・高さの最大差 4px・折り返しの発生 0。ローカル版と同じ字送り。
+  これでこのファイルは外部参照ゼロ。ネットワークが無くても崩れない。
+
+  ただし前提がある ── 発表する機械に Noto Sans JP が入っていること。
+  入っていない機械だと游ゴシックに落ち、行分割が変わる。
+  下の JS がそれを検出して、画面左下に警告を出す（印刷には出ない）。
+-->
+
+<style>
+/* ==============================================================================
+   文字サイズの段（7段＋数字トラック）
+   ------------------------------------------------------------------------------
+     64  問い          S00 / S23 のみ。この2枚以外で使わない
+     40  主張          その枚の決め台詞。1枚に1つまで
+     30  準主張        表の強調行、章の入りの一行
+     22  リード・引用  導入の一行、他人の声、定義文
+     19  本文
+     15  ラベル
+     13  クローム      メタ行・インジケーター・図番号・TODO
+     52  数字          年号だけの別トラック（S01 / S02）
+     14  欧文モノ      固有名詞と理論用語の併記だけの別トラック
+   **この9つ以外の値を足さないこと。** 足した瞬間に階層が読めなくなる。
+   ============================================================================== */
+
+/* ============================================================== tokens */
+:root{
+  --desk:#E7E3DC;              /* ステージ外。16:10 / 4:3 の投影で版面の縁を見せる */
+  --paper:#FAF9F5;
+  --paper2:#F3F1E9;
+  --ink:#1B1A16;               /* 15.6:1 */
+  --ink2:#33312A;              /* 11.4:1 */
+  --muted:#5C5A50;             /*  6.6:1  本文の副次 */
+  --sub:#6E6B60;               /*  5.1:1  英語併記の下限。これより薄い色に文字を置かない */
+  --rule:#C9C4B8;              /* 構造罫。プロジェクタで生き残る濃さ */
+  --hair:#DFDBD0;              /* 補助罫。消えても意味が落ちないものだけ */
+  --accent:#4A5D3A;            /* hsl(93 23% 30%) 低彩度の深いオリーブ / 6.9:1
+                                  デッキ自身の声。枠の枚（問い・転換・理論・自社・回収）とクローム */
+
+  /* 章の色。事例そのものから採る。彩度は落とし、白地で 5.5:1 以上を確保している。
+     使うのは .key と em だけ。ラベル・罫・番号・TODO はどの章でも無彩のまま。 */
+  --c-nin:#9C4A3C;             /* 煉瓦 5.8:1  — 任天堂の章（ファミコンの赤） */
+  --c-cyb:#7E611B;             /* 琥珀 5.5:1  — Cyberpunk の章（サイバーパンクの黄） */
+  --c-gen:#2A6B72;             /* 青碧 5.9:1  — 原神の章（璃月・青磁） */
+  --accent2:#6E8555;
+  --wash:rgba(74,93,58,.055);
+  --sans:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;
+  --serif:"Noto Serif JP","Hiragino Mincho ProN","Yu Mincho",YuMincho,"BIZ UDMincho",serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:var(--desk);color:var(--ink);
+  font-family:var(--sans);font-weight:400;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  overflow:hidden;cursor:default;
+}
+
+/* ====================================================== stage & slides */
+.viewport{position:fixed;inset:0;overflow:hidden}
+.stage{
+  position:absolute;left:50%;top:50%;
+  width:1280px;height:720px;
+  transform-origin:50% 50%;
+  background:var(--paper);
+  box-shadow:0 0 0 1px #D6D0C6;   /* 版面の縁。投影が切れているのか余白なのかを判別できる */
+  /* 和文の折り返し規則を既定任せにしない */
+  line-break:strict;
+  word-break:normal;
+  overflow-wrap:normal;
+  text-spacing-trim:trim-start;   /* 行頭の「（ 等の全角約物を詰める */
+}
+.slide{position:absolute;inset:0;display:none}
+.slide.is-active{display:block}
+.canvas{position:absolute;inset:0;overflow:hidden}
+
+/* =============================================== typography primitives */
+/* 数字・英字は和文より少し重く、少し大きく */
+.n{font-size:1.06em;font-weight:500;letter-spacing:.01em;font-variant-numeric:tabular-nums}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+/* 上部メタ行 ------------------------------------------------------------ */
+.meta{
+  position:absolute;left:96px;right:96px;top:46px;
+  display:flex;justify-content:space-between;align-items:baseline;
+}
+.meta-l{display:flex;align-items:baseline;gap:16px}
+/* 章の色が乗る唯一のクローム。ラベル・罫・インジケーターは無彩のままにするが、
+   ここだけは例外。1〜2語の .key だけでは章の5枚を通した色の記憶が作れないため、
+   3文字の番号で色を途切れさせない。S18 の3色の回収はこれが前提。 */
+.meta-no{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.16em;color:var(--act)}
+.meta-ttl{font-size:14px;letter-spacing:.12em;color:var(--ink2)}
+.meta-r{font-family:var(--mono);font-size:13px;letter-spacing:.14em;color:var(--sub)}
+/* 上部の罫。左端の一定長だけを章の色にして「ページの耳」にする。
+   章の色はこれまでキーワード1〜2語とメタ番号3文字にしか出ておらず、5枚を通しても
+   総面積が数十文字ぶんしかなかった。同じ位置に同じ色の短い線が章のあいだ出続けることで、
+   S18 / S19 で3色が集まったときに初めて「回収」として働く。
+   増やしたのはこの1箇所だけ。ラベル・本文・罫の大半は無彩のまま。 */
+.rule-top{position:absolute;left:96px;right:96px;top:84px;height:1px;background:var(--rule)}
+.rule-top::before{
+  content:"";position:absolute;left:0;top:-1px;
+  width:56px;height:3px;background:var(--act);
+}
+/* 章の数だけ本数を増やす。％で刻むので、章の入り口の 96px でも同じ比率になる。
+   色が読めなくても、本数で章が分かる。 */
+.slide[data-act="cyb"] .rule-top::before{
+  background:linear-gradient(to right,
+    var(--act) 0 46%, transparent 46% 54%, var(--act) 54% 100%);
+}
+.slide[data-act="gen"] .rule-top::before{
+  background:linear-gradient(to right,
+    var(--act) 0 29%,   transparent 29% 35.5%,
+    var(--act) 35.5% 64.5%, transparent 64.5% 71%,
+    var(--act) 71% 100%);
+}
+/* 章の入り口（S02 / S10 / S16）だけ、罫を太く・耳を長くする。
+   構図も座標も動かさずに「ここから章が変わる」を出すための第二の register。
+   ここを動かすと版面を組み直すことになるので、変えてよいのは罫の重さと耳の長さだけ。 */
+.s-open .rule-top{height:2px;background:var(--rule)}
+.s-open .rule-top::before{width:96px;height:4px;top:-1px}
+
+/* ラベル → 内容 のペア -------------------------------------------------- */
+.lbl{font-size:15px;letter-spacing:.12em;color:var(--muted)}
+.lbl-en{display:block;font-family:var(--mono);font-size:14px;letter-spacing:.12em;color:var(--sub);margin-top:6px}
+
+/* 出典の書誌 ---------------------------------------------------------------
+   理論の二枚は、どちらも他人の本から来ている。そこを 15px の注で済ませると、
+   聴いた人が「読んでみよう」と思った瞬間に、次の一歩が無い。
+   書名を注の級から上げ、著者・版元・そして入手経路まで書く。
+   明朝は 30px 以上という決めがあるので書体は変えない。
+   級と太さと色だけで「これは書名だ」と分かるようにする。
+   .lbl はデッキ中 16 箇所で汎用ラベルとして使っているので触らない。 */
+.bk-au{display:block;font-family:var(--mono);font-size:14px;letter-spacing:.12em;
+       color:var(--sub);margin-bottom:9px}
+.bk-ttl{display:block;font-size:19px;font-weight:600;letter-spacing:.04em;
+        line-height:1.5;color:var(--ink)}
+.bk-meta{display:block;font-family:var(--mono);font-size:14px;letter-spacing:.1em;
+         line-height:1.8;color:var(--sub);margin-top:12px}
+/* 入手経路。裏取り済みの値だけを置く（書誌.md を参照） */
+/* 補助線の側（S08 レビット）は、ホルトの本より明らかに小さく組む。
+   同じ大きさの書籍カードだと、聴衆には本が二冊並んで見え、主役が分からなくなる。
+   論文なので書名は『』ではなく「」。 */
+.bk-ttl.is-aux{font-size:16px;font-weight:500;color:var(--ink2)}
+/* 本の出どころを示す小さな印（S17 / S19）。読み上げない */
+.bk-src{font-family:var(--sans);letter-spacing:.06em;color:var(--accent)}
+/* 本の中の事例（S15）。ゲームが本の外から持ち込んだ題材だと、面で分かるようにする。
+   柱の下端を右の一覧の下端（y455）に揃える高さ：18 + 4行×19.2 ≒ 95px。
+   名前は裏取り済みの五つだけ（書誌.md）。行は <br> で固定する（柱幅 176px）。
+   章の順に並べると1行目が 170px になり、pptx で折れかねないので、最長 134px に組み替えてある */
+.bk-cases{display:block;margin-top:18px;font-size:12px;line-height:1.6;letter-spacing:.04em;color:var(--muted)}
+.bk-cases-l{display:block;color:var(--sub)}
+.bk-buy{display:block;font-size:13px;letter-spacing:.04em;line-height:1.7;
+        color:var(--muted);margin-top:8px}
+/* --accent2(#6E8555) は紙面比 3.87:1 で AA 未達。小さい序数に使うと投影で沈むので
+   .idx は --accent(6.9:1) を使う。--accent2 は線・面など文字以外に限る。 */
+.idx{font-family:var(--mono);font-size:13px;letter-spacing:.18em;color:var(--accent)}
+
+/* 未確定チップ ---------------------------------------------------------- */
+.todo{
+  display:inline-flex;align-items:baseline;gap:7px;
+  font-family:var(--mono);font-size:13px;letter-spacing:.1em;
+  color:var(--accent);border-bottom:1px dotted var(--accent2);
+  padding-bottom:2px;white-space:nowrap;
+}
+.todo::before{content:"TODO";font-weight:600;letter-spacing:.16em;opacity:.7}
+/* その場で埋める空欄（S21 / A2 / A3）。.todo は「当日までにやること」の印なので、
+   聴衆に埋めてもらう欄に同じ TODO を出すと、面が未完成に見える。印だけ差し替える。 */
+.todo.is-fill::before{content:"記入"}
+
+/* 書体が入っていない機械への警告。既定は非表示。JS が body に .font-missing を付けたときだけ出る。
+   これが出たまま本番に入ると、行分割が全部ずれている。 */
+.fontwarn{display:none}
+body.font-missing .fontwarn{
+  display:block;position:fixed;left:16px;bottom:56px;z-index:50;max-width:320px;
+  padding:12px 14px;background:#FFF;border:1px solid var(--c-nin);
+  font-size:13px;line-height:1.7;letter-spacing:.02em;color:var(--c-nin);
+}
+@media print{ body.font-missing .fontwarn{display:none} }
+
+/* 裏取りが済んだ事実の小注記。TODO チップと同じ大きさだが、
+   オリーブではなく無彩色・点線なし＝「確認済み」であることが形で分かる。
+   出典そのものはノート側に書く（面には出典名を並べない）。 */
+.src{font-family:var(--mono);font-size:13px;letter-spacing:.1em;color:var(--sub);white-space:nowrap}
+
+/* 現在位置（各スライドが自分の番号を持つ。JS が落ちても印刷でも出る） ---- */
+.stamp{
+  position:absolute;right:96px;bottom:28px;
+  font-family:var(--mono);font-size:13px;letter-spacing:.16em;
+  color:var(--sub);font-variant-numeric:tabular-nums;user-select:none;
+}
+.stamp .sep{color:var(--sub);opacity:.55;margin:0 .5em}
+
+/* 操作ヒント（ステージ外＝スライドの一部ではない） ---------------------- */
+.hint{
+  position:fixed;left:18px;bottom:16px;z-index:5;
+  font-family:var(--mono);font-size:11px;letter-spacing:.14em;
+  color:#8C877D;border:1px solid #D2CCC2;padding:4px 7px 5px;
+  background:rgba(255,255,255,.6);cursor:pointer;
+}
+body.notes-on .hint{color:var(--accent);border-color:var(--accent2)}
+
+/* ======================================================================
+   S00 / S23 共有コンポーネント: .question
+   S23 は .q-echo を1行足すだけ。.question は上端固定なので
+   1行目の座標は 1px も動かず、視覚的な対句が成立する。
+   罫の長さ・行頭 x・ブロックの y は S00 と S23 で絶対に変えないこと。
+   ====================================================================== */
+.question{position:absolute;left:96px;top:262px;right:96px}
+.q-rule{width:44px;height:2px;background:var(--accent);margin-bottom:54px}
+.q-line{font-size:64px;font-weight:500;line-height:1.45;letter-spacing:.012em;color:var(--ink)}
+.q-echo{font-weight:400;color:var(--muted);margin-top:10px}
+/* .q-aside / .q-aside p は削除した。問いの枚の添えを外したときから未使用。 */
+
+/* ======================================================================
+   S13 ｜ なぜ跳ねたのか（旧 S11）
+   この枚は専用の接頭辞を持たない。.chart / .ch-* / .figcap / .band /
+   .contrast という汎用名で組んであり、座標の上書きだけが .s-chart にある。
+   論証の核 = 「技術（パッチ）は縦線を跨いでも何も変わらない ／
+   結果が動いたのは物語（アニメ）の後だけ」という非対称。
+   図の中の文字を最小にし、ラベルを 19px 以上で組めるところまで要素を削った。
+   図版一式（.chart / .ch-* / .figcap）は附録 A1 も借りている。片方だけ
+   直すと A1 が無言でずれるので、必ず両方を見ること。
+   ====================================================================== */
+
+/* ----------------------------------------------------------------------
+   図版について ── 枠は引き払った。理由と、戻すときの手順。
+
+   S02 / S10 / S13 に、四隅のトンボだけの図版枠を3つ置いていた。外した理由は三つ。
+     ・28枚中3枚にしか出ない。規則として読めるには少なすぎ、無視されるには目立つ。
+     ・面に情報が無い（説明文は出さない設計だった）うえ印刷でも消えていたので、
+       聴衆にも PDF の読み手にも、写真を探す人にも、何の役にも立っていなかった。
+     ・当日までに素材が入らなければ、一番大事な3枚に空欄が残る。
+
+   写真を入れることにした場合は、以下を戻す。座標は当時のまま検証済み。
+
+     .plate{position:absolute;left:826px;top:66px;width:216px;height:114px}
+     .plate .marks{position:absolute;inset:0}
+     @media print{ .plate{display:none} }   ← 入れるなら、この行は書かないこと
+
+   ■ S02（1983 の右）  style="left:968px;top:96px"  216×114
+     1983年前後のアメリカの店頭写真を1枚。ワゴンに山積みされた投げ売りのカートリッジなど、『売れ残り』が一目で伝わる画。特定メーカーのロゴが主役に写るものは避ける。彩度を落として敷く。出典と権利の確認が必要。
+
+   ■ S10（上段の右）   style="left:864px;top:158px;width:320px;height:200px"
+     ゲーム本編のナイトシティ俯瞰、または雨のネオン街の1カット。ロゴ・パッケージ・キービジュアルは使わない。人物が写っていなくてよく、『技術は超発達／生活は悲惨』が一目で分かる街の情景を選ぶ。彩度を落として敷く。CD PROJEKT RED の権利確認が必要。
+
+   ■ S13（.chart の中。縦線のすぐ右、「物語」の帯）  座標は既定値のまま
+     『サイバーパンク エッジランナーズ』本編のカットを1枚。キービジュアルやロゴではなく、主人公デイビッドが走っている／立ち尽くしている静かな場面。彩度を落として敷く。Netflix / TRIGGER の権利確認が必要。
+
+   入れる場合は3枚とも入れること。1枚だけ写真があると、その1枚が浮く。
+   ---------------------------------------------------------------------- */
+
+.chart{position:absolute;left:96px;top:116px;width:1088px;height:330px}
+.chart > svg{position:absolute;left:0;top:0}
+/* 図の中の文字はすべて HTML 側で組む（和文の字送りと折り返しのため） */
+.ch-lbl{position:absolute;left:0;width:130px}
+.ch-lbl b{display:block;font-size:19px;font-weight:500;letter-spacing:.08em;color:var(--ink2)}
+.ch-lbl span{display:block;font-size:14px;letter-spacing:.06em;color:var(--sub);margin-top:5px}
+.ch-txt{position:absolute;font-size:19px;font-weight:500;line-height:1.6;letter-spacing:.03em;color:var(--ink)}
+.ch-en{display:block;font-family:var(--mono);font-size:14px;font-weight:400;letter-spacing:.1em;color:var(--sub);margin-top:6px}
+.ch-date{position:absolute;font-family:var(--mono);font-size:15px;font-weight:600;letter-spacing:.08em;color:var(--accent)}
+.ch-year{position:absolute;font-family:var(--mono);font-size:15px;letter-spacing:.12em;color:var(--sub)}
+.ch-call{position:absolute;font-size:15px;line-height:1.7;letter-spacing:.03em;color:var(--ink)}
+
+.figcap{
+  position:absolute;left:96px;right:96px;top:462px;
+  display:flex;align-items:baseline;gap:18px;
+}
+.figcap-id{font-family:var(--mono);font-size:13px;letter-spacing:.16em;color:var(--ink2);white-space:nowrap}
+.figcap-tx{font-size:14px;line-height:1.8;letter-spacing:.02em;color:var(--muted)}
+
+.rule-mid{position:absolute;left:96px;right:96px;top:510px;height:1px;background:var(--rule)}
+
+.band{position:absolute;left:96px;top:534px}
+.band-lbl{display:block;font-size:14px;letter-spacing:.18em;color:var(--accent);margin-bottom:14px}
+.band-lbl::before{content:"";display:block;width:20px;height:2px;background:var(--accent);margin-bottom:12px}
+.band-txt{width:640px;font-size:30px;font-weight:500;line-height:1.45;letter-spacing:.02em;color:var(--ink)}
+.band-txt em{font-style:normal;font-weight:600;color:var(--act)}
+
+/* 建前 / 実感 — 章をまたいで同じ形のまま再登場させる視覚言語。
+   面に .c-line の形で出るのは S14 / S17 / S21 の3回
+   （S15 は同じ内容を理論の言葉に置き換えて受ける）。型を最大で見せるのは S14。
+   ここで最小形に確定させる: ラベル1語 + 本文1行。差はウェイトとサイズで作り、
+   色の濃淡には依存させない（淡い側が投影で消えると対比が成立しないため）。 */
+.contrast{position:absolute;left:800px;top:534px;width:384px}
+.c-line{display:flex;align-items:baseline;gap:20px;padding:11px 0}
+.c-line + .c-line{border-top:1px solid var(--hair)}
+.c-key{flex:none;width:38px;font-size:14px;letter-spacing:.14em;color:var(--muted)}
+.c-val{font-size:19px;line-height:1.6;letter-spacing:.02em;color:var(--ink2)}
+.c-val.is-real{font-weight:600;font-size:19px;color:var(--ink)}
+
+/* ======================================================================
+   S18 ｜ 三つを並べる
+   （クラス接頭辞は .cmp- / .co- / .closer-。分割前の旧番号 S14 のまま）
+   縦罫は引かない。横罫と余白だけで表を作る。
+   「変えなかったもの」の行は、地色ではなく 2px のアクセント罫＋ウェイトで
+   差をつける（薄いティントは投影で消えるため、そちらは補助にとどめる）。
+   ====================================================================== */
+.cmp{position:absolute;left:96px;right:96px;top:120px}
+.cmp-row{display:grid;grid-template-columns:176px repeat(3,1fr);column-gap:40px;align-items:start}
+.cmp-row.ruled{border-top:1px solid var(--rule);padding-top:24px;padding-bottom:26px}
+.cmp-key .idx{display:block;margin-bottom:8px}
+.cmp-key .k{display:block;font-size:15px;letter-spacing:.1em;color:var(--ink2)}
+.cmp-cell{font-size:19px;line-height:1.75;letter-spacing:.02em;color:var(--ink2)}
+.co{padding-bottom:22px}
+.co-name{font-size:22px;font-weight:600;letter-spacing:.02em;color:var(--ink)}
+.co-en{display:block;font-family:var(--mono);font-size:14px;letter-spacing:.14em;color:var(--sub);margin-top:8px}
+
+.cmp-row.same{
+  border-left:2px solid var(--accent);
+  margin-left:-18px;padding-left:16px;
+  background:var(--wash);
+}
+/* 色は乗せない。差は 2px のアクセント罫 ＋ --wash ＋ ウェイト ＋ 1px の大きさで付ける
+   （すぐ上のコメントがそう書いている設計そのもの）。ここに 20px/600 のオリーブを3セル置くと、
+   面積で会社名3語（22px）を上回り、S18 で回収するはずの3色を食う。
+   .k / .idx の色指定も外した。外すと .cmp-key .k は --ink2、.idx は既定の --accent に戻り、
+   01・02 の行とまったく同じ色になる ＝ 3行の見え方が揃う。戻さないこと。 */
+.cmp-row.same .cmp-cell{font-weight:600;font-size:19px}
+
+/* 三列を束ねて、締めの一行に落とすブレース。
+   .cmp の実高（120 + 84 + 101*3 = 507）の直下に置く。行の文字量を変えたら
+   ここも合わせて動かすこと。 */
+.brace{position:absolute;left:312px;top:549px}   /* x = 96 + 176 + 40 */
+
+.closer{position:absolute;left:96px;right:96px;top:607px;
+        display:grid;grid-template-columns:176px 1fr;column-gap:40px;align-items:start}
+.closer-lbl::before{content:"";display:block;width:20px;height:2px;background:var(--accent);margin-bottom:12px}
+.closer-lbl span{font-size:14px;letter-spacing:.16em;color:var(--accent)}
+.closer-txt{font-size:40px;font-weight:500;line-height:1.45;letter-spacing:.02em;color:var(--ink)}
+
+/* ======================================================================
+   章の色 ｜ --act と .key
+   ----------------------------------------------------------------------
+   各スライドは data-act で章の色を1つ持つ。
+   **色が乗るのは .key と em だけ。**
+   ラベル・罫・番号・インジケーター・TODO はどの章でも同じ無彩のままにする。
+   こうしないと1枚に何色も出て、どこを見ればいいか分からなくなる。
+   1枚に .key を置くのは原則1〜2語まで。文を丸ごと色にしない。
+   ====================================================================== */
+.slide{--act:var(--accent)}
+.slide[data-act="nin"]{--act:var(--c-nin)}   /* 任天堂 */
+.slide[data-act="cyb"]{--act:var(--c-cyb)}   /* Cyberpunk 2077 */
+.slide[data-act="gen"]{--act:var(--c-gen)}   /* 原神 */
+.key{font-style:normal;font-weight:600;color:var(--act)}
+/* 主題語「棚」「物語」はデッキ自身の語。章の色では変えない。
+   .key（その枚の持ち帰り語＝章の色）と .term（デッキの主題語＝常にオリーブ）を分ける。 */
+.term{font-style:normal;font-weight:600;color:var(--accent)}
+/* 立てた語は行をまたいで割らない。S13 の結論で「物語」が「物」／「語」に
+   割れていた ── デッキの主題語が真っ二つになるのは、面の事故として最も重い。
+   .key は最長でも8字（「置いてもらえない」）なので、折らなくても溢れない。 */
+.key,.term{white-space:nowrap}
+
+/* ---- 声＝明朝。30px 以上の「口に出す文」だけ ------------------------
+   足すときは「これは人が言う文か、見せる情報か」で決めること。
+   表・ラベル・注記・本文はゴシックのまま。混ぜる基準を大きさだけにしない。 */
+.q-line,
+.closer-txt, .s05-hero-txt, .s09-hit-txt, .s10-claim-txt, .s17-result-tx,
+.s03pair-st, .s03-key, .s06shelf-stmt, .s06-closer,
+.s16-gen-lead, .s16-thesis, .s-chart .band-txt,
+.s04-lead, .s12-closer-tx, .ax3-sum-txt, .ax5-sum-tx, .ax-ask-q{
+  font-family:var(--serif);
+  font-weight:600;
+  letter-spacing:.04em;
+}
+
+/* ======================================================================
+   段階表示（data-step）
+   1枚の中で順に強調したいとき、要素に data-step="1" … を振る。
+   → キーはまず未表示のステップを出し、全部出てから次のスライドへ進む。
+   消さずに沈めるのは、聴衆が「あと何項目あるか」を把握できるようにするため。
+   印刷では全ステップを表示する。
+   ====================================================================== */
+[data-step]{opacity:.26;transition:opacity .22s ease}
+[data-step].is-shown{opacity:1}
+
+/* ======================================================================
+   附録スライド（data-appendix）
+   通常の ← → の流れには出てこない。A キーで入って A / Esc で戻る。
+   質疑で聞かれたときに、キーを1つ叩けば答えのスライドが出る。
+   ====================================================================== */
+.slide[data-appendix] .stamp{color:var(--accent)}
+.ax-flag{
+  position:absolute;left:96px;bottom:28px;
+  font-family:var(--mono);font-size:13px;letter-spacing:.18em;color:var(--accent);
+}
+
+/* ================================================== 発表者ノート（画面） */
+.speaker-notes{display:none}
+/* 画面用の指定は必ず @media screen で囲う。囲わないと詳細度で印刷用を
+   打ち負かし、「表示中のスライドのノートだけ」が帯として本文に重なって刷られる。 */
+@media screen{
+  body.notes-on .slide.is-active .speaker-notes{
+    display:block;position:absolute;left:0;right:0;bottom:0;
+    max-height:340px;overflow-y:auto;      /* 面の半分以上を覆わない */
+    background:var(--paper);border-top:2px solid var(--accent);
+    padding:24px 96px 28px;
+    box-shadow:0 -30px 44px -30px rgba(27,26,22,.18);
+  }
+}
+.sn-head{display:flex;align-items:baseline;gap:16px;margin-bottom:14px}
+.sn-tag{font-family:var(--mono);font-size:11px;letter-spacing:.24em;color:var(--accent)}
+.sn-no{font-family:var(--mono);font-size:11px;letter-spacing:.18em;color:var(--sub)}
+/* 和文の可読行長は 35〜45字。15px なら 600px 前後で必ず折る */
+.speaker-notes p{font-size:15px;line-height:1.95;letter-spacing:.02em;color:var(--ink2);max-width:600px}
+.speaker-notes p + p{margin-top:10px}
+.speaker-notes .sn-todo{margin-top:14px}
+/* 参考（聞かれたときだけ使う）。原稿と同じ大きさでは、当日そのまま読んでしまう。
+   左罫と沈めた色で「これは読まない」と形で言う。通し時間の見積もりからも外す。 */
+.speaker-notes .sn-ref{
+  border-left:2px solid var(--hair);padding-left:18px;
+  color:var(--sub);
+}
+.speaker-notes .sn-ref + .sn-ref{margin-top:10px}
+
+/* 通過時間の目安。S09 / S15 / S19 の3箇所だけ。等幅で本文から浮かせる。 */
+.speaker-notes .sn-clock{margin-top:14px;font-family:var(--mono);font-size:13px;
+  letter-spacing:.06em;color:var(--accent);border-top:1px dotted var(--rule);padding-top:10px}
+
+/* ================================================================ print */
+/*
+  1スライド = 1ページ。ページをステージと同寸（1280x720px = 338.67 x 190.5mm）に
+  固定し、scale を解除する。画面と印刷で 1px もずれない。
+  既定ではノートを刷らない（＝配布用）。? で開いた状態で刷ると、
+  各スライドの直後にノート単独ページが出る（＝発表者の手元用）。
+*/
+@media print{
+  @page{size:338.67mm 190.6mm;margin:0}
+  html,body{height:auto;overflow:visible;background:#fff}
+  body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .viewport{position:static;overflow:visible}
+  .stage{position:static;transform:none !important;width:1280px;height:auto;box-shadow:none}
+  .slide{position:static;display:block !important;width:1280px;height:auto}
+  .canvas{
+    position:relative;inset:auto;width:1280px;height:720px;overflow:hidden;
+    break-after:page;page-break-after:always;
+  }
+  body:not(.notes-on) .slide:last-of-type .canvas{break-after:auto;page-break-after:auto}
+  .hint{display:none}
+  /* 紙は投影より階調が出るので、罫は元の細さに戻してよい */
+  .rule-top,.rule-mid,.cmp-row.ruled{border-color:#DCD7CC}
+  .rule-top,.rule-mid{background:#DCD7CC}
+  /* 段階表示は紙では全部出す */
+  [data-step]{opacity:1 !important}
+
+  .speaker-notes{display:none}
+  body.notes-on .speaker-notes{
+    /* 高さは固定しない。入りきらないノートは2ページ目に送る。
+       height:720px + overflow:hidden にすると末尾（TODO と想定問答）が無言で消える。 */
+    display:block;position:static;width:1280px;min-height:720px;
+    padding:72px 150px;background:#fff;border:0;box-shadow:none;overflow:visible;
+    break-after:page;page-break-after:always;
+  }
+  body.notes-on .speaker-notes p{font-size:17px;line-height:1.95;max-width:680px}
+  body.notes-on .slide:last-of-type .speaker-notes{break-after:auto;page-break-after:auto}
+}
+
+/* ================================================== G1 追加分 */
+/* ======================================================================
+   S01 ｜ きっかけ（接頭辞は .s00- のまま。問いを先頭にしたため。本の柱は .s01-）
+   三つの事例を「年と場所」だけで横に置く。会社名はここでは出さない
+   （S02 以降で一社ずつ出す。ここで名前を出すと引きが消える）。
+   三つ目だけ年号を持たず、線も右端で切らずに破線で逃がしてある。
+   ＝「三つ目はまだ終わっていない」を、文ではなく版面側で言う。
+   ====================================================================== */
+.s00-lead{position:absolute;left:96px;top:124px;width:1088px}
+.s00-lead p{font-size:30px;font-weight:500;line-height:1.5;letter-spacing:.02em;color:var(--ink)}
+.s00-lead .s00-sub{
+  margin-top:18px;
+  font-size:19px;font-weight:400;line-height:1.8;letter-spacing:.03em;color:var(--ink2);
+}
+
+/* 年 → 線 → 国名 の三段。線だけ SVG、文字はすべて HTML 側で組む（S13 と同じ作法） */
+/* S01 きっかけ ─────────────────────────────────────────────────────────
+   今日の話の出発点を、三社より先に出す。事例は本の主張の「証拠」として後から来る。
+   柱は S08 / S15 と同じ部品（.s06-tick / .bk-*）で組む。十四枚あとの S15 で
+   同じ組み方の柱がもう一度出たとき、説明しなくても「最初の本だ」と目で分かる。 */
+.s01-book{position:absolute;left:96px;right:96px;top:124px;
+          display:grid;grid-template-columns:176px 1fr;column-gap:40px}
+.s01-pillar{padding-top:6px}
+.s01-origin{font-size:30px;font-weight:500;line-height:1.5;letter-spacing:.02em;color:var(--ink)}
+.s01-claim{margin-top:18px;font-size:19px;line-height:1.8;letter-spacing:.03em;color:var(--ink2)}
+
+/* 本の下へ一段下げた。上端は本の柱の下端（約 300）から 36 空ける */
+.s00-band{position:absolute;left:96px;top:336px;width:1088px;height:156px}
+.s00-band > svg{position:absolute;left:0;top:0}
+.s00-ln{stroke:var(--rule);stroke-width:1.5}
+.s00-ln-open{stroke:var(--rule);stroke-width:1.5;stroke-dasharray:2 7;stroke-linecap:round}
+.s00-tick{stroke:var(--rule);stroke-width:1.5}
+.s00-tick-now{stroke:var(--accent);stroke-width:2.5}   /* この図で唯一の色 */
+
+.s00-pt{position:absolute;top:0;width:300px;height:156px}
+.s00-yr{
+  position:absolute;left:0;top:0;
+  font-family:var(--mono);font-size:52px;font-weight:500;line-height:1;
+  letter-spacing:.03em;color:var(--ink);font-variant-numeric:tabular-nums;
+}
+/* 三つ目だけ数字ではない。書体が変わること自体が「まだ歴史になっていない」の合図 */
+/* 三つ目だけ色を変える。年号は他の二つと同じ等幅で組む（数字なので）。
+   「まだ終わっていない」は破線（.s00-ln-open）と、この色が言う。 */
+.s00-now{color:var(--accent)}
+.s00-co{
+  position:absolute;left:0;top:96px;
+  font-size:22px;font-weight:500;line-height:1.4;letter-spacing:.06em;color:var(--ink2);
+}
+
+/* 締めの一行。上とは大きさも色も距離も変えて、明確に「添え」にする */
+.s00-tail{position:absolute;left:96px;top:580px;width:640px}
+.s00-tail::before{content:"";display:block;width:36px;height:1px;background:var(--rule);margin-bottom:22px}
+.s00-tail p{font-size:22px;line-height:1.8;letter-spacing:.03em;color:var(--ink2)}
+
+/* ======================================================================
+   S02 ｜ 前提｜アタリショック
+   1983 を主役の大きさで置き、崩壊の事実だけを三行で置く一枚。
+   「同じ年に、二つのことが起きた」の対句は S03 に分けたので、この枚の
+   下半分は空けたままにする（空いている面がそのまま次の一枚の助走になる）。
+   ファミコンの価格・発売日はここでは触れない（TODO も置かない）。
+   ====================================================================== */
+.s02-year{
+  position:absolute;left:96px;top:112px;
+  font-family:var(--mono);font-size:52px;font-weight:500;line-height:1;
+  letter-spacing:.02em;color:var(--ink);font-variant-numeric:tabular-nums;
+}
+/* 年号のわきに掛ける名前の対。和製語と英語表記を面の上で並べる */
+.s02-term{position:absolute;left:400px;top:158px;width:340px}
+
+.s02-lead{position:absolute;left:96px;top:232px;width:900px}
+.s02-lead p{font-size:19px;line-height:1.75;letter-spacing:.03em;color:var(--ink2)}
+.s02-lead p + p{margin-top:12px}
+
+/* 対句（.s02-hinge / .s02-row / .s02-side / .s02-st / .s02-st-key / .s02-st em）と
+   その前置き（.s02-flag / .s02-rule / .s02-cue / .s02-cue::before）は S03 へ
+   分離したので削除した。S03 側の定義は .s03pair-* にある。
+   ※ 28px の .s02-st と 44px の対句が併存していたため、S03 を直したつもりで
+     効かない事故が起きていた。残っているのは 44px の .s03pair-st だけ。 */
+
+/* ======================================================================
+   S04 ｜ 死んだ市場（クラス接頭辞は .s03- のまま。分割前の旧番号）
+   S02・S03 が蝶番で密度を持つので、この一枚は明確に落とす。
+   要素は「前置きの三行」と「締めの一行」だけ。締めの一行が主役。
+   ※ .s03- はこの枚（S04）専用。S03 の対句は .s03pair- のほうにある。
+   ====================================================================== */
+.s03-lead{position:absolute;left:96px;top:150px;width:1088px}
+.s03-lead p{font-size:19px;line-height:1.9;letter-spacing:.03em;color:var(--ink2)}
+.s03-lead p + p{margin-top:14px}
+.s03-cut{position:absolute;left:96px;top:430px;width:44px;height:2px;background:var(--accent)}
+.s03-key{
+  position:absolute;left:96px;top:470px;width:900px;
+  font-size:40px;font-weight:500;line-height:1.45;letter-spacing:.02em;color:var(--ink);
+}
+
+/* 紙は投影より階調が出る。既存の @media print と同じ罫色に合わせる */
+@media print{
+  .s00-ln,.s00-ln-open,.s00-tick{stroke:#DCD7CC}
+}
+
+/* ================================================== G2 追加分 */
+/* ======================================================================
+   S05 ｜ 任天堂の解法      /      S07 ｜ もう一つの仕掛け
+   ----------------------------------------------------------------------
+   ※ クラス接頭辞は .s04-（→ S05）と .s05-（→ S07）のまま。分割前の旧番号。
+     .s04- は S04 のものではない。S04（死んだ市場）は .s03- を使っている。
+
+   ■ S05 の表を S18 の表と別物にするための決め事
+     S18 = 176px の固定ラベル列 + 3等分の均等割り。上端の罫だけで下は開く。
+     S05 = 2列だが左右を非対称にする（施策 580 / 意図 336、間に 64 の余白）。
+           番号列 44px を先頭に置き、表の下にも罫を引いて「閉じた表」にする。
+           どちらも縦罫は引かない。構造は横罫と余白だけで作る。
+     結果、遠目のシルエットが「均等な3本の柱」と「重い左＋軽い右」で割れる。
+
+   ■ S07 は構造を持たせない一枚（時間が押したとき最初に削る候補）
+     機構を2行で置き、余白を挟んで、主役の一行を大きく落とす。
+     現代の対照は主役の下に小さく添えるだけ。ここを構造化すると話が散る。
+     単独で抜いても S06 → S08 が繋がるよう、前後を参照する文言は入れていない。
+
+   ■ 座標の実測（1280x720 / 本文下端 660 の制約）
+     S05  lead 112–151 ／ 見出し 182–204 ／ 表 216–508 ／ 注 524–549
+          （締めの一行は S06 へ分離した。この枚の本文下端は 549）
+     S07  機構 144–237 ／ 注 258–277 ／ 主役 324–395 ／ 対照 474–501
+   ====================================================================== */
+
+/* ------------------------------ S05 ｜ 任天堂の解法（接頭辞は .s04-） -- */
+.s04-lead{
+  position:absolute;left:96px;right:96px;top:112px;
+  font-size:30px;font-weight:600;line-height:1.5;letter-spacing:.03em;color:var(--ink);
+}
+
+/* 番号 / 施策 / 意図。左右の重みを変えるのがこの表の全部。 */
+.s04-row{
+  display:grid;grid-template-columns:44px 580px 336px;column-gap:64px;
+  align-items:baseline;
+}
+.s04-head{position:absolute;left:96px;right:96px;top:182px}
+
+.s04-tbl{position:absolute;left:96px;right:96px;top:216px;border-bottom:1px solid var(--rule)}
+.s04-tbl .s04-row{border-top:1px solid var(--rule);padding-top:18px;padding-bottom:20px}
+
+.s04-act{font-size:19px;font-weight:500;line-height:1.6;letter-spacing:.03em;color:var(--ink)}
+.s04-int{font-size:19px;line-height:1.6;letter-spacing:.03em;color:var(--ink2)}
+
+.s04-note{position:absolute;left:96px;right:96px;top:524px}
+
+/* 締めの一行（.s04-closer / ::before / .s04-closer-txt / .s04-closer-txt em）は
+   S06 へ分離したので削除した。S06 側は .s06shelf-stmt で、印も罫も置かない組み。 */
+
+/* -------------------------- S07 ｜ もう一つの仕掛け（接頭辞は .s05-） -- */
+.s05-mech{position:absolute;left:96px;top:144px;width:620px}
+.s05-m{display:flex;align-items:baseline;column-gap:20px;
+       font-size:22px;line-height:1.7;letter-spacing:.03em;color:var(--ink2)}
+.s05-m + .s05-m{margin-top:18px}
+.s05-m-no{flex:none;width:28px}
+
+.s05-note{position:absolute;left:96px;top:258px}
+
+/* この一枚の主役。ラベルは置かない。印を1つ置いて、そこから落とす。 */
+.s05-hero{position:absolute;left:96px;right:96px;top:324px}
+.s05-hero::before{content:"";display:block;width:20px;height:2px;background:var(--accent);margin-bottom:20px}
+.s05-hero-txt{width:600px;font-size:40px;font-weight:500;line-height:1.45;letter-spacing:.02em;color:var(--ink)}
+.s05-hero-txt em{font-style:normal;font-weight:600;color:var(--act)}
+
+/* 現代の対照。添えるだけ。大きくすると主役を食う。 */
+.s05-echo{position:absolute;left:96px;right:96px;top:474px;
+          display:flex;align-items:baseline;column-gap:44px}
+.s05-e{font-size:15px;line-height:1.6;letter-spacing:.04em;color:var(--ink2)}
+
+/* ================================================== G3 追加分 */
+/* ======================================================================
+   S08 ｜ 補助線｜マーケティング近視眼（本では説明できない任天堂のために借りる）
+   （クラス接頭辞は .s06- のまま。分割前の旧番号。S06「棚とは何か」は
+     .s06shelf- を使っている。.s06- を触ると動くのは S08 のほう）
+   この一枚の主役は「反転」。同じ面の中で理論を紹介し、同じ面の中で崩す。
+   反転は矢印やアイコンではなく、位置と罫だけで示す:
+     上半分 = 左に見出し柱を立て、左から右へ読ませる（--ink2）
+     境目   = 1px の構造罫。その右端 44px だけが accent で厚くなる ＝ 重心が右へ移る
+     下半分 = 行頭を揃えず右端で揃える。色を一段落とす（--muted）
+   締めの一行だけが --ink / 34px で戻ってくる。この一枚で最大の文字。
+   ====================================================================== */
+.s06-lead{
+  position:absolute;left:96px;right:96px;top:124px;
+  display:grid;grid-template-columns:176px 1fr;column-gap:40px;align-items:start;
+}
+.s06-key{padding-top:6px}                 /* 26px 本文の半行分だけ下げて視覚的に頭を揃える */
+.s06-tick{width:20px;height:2px;background:var(--accent);margin-bottom:12px}
+.s06-say p{font-size:22px;line-height:1.8;letter-spacing:.03em;color:var(--ink2)}
+
+/* ------------------------------ 理論の register（S08 / S15 が共有） --
+   事例の枚は左に寄せて下に帯を置く。理論の枚はそれをやらない。
+   罫の右端だけが太り、下半分は右端で揃える ＝ 重心が右へ移る。
+   上部の罫（.rule-top::before）は左端が章の色。こちらは右端がオリーブ。
+   左が章、右が理論。デッキ自身の声はオリーブ、という規則と一致している。 */
+.s-theory .turn{position:absolute;left:96px;right:96px;height:1px;background:var(--rule)}
+.s-theory .turn::after{
+  content:"";position:absolute;right:0;top:-1px;
+  width:44px;height:3px;background:var(--accent);
+}
+@media print{ .s-theory .turn{background:#DCD7CC} }
+
+/* 下半分 */
+.s06-counter{position:absolute;left:96px;right:96px;top:400px;text-align:right}
+.s06-counter p{font-size:19px;line-height:1.85;letter-spacing:.03em;color:var(--muted)}
+.s06-closer{
+  position:absolute;left:96px;right:96px;top:540px;text-align:right;
+  font-size:40px;font-weight:500;line-height:1.45;letter-spacing:.02em;color:var(--ink);
+}
+.s06-closer em{font-style:normal;font-weight:600;color:var(--act)}
+.s06-note{position:absolute;left:96px;top:606px}   /* 2行になったので上げた。下端 656 < 668（ノンブル） */
+/* 「ホルトの本では、任天堂は説明できない」は本の境界を言う一文なので、13px では投影で読めない。S15 の購入の行と同じ 15px */
+.s06-note .bk-buy{font-size:15px}
+
+
+/* ======================================================================
+   S09 ｜ 転換（ブリッジ）
+   （クラス接頭辞は .s07- と .s-bridge。.s07- は旧番号で、S07 ではない）
+   .question をそのまま使う。S00・S23 と同じ静けさを保ったまま、
+   「これは問いではなく橋である」ことだけを最小の差分で示す:
+     ・罫を accent から構造罫の色（--rule）へ落とす ＝ 問いの合図を消す
+     ・2行目を小さく --muted に ＝ 答えではなく、次への引き渡し
+   .question / .q-rule / .q-line の座標には一切触れない。1行目の頭は S00 と同じ y。
+   ====================================================================== */
+.q-rule.s07-rule{display:none}
+.s-bridge .question{top:330px}
+.s-bridge .q-line{font-size:40px}
+/* S09 で本に戻る合図。非母語の聴き手は口頭の「本に戻ります」を拾えないので面に出す */
+.s09-bk{position:absolute;left:96px;top:530px;font-size:15px;letter-spacing:.06em;color:var(--ink2)}
+/* 最後の面に書名を残す。問いの余韻は壊さないよう、奥付の大きさで。読み上げない */
+.s23-bk{position:absolute;left:96px;top:622px;font-size:14px;letter-spacing:.04em;line-height:1.7;color:var(--sub)}
+.q-line.s07-sub{
+  font-size:22px;font-weight:400;line-height:1.75;letter-spacing:.03em;
+  color:var(--muted);margin-top:26px;
+}
+
+/* ================================================== G4 追加分 */
+/* ======================================================================
+   S10 ｜ 前提｜Cyberpunk 2077（クラス接頭辞は .s08- のまま。分割前の旧番号）
+   上半分 = 事実（誰が / どれだけかけて / どう期待されていたか）。
+   .rule-mid の下 = ジャンルの定義。ここは非母語話者向けの生命線なので、
+   面の下段を丸ごと1文に明け渡している。
+
+   ジャンル説明を .contrast で組まないのは、意味が違うため。
+   建前 / 実感（S14・S15・S21）は「上が嘘で下が本当」という上下の否定関係だが、
+   サイバーパンクの二つの節は「どちらも同時に本当」である。
+   そこで、上下2段に積まず横1本に並べ、両側のウェイトとサイズを揃えた。
+   間の縦線は「のに」というヒンジの視覚化であって、優劣の線ではない。
+   ====================================================================== */
+.s08-lead{
+  position:absolute;left:96px;top:168px;width:560px;
+  font-size:30px;font-weight:500;line-height:1.45;letter-spacing:.02em;color:var(--ink);
+}
+/* 右上へ。図版枠を引き払って空いた区画。左＝誰が何年かけたか、右＝期待の大きさ。 */
+.s08-sub{
+  position:absolute;left:700px;top:176px;width:484px;
+  font-size:22px;line-height:1.7;letter-spacing:.03em;color:var(--ink2);
+}
+
+.s08-genre{
+  position:absolute;left:96px;right:96px;top:444px;
+  display:grid;grid-template-columns:176px 1fr;column-gap:40px;align-items:start;
+}
+.s08-def{display:flex;align-items:center}
+.s08-def span{
+  font-size:22px;font-weight:500;line-height:1.55;letter-spacing:.02em;
+  color:var(--ink);white-space:nowrap;
+}
+.s08-bar{flex:none;width:1px;height:30px;background:var(--rule);margin:0 26px}
+.s08-def-tail{margin-top:12px;font-size:19px;line-height:1.7;letter-spacing:.03em;color:var(--muted)}
+
+/* ======================================================================
+   S11 ｜ 崩壊（クラス接頭辞は .s09- のまま。分割前の旧番号）
+   本文は2行だけ。y=258 から y=452 までの空白がこの一枚の主役で、
+   そこが「落ちる」時間になる。文字を足すと落差が消えるので足さない。
+   一番強い事実（棚から消えた）だけを最大サイズにする。
+   ====================================================================== */
+.s09-seq{position:absolute;left:96px;top:160px;width:900px}
+.s09-line{font-size:22px;line-height:1.7;letter-spacing:.03em;color:var(--ink2)}
+.s09-line + .s09-line{margin-top:10px}
+
+.s09-hit{position:absolute;left:96px;top:452px;width:1000px}
+.s09-mark{width:44px;height:2px;background:var(--accent);margin-bottom:34px}
+.s09-hit-txt{font-size:40px;font-weight:600;line-height:1.4;letter-spacing:.02em;color:var(--ink)}
+.s09-hit-sub{margin-top:22px;font-size:22px;line-height:1.7;letter-spacing:.03em;color:var(--ink2)}
+
+/* ======================================================================
+   S12 ｜ 復活（クラス接頭辞は .s10- のまま。分割前の旧番号）
+   作品情報（上）→ 主張（中）→ 事実（下）。
+   主張だけ S11 の「削除」と同じ大きさ（38px）に揃えてあり、崩壊と復活が
+   同じ大きさで対になる。数値とグラフは一切置かない（S13 の取り分）。
+   ====================================================================== */
+.s10-work{position:absolute;left:96px;top:140px;width:900px}
+.s10-work-ttl{font-size:30px;font-weight:500;line-height:1.4;letter-spacing:.02em;color:var(--ink)}
+
+.s10-facts{position:absolute;left:96px;top:238px;display:flex;align-items:center}
+.s10-fact{font-size:19px;line-height:1.7;letter-spacing:.04em;color:var(--ink2)}
+.s10-fact-k{font-size:14px;letter-spacing:.16em;color:var(--muted);margin-right:14px}
+.s10-sep{flex:none;width:1px;height:20px;background:var(--hair);margin:0 26px}
+
+.s10-claim{position:absolute;left:96px;top:322px;width:1000px}
+.s10-mark{width:44px;height:2px;background:var(--accent);margin-bottom:32px}
+.s10-claim-txt{font-size:40px;font-weight:600;line-height:1.35;letter-spacing:.02em;color:var(--ink)}
+.s10-claim-sub{margin-top:20px;font-size:22px;line-height:1.7;letter-spacing:.03em;color:var(--ink2)}
+
+/* ================================================== G5 追加分 */
+/* ======================================================================
+   S15 ｜ 冒頭の本｜Holt（S01 の本に戻る答え合わせ。クラス接頭辞は .s12- のまま）
+   4項目は「読む表」ではなく「1本ずつ立ち上がる行」。段階表示（data-step）が
+   主役なので、行の中に要素を増やさない。1行 = 番号 + 1文。それだけ。
+   要の1行（＝項目02）だけ 32px / accent / 2px罫 で、他の3行（21px）から明確に離す。
+   締めは .rule-mid を1本挟んだ下に置き、4項目とは別の階層にする。
+   ====================================================================== */
+.s12-head{position:absolute;left:96px;right:96px;top:110px}
+/* 出典。英字なので 14px / var(--sub) の下限で組む（併記の規定どおり） */
+.s12-src{font-family:var(--mono);font-size:14px;line-height:1.4;letter-spacing:.09em;color:var(--sub)}
+.s12-src-t{font-weight:600;letter-spacing:.07em;color:var(--ink2)}
+/* 邦訳の扱い（絶版）は聴衆が読む本文なので 18px を割らない */
+.s12-note{width:1088px;margin-top:9px;font-size:19px;line-height:1.8;letter-spacing:.03em;color:var(--muted)}
+
+/* 左に柱、右に本文。S08（.s06-lead）と同じ組み方。柱の幅だけ 176px に揃える
+   （.s08-genre と同じ値。新しい値を増やさない） */
+.s12-body{
+  position:absolute;left:96px;right:96px;top:176px;
+  display:grid;grid-template-columns:176px 1fr;column-gap:40px;align-items:start;
+}
+.s12-pillar{padding-top:4px}
+.s12-list{}
+.s12-item{display:grid;grid-template-columns:46px 1fr;column-gap:24px;align-items:baseline;padding:13px 0}
+.s12-item + .s12-item{border-top:1px solid var(--hair)}
+.s12-tx{font-size:19px;font-weight:500;line-height:1.65;letter-spacing:.03em;color:var(--ink2)}
+/* 理論用語だけ併記する。他の3項目には英語を付けない */
+.s12-term{display:block;margin-top:7px;font-size:15px;line-height:1.5;letter-spacing:.1em;color:var(--muted)}
+.s12-term-en{font-family:var(--mono);font-size:14px;letter-spacing:.12em;color:var(--sub);margin-left:16px}
+
+/* この理論の要（いまは項目02）。地色ではなく 2px のアクセント罫とサイズで差をつける。
+   どの行を要にするかはマークアップ側で .s12-key を付け替えて決める。
+   定義値（32px / 600 / 2px罫）はここで確定させてあるので動かさないこと。 */
+.s12-item.s12-key{border-top:2px solid var(--accent);padding:16px 0 14px}
+.s12-key .idx{color:var(--accent);font-size:15px}
+.s12-key .s12-tx{font-size:30px;font-weight:600;line-height:1.4;letter-spacing:.02em;color:var(--act)}
+
+/* 下半分は右で受ける（理論の register）。幅を 720px に絞って、
+   読点「が、」で折れるようにしてある。後半は nowrap で固定。 */
+.s12-closer{position:absolute;left:96px;right:96px;top:500px;text-align:right}
+/* 書誌と入手経路。S08 の .s06-note と同じ位置・同じ役割。
+   右の結論の最終行は x847 から始まるので、左に置いても触れない。
+   （.s12-src は上で別の用途に取ってあるので名前を分ける） */
+.s12-bk{position:absolute;left:96px;top:606px;width:700px}
+.s12-closer .closer-lbl{display:flex;justify-content:flex-end}
+/* 36字ぶんで 955px。1088px の版面に1行で収まる。折り返させない */
+.s12-closer-tx{margin-top:15px;margin-left:auto;width:720px;
+  font-size:30px;font-weight:500;line-height:1.55;letter-spacing:.02em;color:var(--ink)}
+.s12-quote{font-weight:400;color:var(--muted)}
+
+/* ======================================================================
+   旧 S13（3つ目｜原神）の残り  →  いまは S16 と S17 に分かれている
+   ----------------------------------------------------------------------
+   1枚を2枚に割ったので、.s13- が S16 と S17 に割れていた。使う側の枚に
+   合わせて改名し、この場所からは引き払った:
+     .s13-myth-tx → .s17-myth-tx     （引用の本文。S16 に置いていたが S17 へ移した）
+     .s13-gloss   → 削除              （「二次元」の注釈。面から外して口頭に回した）
+     .s13-result / .s13-result-tx / .s13-todo → .s17-result / -tx / .s17-todo
+   使われなくなった .s13-lead / .s13-pre / .s13-myth / .s13-did / .s13-did-hd /
+   .s13-en / .s13-myth-ex は削除した。
+   これで .s13- が残るのは S13 自身の .s13-acc / .s13-dot / .s13-wash
+   （図の SVG に章の色を当てる3つ）だけになり、番号と枚が一致する。
+   引用の作法（ラベル / 左罫 / インデント / --muted）は S19 の .s15-quote と同じ語彙。
+   定義の並びは分割前のまま動かしていない（順を入れ替えても詳細度は同じだが、
+   分割の履歴が読めなくなるため）。
+   ====================================================================== */
+/* 引用ブロック（もと .s16-gen-myth。S16 から S17 へ移した）。
+   作法は S19 の .s15-quote と同じ ── ラベル / 左罫 / インデント / --muted。
+   置き場所は .s17-did（216〜390）と .rule-mid（510）のあいだの空き帯。 */
+.s17-myth{
+  position:absolute;left:96px;top:410px;width:920px;
+  border-left:2px solid var(--rule);padding-left:22px;
+}
+.s17-myth-tx{margin-top:8px;font-size:19px;line-height:1.7;letter-spacing:.03em;color:var(--muted)}
+
+.s17-result{position:absolute;left:96px;right:96px;top:540px;
+            display:grid;grid-template-columns:38px 1fr;column-gap:20px;align-items:start}
+.s17-result-tx{font-size:40px;font-weight:500;line-height:1.5;letter-spacing:.02em;color:var(--ink)}
+.s17-todo{margin-top:16px}
+
+/* ================================================== G6 追加分 */
+/* ======================================================================
+   S19 ｜ 反論を先に潰す（クラス接頭辞は .s15- のまま。分割前の旧番号）
+   聴衆の声（引用）と、こちらの答えを縦に積む。引用が「別の人の声」だと
+   一目で分かるよう、ラベル / インデント / 左罫 / --muted の4点で本文から離す。
+   締めの一行は S14・S18 と同じ帯（rule-mid=510 の下、y=534）に置き、
+   .closer-lbl / .closer-txt をそのまま借りる。新しい締めの形は作らない。
+   ====================================================================== */
+.s15-lbl{position:absolute;left:96px;top:122px}
+.s15-quote{
+  position:absolute;left:96px;right:96px;top:178px;
+  padding-left:32px;border-left:2px solid var(--rule);
+}
+.s15-q{font-size:22px;font-weight:400;line-height:1.5;letter-spacing:.02em;color:var(--muted)}
+.s15-ans{
+  position:absolute;left:96px;right:96px;top:300px;
+  font-size:30px;font-weight:500;line-height:1.6;letter-spacing:.03em;color:var(--ink);
+}
+/* 三つは任天堂（S05〜S07）・Cyberpunk（S13）・原神（S17）の事例に一対一で
+   対応するが、番号を振ると S18 の列順（任天堂 / Cyberpunk / 原神）と
+   読み手が勝手に対応づけてしまう。
+   対応づけは口頭に任せ、面では列挙であることだけを示す。 */
+.s15-list{
+  position:absolute;left:96px;right:96px;top:372px;
+  font-size:22px;font-weight:500;line-height:1.5;letter-spacing:.04em;color:var(--ink2);
+}
+.s15-sep{font-size:.82em;color:var(--sub);margin:0 .42em}
+.s15-closer{position:absolute;left:96px;top:534px;width:860px}
+.s15-closer-tx{margin-top:14px}
+
+/* ======================================================================
+   S20 ｜ 自社へ（クラス接頭辞は .s16- のまま。分割前の旧番号）
+   建前 / 実感 は面に .c-line の形で2回出る（S14 とこの枚）。S15 は同じ内容を
+   理論の言葉に置き換え、S17 は同じ罫の形を棚／物語で借りている。
+   この枚では .contrast を主役として上段に置き直す（.s16-gap 側で上書き）。
+   構造は1つ＝「01 棚 / 02 ズレ / 03 物語」の記入欄。答えは書かない。
+   棚を先頭に置くのは、主題の前半（棚）が本編で一度も自社に当てられないまま
+   終わっていたため。附録 A2 は質疑用なので、本編での回収点はここしかない。
+   下段左（S11 で結論が入っていた位置）は空欄にしてある。
+   結論があるはずの場所が空いていることが、この一枚の主張。
+   ====================================================================== */
+/* 読む順は原稿どおり「建前 → 実感 → だからこのズレをどう埋めるか」。
+   ズレの中身を先に見せてから問いを出す。逆にすると、まだ見ていないものを
+   指して「このズレ」と言うことになる。 */
+.s16-gap{position:absolute;left:96px;top:116px;width:620px}
+.s16-gap .s16-cap{position:static;width:auto;margin-bottom:10px}
+/* .contrast の定義そのものは触らない。S20 では主役なので置き場所だけ変える */
+.s16-gap .contrast{position:static;width:100%}
+.s16-gap .c-val{font-size:19px}
+.s16-gap .c-val.is-real{font-size:19px}
+
+.s16-thesis{
+  position:absolute;left:96px;top:290px;width:920px;
+  font-size:40px;font-weight:500;line-height:1.45;letter-spacing:.02em;color:var(--ink);
+}
+.s16-note{position:absolute;left:96px;top:356px}
+/* 記入欄は三つ。棚 → ズレ → 物語 の順。
+   横3列に並べない理由: 2枚前の S18 が三社（任天堂 / Cyberpunk / 原神）の三列なので、
+   ここで番号つきの三列を出すと、読み手が 01/02/03 を三社に対応づけて読む
+   （S19 で番号を振らなかったのと同じ理由）。だから縦に3行で積む。
+   1行 = 番号(46) + 主題語(100) + 問い(540) + 記入罫(330)。列は固定幅にして、
+   三本の記入罫の左右（x=854〜1184）を揃える。問いは折り返させない。
+   実測: 3行 396–528（罫は 424.5 / 472.5 / 520.5。.s16-act の 540 より上）*/
+.s16-form{position:absolute;left:96px;right:96px;top:396px}
+.s16-row{display:grid;grid-template-columns:46px 100px 540px 1fr;column-gap:24px;
+         align-items:baseline}
+.s16-row + .s16-row{margin-top:12px}
+/* 行の主題語。S17 の .c-key（棚 / 物語）と同じ役目なので、色は無彩のまま。
+   「棚」「物語」だけ内側に .term を置いてオリーブに固定する（章の色には載せない）。 */
+.s16-k{font-size:15px;line-height:1.5;letter-spacing:.1em;color:var(--muted)}
+.s16-q{font-size:22px;font-weight:500;line-height:1.5;letter-spacing:.03em;color:var(--ink)}
+/* 記入欄。箱で囲わない。罫は一本だけ引いて、上に何も乗せない。
+   問いと同じ行の右に置く。box-sizing:border-box なので border 込みで 28px、
+   ベースライン揃えの grid では空 div のベースライン＝下端になり、罫が問いの
+   ベースラインに乗る。行高はいずれも 36px。 */
+.s16-slot{height:28px;border-bottom:1px solid var(--rule)}
+/* 空欄が意図であることの印。.s16-note（左）と同じ行の右端に置き、
+   下の記入罫の列の頭を締める。文ではなく句なので .lbl を使ってよい。
+   ベースラインは .s16-note の p（18px/1.7, y=378.1）に合わせて top:360。 */
+.s16-blank{position:absolute;right:96px;top:360px;font-size:15px;line-height:1.6}
+.s16-act{position:absolute;left:96px;top:540px;width:700px}
+.s16-act-slot{margin-top:18px;padding-bottom:16px;border-bottom:1px solid var(--rule)}
+
+/* ================================================== AX 追加分 */
+/* ======================================================================
+   附録 A1〜A4 ｜ 質疑応答用
+   A キーで入る。本編の ← → の流れには出てこない。
+   既存トークン・既存コンポーネントのみで組み、新規クラスは .ax1- 〜 .ax4- で
+   名前空間を切ってある。既存ルールは一切書き換えていない。
+   図の色は直値で書かない。物語の線・丸・塗りは S13 と共有の .fig-acc / .fig-dot /
+   .fig-wash で当て、その枚の章の色に載せる（A1 は data-act="cyb" なので琥珀）。
+   技術の線だけが #7A776B の直値で無彩のまま。塗りは --act に fill-opacity を掛ける。
+   本文は 18px 以上、ラベルは 14px 以上、本文下端は y=660 を超えない。
+   ====================================================================== */
+
+/* ---------------------------------------------------------------- A1 --
+   図は .chart / .ch-lbl / .ch-txt / .ch-date / .ch-year / .figcap を
+   S13 からそのまま借りる。下段だけ新規。
+   左に「観測」二つ、右に「切り分け」の一行。rule-mid（top:510）の下、
+   530 から始めて 650 で終わる。                                       */
+.ax1-obs{position:absolute;left:96px;top:530px;width:576px}
+.ax1-row{display:flex;align-items:baseline;gap:20px;padding:9px 0}
+.ax1-row + .ax1-row{border-top:1px solid var(--hair)}
+.ax1-k{flex:none;width:86px;font-size:14px;letter-spacing:.14em;color:var(--muted)}
+.ax1-v{font-size:19px;line-height:1.65;letter-spacing:.02em;color:var(--ink2)}
+.ax1-v em{font-style:normal;font-weight:600;color:var(--ink)}
+
+.ax1-sum{position:absolute;left:700px;top:530px;width:484px}
+.ax1-sum-txt{font-size:30px;font-weight:500;line-height:1.55;letter-spacing:.02em;color:var(--ink)}
+.ax1-sum-txt + .ax1-sum-txt{margin-top:6px}
+.ax1-sum-txt em{font-style:normal;font-weight:600;color:var(--act)}
+
+/* ---------------------------------------------------------------- A2 --
+   自社の話なので断定を置かない。上に想定質問、中に論点三つ、
+   下は空欄（.todo）にして本人が埋める。                               */
+/* ------------------------------ 附録の register（A2 / A3 / A5 が共有） --
+   本編は「小さい前提 → 大きい結論」。附録は逆で、問いが面で一番大きい。
+   質疑で1枚だけ出す枚なので、まず何に答えているのかが見えるほうがいい。
+   左罫は引用の作法（S16 から借りている）。 */
+.ax-ask{border-left:2px solid var(--rule);padding-left:24px}
+.ax-ask-q{font-size:30px;font-weight:500;line-height:1.5;letter-spacing:.02em;color:var(--ink2)}
+
+.ax2-ask{position:absolute;left:96px;right:96px;top:110px}
+
+.ax2-defs{position:absolute;left:96px;right:96px;top:252px}
+.ax2-def{display:grid;grid-template-columns:150px 1fr;column-gap:40px;align-items:start;
+         padding:20px 0;border-top:1px solid var(--rule)}
+.ax2-k{font-size:15px;letter-spacing:.1em;color:var(--ink2)}
+.ax2-v{font-size:19px;line-height:1.7;letter-spacing:.02em;color:var(--ink2)}
+.ax2-v em{font-style:normal;font-weight:600;color:var(--ink)}
+
+/* 問いが2行になる枚なので、下を16px送ってある（.s-surv と同じ作法） */
+.s-agency .rule-mid{top:524px}
+.ax2-open{position:absolute;left:96px;top:542px;width:1000px}
+.ax2-open-tx{font-size:19px;line-height:1.7;letter-spacing:.02em;color:var(--ink2)}
+.ax2-open-todo{margin-top:14px}
+
+/* ---------------------------------------------------------------- A3 --
+   S18 の三列比較は「横罫で全列を貫く表」。ここは逆に、
+   列ごとに切れたアクセント罫を頭に載せた縦のスタックにする。
+   同じ三列でも、走る向きが違うので見た目が混ざらない。               */
+.ax3-lead{position:absolute;left:96px;right:96px;top:112px}
+
+.ax3-cols{position:absolute;left:96px;right:96px;top:204px;
+          display:grid;grid-template-columns:repeat(3,1fr);column-gap:56px}
+.ax3-col{position:relative;padding-top:30px}
+.ax3-col::before{content:"";position:absolute;left:0;top:0;width:100%;height:2px;background:var(--accent)}
+.ax3-col .idx{display:block;margin-bottom:12px}
+.ax3-item{margin-top:6px;font-size:19px;line-height:1.7;letter-spacing:.02em;color:var(--ink)}
+.ax3-kind{margin-top:14px;font-size:15px;line-height:1.6;letter-spacing:.04em;color:var(--muted)}
+
+.ax3-sum{position:absolute;left:96px;top:474px;width:620px}
+.ax3-sum-txt{font-size:30px;font-weight:500;line-height:1.55;letter-spacing:.02em;color:var(--ink)}
+.ax3-sum-txt + .ax3-sum-txt{margin-top:6px}
+.ax3-sum-txt em{font-style:normal;font-weight:600;color:var(--act)}
+
+.ax3-self{position:absolute;left:748px;top:474px;width:436px}
+.ax3-self-tx{font-size:19px;line-height:1.7;letter-spacing:.02em;color:var(--ink2)}
+.ax3-self-todo{margin-top:14px}
+
+/* ---------------------------------------------------------------- A4 --
+   附録でいちばん静かな一枚。事実を三行置いて終わる。               */
+.ax4-body{position:absolute;left:96px;top:180px;width:1088px}
+.ax4-line{font-size:22px;font-weight:500;line-height:1.75;letter-spacing:.02em;color:var(--ink)}
+.ax4-line + .ax4-line{margin-top:24px}
+.ax4-en{display:block;font-family:var(--mono);font-size:14px;font-weight:400;
+        letter-spacing:.12em;color:var(--sub);margin-top:10px}
+
+.ax4-open{position:absolute;left:96px;right:96px;top:532px}
+.ax4-todos{display:flex;flex-wrap:wrap;gap:14px 30px}
+
+/* 見出しラベルに .lbl を借りるときの下余白だけ足す（.lbl 自体は触らない） */
+.ax2-ask .lbl,.ax3-self .lbl,.ax4-open .lbl{display:block;margin-bottom:14px}
+/* ======================================================================
+   附録 A5 ｜ 成功例だけを選んでいないか（生存者バイアス）
+   認める → 主張を正しい強さに下げる → 反証条件を示す、の3段。
+   ====================================================================== */
+.ax5-q{position:absolute;left:96px;right:96px;top:120px}
+.ax5-q-tx{margin-top:10px}
+.ax5-defs{position:absolute;left:96px;right:96px;top:226px}
+.ax5-def{display:grid;grid-template-columns:172px 1fr;column-gap:32px;align-items:baseline;padding:16px 0}
+.ax5-def + .ax5-def{border-top:1px solid var(--hair)}
+.ax5-k{font-size:15px;letter-spacing:.12em;color:var(--muted)}
+.ax5-v{font-size:19px;line-height:1.7;letter-spacing:.03em;color:var(--ink2)}
+.ax5-v em{font-style:normal;font-weight:600;color:var(--act)}
+.ax5-sum{position:absolute;left:96px;right:96px;top:570px}
+/* .rule-mid は共有なので、この枚だけ下げる */
+.s-surv .rule-mid{top:548px}
+.ax5-sum-tx{margin-top:14px;font-size:30px;font-weight:500;line-height:1.6;letter-spacing:.02em;color:var(--ink)}
+.ax5-sum-tx em{font-style:normal;font-weight:600;color:var(--act)}
+
+/* 旧 S11 の座標上書きは、分割（新 S13 / S14）に伴い新 S13 側へ移した。 */
+
+/* ============================== 通し確認後の追補 ============================== */
+/* S16: 「二次元」の注釈。脇に置いて主役にしない（旧 .s13-gloss を改名）。
+   同じ位置にあった .s13-myth-ex（反例を先に出す一行）は未使用のため削除した。 */
+
+/* S18: 主題語（棚 / 物語）を正式名称として立て、原稿の言い回しを副として下に置く */
+.cmp-sub{display:block;margin-top:6px;font-size:15px;line-height:1.6;letter-spacing:.03em;color:var(--sub);font-weight:400}
+.cmp-row.same .cmp-sub{color:var(--sub)}
+
+/* A3: 費目だけでは「で、高いのか安いのか」に答えていない */
+.ax3-sum-cost{margin-top:14px;font-size:19px;font-weight:400;color:var(--muted)}
+
+/* S20（接頭辞は .s16-）: .lbl は1語のラベル用。ここは文なので本文として組む */
+.s16-note p{font-size:19px;line-height:1.7;letter-spacing:.03em;color:var(--muted)}
+/* 記入欄が2列から1列3行になり、英語併記（CULTURAL CONTRADICTION）も落としたので、
+   高さを揃える応急処置（旧 .s16-form > div:last-child .s16-q{padding-bottom:26px}）は
+   不要になった。3行はいずれも1行組みで、罫の間隔は 48px で揃っている。 */
+.s16-act{width:428px}
+
+/* S12: 要の行だけ 32px / accent / 2px罫 なので、開示前から落としどころが漏れていた */
+.s12-key .s12-tx[data-step]:not(.is-shown){opacity:.08}
+
+/* ============================ 分割 N 追加分 ============================ */
+/* ======================================================================
+   S03 ｜ 1983年に起きた、二つのこと
+   ----------------------------------------------------------------------
+   ■ 接頭辞は .s03pair-（対句 = pair）。.s03- ではない。
+     .s03- は S04（死んだ市場）が使っている。分割前は .s02-hinge 系だったが、
+     28px の .s02-st と 44px のこの枚が併存して「片方だけ直して効かない」
+     事故が起きていたので、旧 .s02-* 側を削除し、こちらを .s03pair-* にした。
+
+   既存 S02 の後半だけを独立させた一枚。作法（縦罫を引かず、横罫1本と
+   余白だけで対を作る）は S18 の表と同じ規律。違うのは寸法だけ:
+     ・分割したぶん本文を 28px → 44px へ上げた。この枚は対句が面の全部。
+     ・ラベル列を 200px → 176px にして、.cmp / .closer と同じ列幅に揃えた。
+       ＝ 本文列 872px。44px × 18字 = 792px なので
+       「ファミリーコンピュータが、生まれた。」は必ず1行に収まる。
+     ・上下の差はウェイトや濃度で作らない。二行は対等な対句なので同じ組み。
+       立てるのは .key の「死んだ」「生まれた」の2語だけ。
+
+   ■ 段階表示（data-step）は入れない。判断の記録:
+     ノートの「二行を順に読んで、一拍おいてから次へ」は発表者の読み方の指示で、
+     面の出し方の指示ではない。この枚の主張は「同じ年に、二つ同時に起きた」で、
+     片方を opacity .26 に沈めると、その同時性そのものが消える。上下を対等に
+     組むという上の決め事とも正面から衝突する。前後の S02・S04 も段階表示を
+     持たないので、ここだけクリックが1回増えると本番の手が狂う。
+   実測: 対句 186–485 ／ 締め 556–588（本文下端 588 < 660）
+   ====================================================================== */
+.s03pair-hinge{position:absolute;left:96px;right:96px;top:186px}
+.s03pair-row{display:grid;grid-template-columns:176px 1fr;column-gap:40px;
+         align-items:baseline;padding:36px 0}
+.s03pair-row + .s03pair-row{border-top:1px solid var(--rule)}
+.s03pair-side{font-size:19px;line-height:1.4;letter-spacing:.12em;color:var(--muted)}
+.s03pair-st{font-size:40px;font-weight:500;line-height:1.45;letter-spacing:.02em;color:var(--ink2)}
+
+/* 締めの一行。上の対句とは大きさも距離も変えて、明確に「添え」にする。
+   罫も印も置かない（横罫を足すと三行目の見出しに見えてしまう）。色も乗せない。 */
+.s03pair-tail{position:absolute;left:96px;top:556px;width:760px;
+          font-size:19px;line-height:1.8;letter-spacing:.03em;color:var(--muted)}
+
+/* ======================================================================
+   S06 ｜ 棚とは何か
+   ----------------------------------------------------------------------
+   ■ 接頭辞は .s06shelf-（棚 = shelf）。.s06- ではない。
+     .s06- は S08（補助線）が使っている。分割前は .s06- が S06 と S08 の
+     二枚に割れていたので、定義の枚のほうを .s06shelf- に切り出した。
+
+   面にあるのは一行だけ。印も罫も置かない（.q-rule も、S05 にあった
+   締めの ::before も使わない。あの締めの定義はこの分割で削除済み）。
+   ここは章の中なので meta と rule-top は置く。
+   42px × 24字 = 1008px（+字送り 20px）。版面 1088px に1行で収まる。
+   44px にすると 1077px で残り 11px になり、フォールバック書体で折れる
+   危険があるので 42px で確定させてある。折り返させないこと。
+   実測: 一行 296–355 ／ 定義 408–437（本文下端 437 < 660）
+   ====================================================================== */
+.s06shelf-stmt{position:absolute;left:96px;width:640px;top:296px;
+          font-size:40px;font-weight:500;line-height:1.4;letter-spacing:.02em;color:var(--ink)}
+/* 主題語「棚」を定義する一行。デッキ中でここ一度だけ。
+   色は乗せない ── この枚の .key は上の「比べられるか」で使い切っている。 */
+.s06shelf-def{position:absolute;left:96px;top:446px;width:860px;
+         font-size:19px;line-height:1.8;letter-spacing:.03em;color:var(--muted)}
+
+/* 紙は投影より階調が出る。既存の @media print と同じ罫色に合わせる */
+@media print{ .s03pair-row + .s03pair-row{border-color:#DCD7CC} }
+
+/* ============================ 分割 C 追加分 ============================ */
+/* ======================================================================
+   S13 ｜ なぜ跳ねたのか      /      S14 ｜ アニメが供給したもの
+   ----------------------------------------------------------------------
+   旧 S11（図 + 結論 + 建前/実感）を2枚に割った。
+   S13 = 図と結論だけ。S14 = 建前/実感に1枚まるごと与える。
+   両方とも data-act="cyb"。章の色は琥珀（--c-cyb）。
+   ====================================================================== */
+
+/* ---------------------------------------------------------------- S13 --
+   ■ 座標について
+     旧 S11 は結論を 42px にするために .slide[data-no="11"] で下段を
+     20px 繰り上げていた。.contrast が抜けても縦の空きは増えない
+     （.contrast は .band と同じ y に横並びで置いてあったため）ので、
+     素直な座標に戻すと 42px x 2行の結論が y=700 まで落ちて下端を割る。
+     そこで「11 の上書きをやめ、13 として書き直す」方を選び、
+     図・キャプション・罫・結論を一段ずつ詰めた一貫した座標を持たせる。
+
+   ■ 実測（本文下端 660 の制約）
+     図      96–426   （SVG 330px。上端のインクは y=114 から）
+     キャプ  440–465
+     罫      478
+     結論    492–658.6   ← 帯 492–494 / ラベル 506–527 / 本文 541–658.6
+
+   ■ 面の右下（x=752 以降）は空けたままにする。
+     旧 S11 ではここに .contrast が入っていた。その空きが「結論だけを
+     置いた一枚」であることを版面側で言う。埋めないこと。            */
+.s-chart .chart{top:96px}
+.s-chart .figcap{top:440px}
+.s-chart .rule-mid{top:478px}
+.s-chart .band{top:492px}
+/* 幅は 656px。700px だと「…ではなく、物 / 語だった。」と主題語が行をまたいで割れる。
+   ここで折る位置を固定しておくこと。 */
+.s-chart .band-txt{font-size:40px;width:630px;line-height:1.4}
+
+/* 図の中の「物語」の色。縦線＋丸＋塗りという同じ視覚言語を S13 と附録 A1 が共有するので、
+   クラス名はスライド番号に紐づけず .fig-* にしてある（旧 .s13-*）。両方の枚に当てること。
+   どちらの枚でも、その枚の章の色に載る（S13 / A1 とも data-act="cyb" なので琥珀）。
+   技術の線だけは #7A776B の直値のまま無彩で走らせる ── 章に属さない対照項だから。
+   presentation attribute では var() が解決されないため、属性ではなくクラスで当てる。
+   新しい色は定義せず --act だけを使い、塗りは同じ変数に fill-opacity を掛けて作る。 */
+.fig-acc{stroke:var(--act)}
+.fig-dot{fill:var(--act)}
+.fig-wash{fill:var(--act);fill-opacity:.1}
+
+/* ---------------------------------------------------------------- S14 --
+   ■ この一枚の主役は .contrast（建前 / 実感）。
+     旧 S11 では右下に 384px 幅で添えられていたが、ここでは面の中央に
+     672px で据える。S15（Holt）と S20（自社へ）で同じ形が再登場するので、
+     いちばん大きく見せるのはこの枚。ここで型を刻む。
+     .contrast / .c-line / .c-key / .c-val の定義そのものは触らない。
+     data-no で限定して、置き場所と大きさだけを上書きする。
+
+   ■ 実測（本文下端 660 の制約）
+     導入    124–160
+     主人公  186–224
+     対比    288–476
+     罫      510
+     締め    534–605                                                   */
+.s14-lead{
+  position:absolute;left:96px;top:124px;width:900px;
+  font-size:19px;line-height:1.8;letter-spacing:.03em;color:var(--muted);
+}
+.s14-hero{
+  position:absolute;left:96px;top:186px;width:900px;
+  font-size:22px;font-weight:500;line-height:1.6;letter-spacing:.03em;color:var(--ink2);
+}
+
+.s-contrast .contrast{left:96px;top:288px;width:672px}
+.s-contrast .c-line{gap:36px;padding:22px 0}
+.s-contrast .c-key{width:56px;font-size:15px}
+.s-contrast .c-val{font-size:30px;line-height:1.5}
+/* .c-val.is-real は (0,2,0)。上の行に負けないよう同じ枝で書き足す */
+.s-contrast .c-val.is-real{font-size:30px}
+
+/* 締めの一行。ラベル語は置かず、印だけ（S07 の .s05-hero と同じ作法。
+   S05 にも同型の締めがあったが、S06 への分離で定義ごと削除した）。
+   .closer-txt はそのまま借りる。 */
+.s14-closer{position:absolute;left:96px;right:96px;top:534px}
+/* 事例が本を証明する瞬間。S01 の主張の一行と同じ言い回しで返す。
+   締めの一行（556〜614）の下、ノンブル（671）の上。 */
+.s14-bk{position:absolute;left:96px;top:626px;width:900px;
+        font-size:13px;letter-spacing:.04em;line-height:1.7;color:var(--muted)}
+.s14-closer::before{content:"";display:block;width:20px;height:2px;background:var(--accent);margin-bottom:20px}
+
+/* ============================ 分割 G 追加分 ============================ */
+/* ======================================================================
+   S16 ｜ 3つ目｜原神（前提）      /      S17 ｜ 原神がやったこと
+   ----------------------------------------------------------------------
+   旧 S13（導入・前提・引用・やったこと・結果を1枚に詰めていた 238 字）を
+   2枚に割った。
+
+   S16 = 前提だけ。やったことと結果はこの枚から外す。
+         面の下 3 分の 1 は空けたままにする。結論が入るはずの帯（y=510 の
+         .rule-mid から下）に何も無いこと自体が「まだ何も起きていない」の
+         合図になり、次の枚の答え合わせが効く。
+   S17 = やったこと + 結果。既出の型（.c-line と、.s17-result ＝ 旧 S13 の
+         結果ブロックを改名したもの）に流し込むだけ。新しいレイアウトは
+         作らない。ラベルの「棚」「物語」は
+         S06 / S13 で立てた主題語の再登場なので、ここだけ .key を2語許す。
+
+   ■ クラス名について
+     .s16- は「自社へ」＝ S20 の枚が使っている（.s16-gap / .s16-form ほか。
+     接頭辞は分割前の旧番号のまま）。クラスセレクタは完全一致なので、この枚は
+     .s16-gen- で切って衝突を避ける。ハイフンの位置だけの差なので、S16 を
+     直すときは .s16-gen を先に grep すること。
+     .s17- はこの隣の枚（S17）専用。旧 .s13-result 系もここへ改名して集めた。
+
+   ■ 色
+     .key は S16 が「両方」の1語、S17 が「棚」「物語」の2語。それ以外は無彩。
+     .closer-lbl / .todo / 罫 / メタ行は、章に関係なくデッキ自身の声のまま。
+
+   ■ 座標の実測（1280x720 / 本文下端 660 の制約）
+     S16  導入 160–218 ／ 前提 268–339 ／ 引用 400–465 ／ 以下は余白
+     S17  2項目 216–393 ／ rule-mid 510 ／ 結果 540–585 ／ TODO 601–625
+   ====================================================================== */
+
+/* ---------------------------------------------------------------- S16 */
+/* この枚で唯一大きい要素。13字なので必ず1行で組む（折らせない）。 */
+.s16-gen-lead{
+  position:absolute;left:96px;top:160px;width:900px;
+  font-size:40px;font-weight:500;line-height:1.45;letter-spacing:.02em;color:var(--ink);
+}
+/* 前提は1行だけ。注釈は面に置かない（口頭。ノートに指示がある）。 */
+.s16-gen-pre{
+  position:absolute;left:96px;top:268px;width:880px;
+  font-size:19px;line-height:1.8;letter-spacing:.03em;color:var(--ink2);
+}
+
+
+/* ---------------------------------------------------------------- S17 */
+/* .c-line / .c-key / .c-val は S14 で型を刻み、この枚（S17）と S20 で
+   再登場する型。構造・幅・色は触らない。2項目しか置かない枚なので、本文の
+   大きさと行の間だけを上げる ——「自社へ」＝ S20 の枚で .c-val を 20px に
+   しているのと同じ扱い方で、いずれも自分の名前空間の中に閉じている。 */
+.s17-did{position:absolute;left:96px;right:96px;top:216px}
+.s17-did .c-line{padding:18px 0}
+.s17-did .c-val{font-size:22px}
+/* ============================ 色の追補 ============================ */
+/* S18「三つを並べる」だけは3色が同時に出る。
+   章ごとに刷り込んできた色がここで一枚に集まり、「あの3つだ」と読める。
+   章の色が乗るのは会社名だけ。表の中身は無彩のままにして、対比を濁らせない。
+   例外は「変えたもの」行の主題語（棚／物語）で、ここは .term のオリーブ。
+   章の色ではないので、下の3色の回収とは混ざらない。 */
+.co-nin .co-name{color:var(--c-nin)}
+.co-cyb .co-name{color:var(--c-cyb)}
+.co-gen .co-name{color:var(--c-gen)}
+
+/* 段階表示は「消す」ではなく「沈める」。ただし .cmp-row は display:grid なので
+   opacity が行全体に効く。罫（border-top）も一緒に沈むが、行の存在は見えるので可。 */
+
+/* ------------------------------ S19 ｜ 二つの軸（接頭辞は .s19-。この枚の番号と一致） -- */
+.s19-plane{position:absolute;left:96px;top:116px;width:1088px;height:420px}
+.s19-axes{position:absolute;inset:0}
+.s19-axes > svg{position:absolute;left:0;top:0}
+/* 十字だけがこの図の構造。隣に位置を保証してくれる要素が無いので、1px ではなく 1.5px。
+   （1.5px は S18 のブレースと A1 の図線で既に使っている太さ。新しい値を増やさない） */
+.s19-axis{stroke:var(--rule);stroke-width:1.5}
+
+/* 軸ラベルは枠。社名と空きマスの名前（答え）より一段沈める。 */
+.s19-ax{
+  position:absolute;font-size:19px;font-weight:400;line-height:1.6;
+  letter-spacing:.08em;color:var(--muted);white-space:nowrap;
+}
+.s19-ax-y{left:428px;top:0;width:161px;text-align:center}   /* 中心 x=508.5 */
+.s19-ax-x{left:952px;top:217px}
+/* 縦軸の出どころ。軸の名前（行の箱 0〜30）と縦線の始まり（46.5）の間に置く。
+   top:24 だと pptx の検査で軸の名前と行の箱が 4px 重なった。27 なら墨の間は上 6px・下 4px */
+.s19-ax-src{left:428px;top:27px;width:161px;text-align:center;font-size:12px;letter-spacing:.08em;color:var(--accent)}                             /* 中心 y=232.2 */
+
+/* 象限の中身。四つとも象限の左上から同じ (40,36)。視線が同じ形で四回動き、四回目に何も無い。 */
+.s19-cell{position:absolute;width:388px}
+.s19-q1{left:548px;top:82px}    /* 右上 ＝ 棚も物語も          原神 */
+.s19-q2{left:120px;top:82px}    /* 左上 ＝ 物語だけ            Cyberpunk 2077 */
+.s19-q4{left:548px;top:268px}   /* 右下 ＝ 棚だけ              任天堂 */
+/* 左下だけは象限の中央に置く。主張の対象は角ではなくこのひと区画。 */
+.s19-q3{left:80px;top:310px;width:428px;text-align:center}
+
+.s19-co .co-name{font-size:30px;line-height:1.4;letter-spacing:.02em;white-space:nowrap}
+
+/* 空きマスの名前。この面でいちばん濃い 19px（軸ラベルは --muted に沈めてある）。
+   囲いも地色も罫も置かない ── 空であること自体が主張なので、埋めた瞬間に論証が消える。 */
+.s19-void{font-size:19px;font-weight:500;line-height:1.6;letter-spacing:.14em;color:var(--ink)}
+
+/* 開示前は既定の .26 では足りない。左下に文字が薄く見えていると「空いている」が成立せず、
+   三社を置く前に落ちが割れる。ここだけ 0 まで落とす。
+   印刷は @media print の [data-step]{opacity:1 !important} が勝つので、PDF では四つとも出る。 */
+.s19-q3[data-step]:not(.is-shown){opacity:0}
+
+
+@media print{ .s19-axis{stroke:#DCD7CC} }
+
+/* ------------------------------ S22 ｜ 四つ目（接頭辞なし。.cmp をそのまま借りる） --
+   S18「三つを並べる」の文法を、列を1本にして再利用する。
+   行の名前（01 問題 / 02 変えたもの / 03 変えなかったもの）は S18 と完全に同じ。
+   ＝ 聴衆は「あの表だ」で読める。新しい図も表も出さない。
+   社名の色は章の3色ではなくオリーブ（--accent）。私たちは章ではなく、話している側だから。
+   締めは S18 の一行を一人称にしただけ。文を変えないことが回収になる。 */
+.s-us .cmp-row{grid-template-columns:176px 1fr}
+.s-us .cmp{top:120px}   /* S18 の表と同じ頭。二枚が同じ表に見えること */
+/* 三社の表は3行、この枚だけ4行。行の余白を詰めて、締めの y（607）を動かさない。
+   ＝「どの会社も、モノは変えていない。」と「私たちも、〜」が画面の同じ位置に出る。 */
+.s-us .cmp-row.ruled{padding-top:14px;padding-bottom:15px}
+/* 四行目だけラベルをオリーブに。三社が持たない行であることの印。 */
+.s-us .cmp-row.open .k{color:var(--accent)}
+.co-us .co-name{color:var(--accent)}
+.s-us .closer{position:absolute;left:96px;right:96px;top:607px}   /* S18 の結論と同じ y */
+
+/* ======================================================================
+   視覚部品（v-）。複数の枚で使う図の部品。枚ごとの CSS は下の「枚ごと」区画に置く。
+   ====================================================================== */
+/* @@V-COMPONENTS START@@ */
+/* 使い方・貼り付け用の HTML は scratchpad/impl/components.md。ここは見た目と固定座標だけ。
+   pptx 規則：形は SVG（rect/line/path/polyline/polygon/circle）、文字は HTML。
+   SVG <text>・::before/::after の形・インラインの枠・div の opacity/rgba は使わない。
+   半透明は SVG の fill-opacity だけ（抽出器が拾う）。 */
+
+/* ---- 章の色を SVG に当てる（S03 / S05 / S06 / S07 / S17 など）。
+   --act は section[data-act] で切り替わるので、同じ部品が章ごとの色になる。
+   属性の stroke / fill より CSS が勝つので、rect に fill="none" と書いてあっても効く。
+   逆に言えば stroke-width="1.5" の属性も負ける。1.5 にしたいときは v-acc-thin を足す。
+   data-act の無い枚（S22 など）では --act＝オリーブになる。 */
+.v-acc-stroke{stroke:var(--act);stroke-width:2}
+.v-acc-wash{fill:var(--act);fill-opacity:.10}
+.v-acc-stroke.v-acc-thin{stroke-width:1.5}   /* S04 の×・S07 の小箱など 1.5 の線 */
+
+/* ---- 小図標 v-glyph（g-shelf / g-gap / g-story / g-story-empty / g-refill / g-book）。
+   色は無彩と橄欖だけ。線の半分が枠の外に出るので overflow:visible。
+   語との間は 10px（前に置くなら --pre、後ろなら --post）。 */
+.v-glyph{display:inline-block;flex:none;vertical-align:middle;overflow:visible;fill:none}
+.v-glyph--pre{margin-right:10px}
+.v-glyph--post{margin-left:10px}
+.v-glyph .gi{stroke:#33312A;stroke-width:1.5;fill:none}          /* 墨の線（棚板・g-refill の枠） */
+.v-glyph .gi1{stroke:#33312A;stroke-width:1;fill:none}           /* 墨の細線（建前の板） */
+.v-glyph .gr{stroke:#C9C4B8;stroke-width:1;fill:none}            /* 灰の箱（棚の隣人） */
+.v-glyph .gk{fill:#33312A;stroke:none}                           /* 墨の面（実感の板） */
+.v-glyph .ga{fill:#4A5D3A;stroke:none}                           /* 橄欖の面（主役・物語） */
+.v-glyph .ga-e{stroke:#4A5D3A;stroke-width:1.2;stroke-dasharray:3 2;fill:none}  /* 空の物語 */
+.v-glyph .gi1-d{stroke:#33312A;stroke-width:1;stroke-dasharray:2 1.5;fill:none} /* g-refill の最後の破線箱 */
+.v-glyph .gb{stroke:#4A5D3A;stroke-width:1.5;fill:none}          /* g-book の外形と背の線 */
+.v-glyph .gb-sp{fill:#4A5D3A;stroke:none}                        /* g-book 大（S23）の背 */
+/* 語と図標を一行に並べる行。抽出器は flex の中へ降りるので、語が一つずつの文字箱になり、
+   図標の前に置いた語が pptx で図標に重ならない（インラインのままだと一つの文字箱に潰れる）。 */
+.v-gl-row{display:flex;align-items:center;flex-wrap:nowrap;white-space:nowrap}
+
+/* ---- 双語の錨札 v-tag（「棚 SHELF」「物語 STORY」の2つだけ）。枠も地も無し。 */
+.v-tag{display:flex;align-items:baseline;gap:8px;width:max-content;white-space:nowrap;line-height:24px}
+.v-tag .ja{font-size:15px;font-weight:600;color:var(--accent)}
+.v-tag .en{font-family:var(--mono);font-size:14px;letter-spacing:.12em;color:var(--sub)}
+
+/* ---- 出典印 v-seal ＋ 括線 v-bracket。
+   印の枠は CSS の border ではなく、中に敷いた SVG の rect（width/height 100%）。
+   印は「ブロックの flex・幅は中身なり」。位置は置く側（v-sNN- か style）で決める。 */
+.v-seal{position:relative;display:flex;align-items:center;flex:none;gap:8px;
+        width:max-content;height:26px;padding:0 9px;white-space:nowrap}
+.v-seal-fr{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible;fill:none}
+.v-seal-fr rect{stroke-width:1.5;fill:none}
+.v-seal--holt .v-seal-fr rect{stroke:#4A5D3A}
+.v-seal--out  .v-seal-fr rect{stroke:#6E6B60;stroke-dasharray:4 3}
+.v-seal-tx{position:relative;line-height:26px}
+.v-seal--holt .v-seal-tx{font-family:var(--mono);font-size:14px;letter-spacing:.12em;color:var(--accent);
+                         margin-right:-.12em}   /* 字送りの末尾ぶんを戻して左右の余白を揃える */
+.v-seal--out  .v-seal-tx{font-size:15px;letter-spacing:.06em;color:var(--sub);margin-right:-.06em}
+.v-bracket{position:absolute;overflow:visible;fill:none}
+.v-bracket path{fill:none;stroke-width:1.5}
+.v-bracket--holt path{stroke:#4A5D3A}
+.v-bracket--out  path{stroke:#6E6B60;stroke-dasharray:4 3}
+
+/* ---- ズレ／物語 図 v-gap。幾何は部品が持つ。枚の側で変えてよいのは top だけ
+   （S10 の --open だけは left:312 に置く）。
+   文字はすべて絶対配置の HTML。top は「値と鍵の基線が揃う」ように算出済み。 */
+.v-gap{position:absolute;left:96px}
+.v-gap > svg{position:absolute;left:0;top:0;overflow:visible}
+.v-gap-top{fill:#FAF9F5;stroke:#33312A;stroke-width:1.5}
+.v-gap-bot{fill:#33312A;stroke:none}
+.v-gap-bridge{fill:#4A5D3A;fill-opacity:.10;stroke:#4A5D3A;stroke-width:2}
+.v-gap-bridge--empty{fill:none;stroke:#4A5D3A;stroke-width:1.5;stroke-dasharray:6 5}
+.v-gap-ext{fill:none;stroke:#C9C4B8;stroke-width:1;stroke-dasharray:2 3}
+.v-gap-dim{fill:none;stroke:#6E6B60;stroke-width:1.5}
+.v-gap-tk,.v-gap-tv,.v-gap-st,.v-gap-sv,.v-gap-jk,.v-gap-jv,.v-gap-zl{position:absolute;white-space:nowrap}
+.v-gap-tk,.v-gap-jk{font-size:15px;line-height:24px;letter-spacing:.14em}
+.v-gap-tk{color:var(--muted)}
+.v-gap-jk{color:#DFDBD0}
+.v-gap-tv{color:var(--ink2);font-weight:500}
+.v-gap-jv{color:#FAF9F5;font-weight:600}
+.v-gap-sv{color:var(--ink);font-weight:500;font-size:22px;line-height:32px;letter-spacing:.03em}
+.v-gap-zl{font-size:15px;line-height:24px;letter-spacing:.14em;color:var(--muted)}
+/* 完全版（S14）800×184：建前 0–56 ／ 橋 x32 64–120 ／ 実感 x64 128–184 */
+.v-gap--full{width:800px;height:184px}
+.v-gap--full .v-gap-tv,.v-gap--full .v-gap-jv{font-size:30px;line-height:40px;letter-spacing:.02em}
+.v-gap--full .v-gap-tk{left:20px;top:22.5px}
+.v-gap--full .v-gap-tv{left:160px;top:8px}   /* 三段とも値は同じ列（x160）に揃える */
+.v-gap--full .v-gap-st{left:52px;top:83px}
+.v-gap--full .v-gap-sv{left:160px;top:76px}   /* 実感の値（x160）と同じ列。建前 96 → 橋・実感 160 の二段 */
+.v-gap--full .v-gap-jk{left:84px;top:150.5px}
+.v-gap--full .v-gap-jv{left:160px;top:136px}
+.v-gap--full .v-gap-zl{left:796px;top:80px}
+/* 2/3 版（S21）524×128：建前 0–40 ／ 橋 x21 44–84（破線・「？」）／ 実感 x43 88–128。ズレの札は置かない */
+.v-gap--s{width:524px;height:128px}
+.v-gap--s .v-gap-tv,.v-gap--s .v-gap-jv{font-size:22px;line-height:32px;letter-spacing:.03em}
+.v-gap--s .v-gap-tk{left:14px;top:11px}
+.v-gap--s .v-gap-tv{left:107px;top:4px}      /* 建前と実感の値を同じ列（x107）に */
+.v-gap--s .v-gap-st{left:35px;top:58.5px}
+.v-gap--s .v-gap-sv{left:149px;top:44px;font-size:30px;line-height:40px;letter-spacing:0;color:var(--accent)}
+.v-gap--s .v-gap-jk{left:57px;top:99px}
+.v-gap--s .v-gap-jv{left:107px;top:92px}
+/* 開いた版（S10）392×96：上 0–36 ／ 下 x32 60–96。橋・鍵・寸法線なし */
+.v-gap--open{width:392px;height:96px}
+.v-gap--open .v-gap-tv,.v-gap--open .v-gap-jv{font-size:22px;line-height:32px;letter-spacing:.03em}
+.v-gap--open .v-gap-tv{left:20px;top:2px}
+.v-gap--open .v-gap-jv{left:52px;top:62px}
+/* @@V-COMPONENTS END@@ */
+
+/* ---- 枚ごと（v-sNN-）---- */
+/* @@BATCH B1 START@@ */
+/* S14 ｜ 主図は v-gap--full（.contrast はこの枚では使わない。定義は S17 用に残す）。
+   幾何は部品が持つ。枚の側は top だけ：建前 192–248／橋 256–312／実感 320–376。
+   導入 124–160 ／ 図 192–376 ／ HOLT 行 414–440 ／ 罫 510 ／ 締め 534（罫と締めは不動）。
+   導入→図 32px、HOLT→罫 約70px：図と HOLT を 16px 下げて上詰まりを解消。 */
+.v-s14-gap{top:192px}
+/* HOLT 行：印 x96–236（w140）、本文 19px は x252 から一行。
+   もと .s14-bk（626・13px）をここへ移して 19px に。.s14-bk の定義は触らず、この行の中だけ上書き。 */
+.v-s14-holt{position:absolute;left:96px;top:414px;display:flex;align-items:center;gap:16px;white-space:nowrap}
+.v-s14-holt .v-seal{width:140px}
+.v-s14-holt .s14-bk{position:static;width:auto;font-size:19px;line-height:32px;letter-spacing:.03em;color:var(--ink2)}
+
+/* S21（接頭辞 .s16-）｜S14 の v-gap を 2/3 にした v-gap--s。枚の側は top だけ。
+   建前 148–188／橋（破線・？）192–232／実感 236–276／寸法線 x611。 */
+.v-s21-gap{top:148px}
+/* 問いは図の右へ。明朝 40px のまま、置き場所だけ上書き。x704 は寸法線（611）から 93px。
+   「このズレを、」で改行して必ず2行（160–276、図の下端と揃う）。 */
+.v-s21-thesis{left:704px;top:160px;width:480px}
+/* 記入欄の主題語の前の図標。列幅（46/100/540）を動かさないため、図標は語の左へ
+   吊り下げる（x128–156、番号 01 と語 x166 のあいだの空き）。語の x は v0 のまま。 */
+.v-s21-k{position:relative}
+/* left:-34（図標 x132–160）：番号 01 の文字箱（x96–142）との重なりを減らす。語 x166 との間は 6px。 */
+.v-s21-k > .v-glyph{position:absolute;left:-34px;top:50%;margin-top:-9px}
+/* 見出し「デザイン業界」の文字箱が建前板（y148）へ食い込まないよう、この枚だけ下余白を 0 に。 */
+.v-s21-capwrap .s16-cap{margin-bottom:0}
+/* @@BATCH B1 END@@ */
+/* @@BATCH B2 START@@ */
+/* ---- Cyberpunk 時間の帯 v-rail（S10 / S11 / S12 で共有）。
+   三枚とも同じ位置・同じ縮尺（y628–694、x96–1184、1か月 = 40px）。変わるのは節点の状態だけ。
+   枚を送っても軸は動かず、節点が増えていく。SVG は viewBox を枚の座標に合わせてあるので、
+   中の数字はそのまま面の x / y。
+   節点の x ── 発表 101（点の左端を版面の 96 に揃える）／発売 240／削除 250／復帰 496／配信 1080。
+   spec の x（発売 200 …）から全体を 40px 右へ寄せた。発表→発売の圧縮区間が 104px だと
+   S10 の「8年半」と「2020.12」が同じ行でぶつかるため（1か月 = 40px の縮尺は同じ）。
+   日付は面にある値だけ（2020.12／12.18／2021.06.21／2022.09.13）。2012.05 は書かない。
+   物語の帯は橄欖（どの章でも物語は橄欖）。章の色（琥珀）は「いま」の節点と販売停止の破線だけ。 */
+.v-rail{position:absolute;left:96px;top:628px;width:1088px;height:66px}
+.v-rail > svg{position:absolute;left:0;top:0;overflow:visible}
+.v-rail-base{fill:none;stroke:#C9C4B8;stroke-width:1.5}
+.v-rail-fut{fill:none;stroke:#C9C4B8;stroke-width:1.5;stroke-dasharray:2 6}
+.v-rail-brk{fill:none;stroke:#6E6B60;stroke-width:1.5}
+.v-rail-halt{fill:none;stroke:var(--act);stroke-width:2;stroke-dasharray:4 4}
+.v-rail-story{fill:#4A5D3A;stroke:none}
+.v-rail-story--old{fill-opacity:.35}
+.v-rail-past{fill:#33312A;stroke:none}
+.v-rail-now{fill:var(--act);stroke:none}
+.v-rail-next{fill:#FAF9F5;stroke:#C9C4B8;stroke-width:1.5}
+/* 発売 240 と削除 250 は 10px（8日）しか離れない。後から描く点に紙色の縁を 1px 付けて二つを分ける。
+   pptx の円は縁を持たないので、そちらでは接したまま（按比例なので受け入れる）。 */
+.v-rail-sep{stroke:#FAF9F5;stroke-width:1}
+/* 文字：日付は線の上（y628–646）、出来事は線の下（y674–692）。
+   発売は節点の左に右揃え、削除は節点の右から。その他は節点を中心に。 */
+.v-rail-d,.v-rail-e,.v-rail-dur{position:absolute;white-space:nowrap}
+.v-rail-d{top:0;font-family:var(--mono);font-size:14px;line-height:18px;letter-spacing:.06em;color:var(--sub)}
+.v-rail-e{top:46px;font-size:15px;line-height:18px;letter-spacing:.06em;color:var(--ink2)}
+.v-rail-dur{top:46px;left:51px;width:40px;text-align:center;font-size:15px;line-height:18px;letter-spacing:.04em;color:var(--ink2)}
+.v-rail-r{width:100px;text-align:right}          /* 右端 = 節点 −4 */
+.v-rail-c{width:120px;text-align:center}         /* 節点を中心に */
+.v-rail-sale{left:36px}                          /* 発売 x240 → 右端 236 */
+.v-rail-del{left:158px}                          /* 削除 x250 → 254 から */
+.v-rail-ret{left:340px}                          /* 復帰 x496 */
+.v-rail-str{left:844px}                          /* 配信 x1000。ノンブル（x1131〜）と同じ高さに並ぶので、80px 手前に置く */
+.v-rail-ann{left:0}                              /* 発表：版面の左端に揃える */
+/* 「8年半」は区間の長さで日付ではないので、日付の行ではなく出来事の行に、断軸（x159–175）を中心に置く（x147–187）。 */
+/* 未来の破線と S12 の新しい物語の帯は x1112 で止める（頁番号 x1130– の上に載らないように）。 */
+
+/* ---- S10 ｜ .s08-def（横1本の対置）を v-gap の開いた版に置き換えた。
+   上下にずらした二枚の板 ＝ S14 で名付けられる「ズレ」の予告。橋はまだ無い。
+   「悲惨」は .key を外した（琥珀は墨の板の上で 2.2:1）。紙の色・700 で立てる。 */
+/* 罫から下を 90px 上げた（罫 510→420）。時間の帯との間を 100px 空ける */
+.rule-mid.v-s10-up{top:420px}
+.v-s10-gap{left:312px;top:432px}
+.v-s10-hisan{font-weight:700;color:#FAF9F5}
+.v-s10-tail{position:absolute;left:736px;top:494px;margin:0;
+            font-size:19px;line-height:32px;letter-spacing:.03em;color:var(--muted);white-space:nowrap}
+
+/* ---- S13 ｜ 実数二つを図注から図の中へ。曲線（模式）には載せず、曲線の外の余白に置く。
+   図注は模式図の説明1行だけにしたので、罫（y478）が文字を貫かなくなった。 */
+.v-s13-num{position:absolute;margin:0;white-space:nowrap;text-align:right;
+           font-family:var(--mono);font-size:14px;line-height:20px;letter-spacing:.06em}
+.v-s13-peak{right:0;top:166px;color:var(--ink);font-weight:500}     /* 面 y262・右端 x1184 */
+.v-s13-base{right:316px;top:236px;color:var(--ink2)}                 /* 面 y332・右端 x868（平線・物語の縦線 x894 からそれぞれ約26px 離す） */
+/* 泳道の「物語」を主題語の色（.term と同じ橄欖・600）に。.ch-lbl b に勝つよう同じ枝で書く */
+.ch-lbl b.v-s13-story{font-weight:600;color:var(--accent)}
+.v-s13-seal{position:absolute;left:986px;top:120px}                  /* 面 x1082–1184 / y612（版面の右端・結論2行目の中心に揃える）。結論と一緒に出る */
+/* ---- S12 ｜ 結果の一文と時間帯の日付の行が 10px しか離れなかったので、罫と .band を 14px 上げる。
+   時間帯（y628–）は三枚で同じ座標のまま動かさない。 */
+.rule-mid.v-s12-up{top:496px}
+.band.v-s12-up{top:520px}
+/* 物語の帯の凡例（QA で「帯が何か読めない」と指摘）。S10 は帯の左上、S12 は新しい帯の右。 */
+.v-rail-lg{position:absolute;font-size:14px;line-height:16px;font-weight:600;letter-spacing:.06em;color:var(--accent);white-space:nowrap}
+.v-rail-lg--s10{left:0;top:12px}
+.v-rail-lg--s12{left:974px;top:26px}
+/* @@BATCH B2 END@@ */
+/* @@BATCH B3 START@@ */
+/* ---- 棚 図 v-shelf（S04 / S05 / S06 / S08 / S17 / S22 / A2）。
+   形は SVG、文字は絶対配置の HTML。容器 .v-shelf を canvas（か位置の付いた親）に置き、
+   中の svg と札は容器の左上からの座標で書く。
+   棚板（置き場所）と ↔（並べて比べられる）は別の部品。↔ の無い図は「棚」ではなく置き場所。
+   ↔ は一本の開いた折れ線（矢じりを往復して描く）＝ pptx で1図形。
+   幾何（全枚共通・変えない）：↔ の中心線は箱の上辺の 18px 上／棚板は両端の箱より 12px ずつ長い／
+   箱の間 12–24px。SVG の描く順は 箱 → 棚板 → ↔（棚板を箱の下辺の上に重ねる。pptx も同じ重なり順）。
+   例外は S08 の小さな棚（箱の高さ 28＝本寸 40 の 0.7）：↔ 12px 上・棚板 8px 長い（本寸の約 0.7 倍）。 */
+.v-shelf{position:absolute}
+.v-shelf > svg{position:absolute;left:0;top:0;overflow:visible}
+.v-shelf-bd{fill:none;stroke:#33312A;stroke-width:2}                     /* 棚板：いまの棚 */
+.v-shelf-bd--dead{stroke:#C9C4B8}                                         /* 死んだ置き場所（S04・S06 左） */
+.v-shelf-bd--past{stroke:#C9C4B8;stroke-dasharray:6 5}                    /* 出ていった棚（S05・S17 左） */
+.v-shelf-nb{fill:none;stroke:#C9C4B8;stroke-width:1.5}                    /* 隣の箱 */
+.v-shelf-gh{fill:none;stroke:#C9C4B8;stroke-width:1.5;stroke-dasharray:5 4} /* 抜け殻（元の位置） */
+.v-shelf-cmp{fill:none;stroke:#4A5D3A;stroke-width:1.5}                   /* ↔ */
+.v-shelf-mv{fill:none;stroke:#33312A;stroke-width:1.5}                    /* 移動の矢印 */
+.v-shelf-l{position:absolute;white-space:nowrap;text-align:center;
+           font-size:15px;letter-spacing:.04em;color:var(--muted)}        /* 箱の札。left/top/width/line-height は置く側 */
+.v-shelf-l--hero{font-weight:600;color:var(--ink)}
+.v-shelf-l--gh{color:var(--sub)}
+.v-shelf-l--lat{font-family:var(--mono);font-size:14px;letter-spacing:.06em}
+.v-shelf-tag{position:absolute}                                           /* v-tag「棚 SHELF」の置き場 */
+
+/* ---- S04 ｜ 死んだ市場（.s03-）。置き場所だけ。「棚」の字も ↔ も無い（定義は S06）。
+   棚板 y520 は結論の一行（明朝 40px）の字の下端に揃える。隣は名前を書かない（淡色は投影で消えるので通常の nb）。
+   空いた枠の名前「ゲーム機」は枠の真上（棚板の下の字は棚全体の説明、という S17 の約束とぶつけない）。 */
+.v-s04-shelf{left:800px;top:460px;width:384px;height:84px}
+.v-s04-key{width:auto}   /* 文字箱を字の幅に（図 x800– と箱が重ならないように）。字の位置は同じ */
+
+/* ---- S05 ｜ 任天堂の解法（.s04-）。04 行の子。包含ブロックは .s04-tbl（x96, y216）。
+   canvas で 左棚 x204–524 ／ 矢印 x544–604 ／ 右棚 x624–944 ／ y566–652。
+   左端は「施策」の列頭 x204 に揃えた（番号列 x96–200 は空けたまま）。 */
+.v-s05-move{left:108px;top:350px;width:740px;height:86px}
+
+/* ---- S06 ｜ 棚とは何か（.s06shelf-）。定義文の前半の下に「置き場所」、後半の下に「棚」。 */
+.v-s06-def{left:96px;top:500px;width:1088px;height:150px}
+/* 左の板に名前。「置き場所」と「棚（SHELF）」を並べて、定義文の前半と後半に対応させる */
+.v-s06-place{position:absolute;left:0;top:101px;font-size:15px;line-height:24px;letter-spacing:.06em;color:var(--muted);white-space:nowrap}   /* 右の棚 canvas x445–933（中心 689）、箱の間 24 */
+
+/* ---- S07 ｜ もう一つの仕掛け（.s05-）。01 行の右に本体、02 行の右に伸び続けるソフトの列。 */
+.v-s07-chain{left:560px;top:140px;width:572px;height:100px}
+.v-s07-body{fill:none;stroke:#33312A;stroke-width:1.5}
+.v-s07-more{fill:none;stroke:#C9C4B8;stroke-width:1.5;stroke-dasharray:3 3}
+.v-s07-mech{width:auto}
+
+/* ---- S08 ｜ 補助線（.s06-）。柱の頭は .s06-tick ではなく「本の外」の印（.s06-tick の定義は S01/S15 用に残す）。
+   右上：定義の入れ子（鉄道業 → 段1で 輸送業の破線枠＋航空会社）。左下：段2で小さな棚。 */
+.v-s08-seal{margin-top:-6px;margin-bottom:12px}
+.v-s08-say{width:520px}
+.v-s08-rail{left:848px;top:124px;width:336px;height:172px}
+.v-s08-wide{left:752px;top:-276px;width:336px;height:172px}   /* .s06-counter（x96, y400）基準 */
+.v-s08-frame{fill:none;stroke:#6E6B60;stroke-width:1.5;stroke-dasharray:6 5}
+.v-s08-mini{position:absolute;left:0;top:-58px;overflow:visible}  /* .s06-closer（x96, y540）基準。canvas y482–535＝結論句の左上の空き（行内の印に見えないように） */
+.v-s08-mid{fill:none;stroke:#33312A;stroke-width:1.5}
+
+/* ---- S17 ｜ 原神がやったこと。上の空きに S05 と同じ形の移動図。 */
+.v-s17-move{left:142px;top:106px;width:980px;height:101px}   /* 左の箱の左端 x154＝本文の列 */
+.v-s17-src{display:flex;align-items:center;gap:16px;margin-top:6px}
+.v-s17-src .lbl-en{margin-top:0}
+
+/* ---- S22 ｜ 四つ目。01 行の右に小さな棚（制作会社の隣に Goodpatch）。 */
+.v-s22-shelf{left:832px;top:204px;width:352px;height:80px}   /* 箱 y238–266・棚板 y266・↔ y224。行の罫（204／284）から 20／18px 離す */
+
+/* ---- A2 ｜ 受託・BtoB。①「棚とは」の右に小さな棚、② 下に相見積もりの比較表（模式）。 */
+.v-sA2-shelf{left:840px;top:252px;width:344px;height:58px}   /* ↔ y263・箱 y281–309・棚板 x868–1156 y309（行罫 y252 / y325 から 11 / 16） */
+.v-sA2-tbl{left:760px;top:556px;width:424px;height:104px}
+.v-sA2-grid{fill:none;stroke:#C9C4B8;stroke-width:1}
+.v-sA2-row{fill:none;stroke:#4A5D3A;stroke-width:3}
+.v-sA2-l{position:absolute;white-space:nowrap;font-size:15px;line-height:26px;letter-spacing:.04em;color:var(--sub)}
+.v-sA2-q{font-weight:600;color:var(--accent)}
+.v-sA2-open{width:640px}
+/* @@BATCH B3 END@@ */
+/* @@BATCH B4 START@@ */
+/* ---- B4：本・出典・道のり（v-book / v-nav / v-sheet ＋ S01 S09 S15 S16 S19 S23 A6）---- */
+
+/* ---- 本の実体 v-book。S01（L）・S15（M）・A6（M と幽霊）で同じ一冊。
+   四層とも塊の div に実色（opacity・::before は使わない）。
+   ① 小口 pg（右下へずらした紙の束）② 表紙 cv ③ 背 sp ④ 文字 tx。
+   文字はすべて HTML。表紙の副次の文字は #DFDBD0（--hair）で一段沈める。 */
+.v-book{position:absolute}
+.v-book-pg,.v-book-cv,.v-book-sp{position:absolute}
+.v-book-pg{background:#F3F1E9;border:1px solid #C9C4B8}
+.v-book-cv{left:0;top:0;right:0;bottom:0;background:#4A5D3A}
+.v-book-sp{left:0;top:0;bottom:0;width:12px;background:#3B4A2E}
+.v-book-tx{position:absolute;left:0;top:0;right:0;bottom:0;color:#FAF9F5}
+.v-book-au,.v-book-en,.v-book-meta{position:absolute;font-family:var(--mono);font-size:14px;
+  line-height:20px;letter-spacing:.12em;color:#DFDBD0;white-space:nowrap}
+.v-book-ttl{position:absolute;font-weight:700;color:#FAF9F5;white-space:nowrap}
+.v-book-rl{position:absolute;height:1px;background:#A2AB97}
+/* 邦訳の表紙（S01・S15）：著者は旧柱と同じ日本語。14px ゴシック・字送り 0 */
+.v-book .v-book-au.is-ja{font-family:var(--sans);letter-spacing:0}
+/* L 232×336（S01）。小口 +8/+6 */
+.v-book--l{width:232px;height:336px}
+.v-book--l .v-book-pg{left:8px;top:6px;width:232px;height:336px}
+.v-book--l .v-book-au{left:28px;top:24px}
+.v-book--l .v-book-ttl{left:28px;top:60px;font-size:22px;line-height:32px;letter-spacing:.04em}
+.v-book--l .v-book-en{left:28px;top:140px}
+.v-book--l .v-book-rl{left:28px;right:18px;bottom:52px}
+.v-book--l .v-book-meta{left:28px;bottom:22px;letter-spacing:.08em}
+/* M 176×256（S15・A6）。小口 +6/+5。表紙の文字幅は 138 なので字送りを詰める */
+.v-book--m{width:176px;height:256px}
+.v-book--m .v-book-pg{left:6px;top:5px;width:176px;height:256px}
+.v-book--m .v-book-au{left:24px;top:20px;letter-spacing:.06em}
+.v-book--m .v-book-ttl{left:24px;top:50px;font-size:19px;font-weight:600;line-height:27px;letter-spacing:0}
+.v-book--m .v-book-en{left:24px;top:116px;letter-spacing:.08em}
+.v-book--m .v-book-rl{left:24px;right:14px;bottom:46px}
+.v-book--m .v-book-meta{left:24px;bottom:18px;letter-spacing:.06em}
+/* 原著（A6）：表紙は英語だけ。組みは S01/S15 と同じ（著者 → 書名 → 罫 → 年・頁） */
+.v-book--m .v-book-ttl.is-en{letter-spacing:0}
+/* 幽霊版（A6 の邦訳）：塗りなし・破線の枠だけ。背も小口も無い */
+.v-book.is-ghost .v-book-fr{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible;fill:none}
+.v-book.is-ghost .v-book-fr rect{fill:none;stroke:#6E6B60;stroke-width:1.5;stroke-dasharray:4 3}
+.v-book.is-ghost .v-book-ttl{color:var(--ink2);font-weight:500}
+
+/* ---- 三社の道のり v-nav（S09 / S16）。S01 の年表と同じ x（376 / 646 / 916）。
+   容器 x376–1184, y548–664。印 y548 → 括線 y582（印の下 8px。S01 と同じ） → 年 y600 → 基線 y630 → 国名 y642 */
+.v-nav{position:absolute;left:376px;top:548px;width:808px;height:116px}
+.v-nav > .v-seal{position:absolute;top:0}
+.v-nav-so{left:0}
+.v-nav-sh{left:270px}
+.v-nav-ln{position:absolute;left:0;top:70px;overflow:visible;fill:none}
+.v-nav-ln .done{stroke:#33312A;stroke-width:1.5}
+.v-nav-ln .todo-l{stroke:#C9C4B8;stroke-width:1.5}
+.v-nav-ln .open{stroke:#C9C4B8;stroke-width:1.5;stroke-dasharray:2 6}
+.v-nav-ln .n-done{fill:#33312A;stroke:none}
+.v-nav-ln .n-cur{fill:#FAF9F5;stroke:var(--act);stroke-width:2}
+.v-nav-ln .n-next{fill:#FAF9F5;stroke:#C9C4B8;stroke-width:1.5}
+.v-nav-yr{position:absolute;top:52px;font-family:var(--mono);font-size:14px;line-height:16px;
+  letter-spacing:.06em;color:var(--sub);white-space:nowrap}
+.v-nav-co{position:absolute;top:94px;font-size:15px;line-height:20px;letter-spacing:.06em;
+  color:var(--ink2);white-space:nowrap}
+
+/* ---- 論文の紙 v-sheet（A6 のレビット）。88×120、右上の角を折る。オリーブは使わない */
+.v-sheet{position:absolute;overflow:visible}
+.v-sheet .pp{fill:#F3F1E9;stroke:#C9C4B8;stroke-width:1.5}
+.v-sheet .fd{fill:none;stroke:#C9C4B8;stroke-width:1.5}
+
+/* ---------------------------------------------------------------- S01 */
+.v-s01-book{left:96px;top:120px}
+/* 本が柱の代わりになる。主張の段は x376 から（年表の一つ目と同じ x） */
+.s01-book.v-s01-wrap{left:376px;top:120px;display:block}
+.v-s01-so{position:absolute;left:376px;top:312px}
+.v-s01-sh{position:absolute;left:646px;top:312px}
+.s00-band.v-s01-band{left:376px;top:380px;width:808px}   /* 基線 y456 ＝ 本の下端 */
+
+/* ---------------------------------------------------------------- S09 */
+/* 明朝は 30px 以上だけ（22px の副句はゴシックへ） */
+.q-line.s07-sub.v-s09-sub{font-family:var(--sans)}
+/* 「本に戻ります」を HOLT の印の説明として、印の右に置く */
+.s09-bk.v-s09-bk{left:740px;top:550px}
+
+/* ---------------------------------------------------------------- S15 */
+.s12-pillar.v-s15-pillar{padding-top:0;position:relative;height:256px}
+.v-s15-pillar .v-book{left:0;top:0}
+/* 本の事例は本の下、転換線（y470）の下へ。x96 y486 幅176 */
+/* 奥付「原著 2004 ／ 邦訳 2005」は M 号の表紙（使える幅 152px）に 185.4px で入らず、
+   「邦訳 2005」が表紙の外（クリーム地の上）に出て読めなくなっていた。二行に折り、
+   そのぶん罫を上げる。A6 の書影は奥付が一行なので、この枚だけに効かせる。 */
+.v-s15-pillar .v-book--m .v-book-meta{line-height:18px}
+.v-s15-pillar .v-book--m .v-book-rl{bottom:62px}
+.bk-cases.v-s15-cases{position:absolute;left:0;top:310px;width:176px;margin-top:0;font-size:14px;line-height:1.5}
+/* 番号を HOLT の印と同じ枠で囲む（34×24・オリーブ 1.5）。列幅 46 は変えない */
+.idx.v-s15-idx{position:relative;display:block;width:34px;height:24px;line-height:24px;
+  padding-left:4px;text-align:center;margin:-4px 0;top:-4px}   /* 枠の上下 4px は行の高さに数えない（行の座標を動かさない）。baseline 揃えなので top で枠の中心を一行目の中心へ */
+.s12-key .idx.v-s15-idx{top:-8px}
+.v-s15-idx .v-s15-fr{position:absolute;left:0;top:0;width:34px;height:24px;overflow:visible;fill:none}
+.v-s15-idx .v-s15-fr rect{fill:none;stroke:#4A5D3A;stroke-width:1.5}
+.bk-buy.v-s15-buy{font-size:15px;line-height:1.7;margin-top:6px;white-space:nowrap}
+
+/* ---------------------------------------------------------------- S16 */
+/* 章の入り口。y302–540 は空けたまま、下端に道のりだけ置く（.v-nav の既定位置） */
+
+/* ---------------------------------------------------------------- S19 */
+/* 縦軸の出どころ＝HOLT、横軸の出どころ＝本の外。左下の象限には何も置かない */
+.v-s19-sh{position:absolute;left:580px;top:5px}
+.v-s19-so{position:absolute;left:952px;top:256px}
+/* 縦軸名の文字枠を字幅まで詰める（pptx で HOLT の印に掛からないように）。中心 x=508.5 のまま */
+.s19-ax.s19-ax-y{left:442.5px;width:132px;white-space:nowrap}
+
+/* ---------------------------------------------------------------- S23 */
+/* 奥付の大きさの一冊。問いの二行（.question）は触らない */
+.v-s23-book{position:absolute;left:96px;top:604px}
+.s23-bk.v-s23-bk{left:152px;top:621px}
+
+/* ---------------------------------------------------------------- A6 */
+/* 附録「読むなら」。書店の平台の一区画：原著（実物）／邦訳（幽霊）／論文（一枚の紙） */
+.v-sA6-book1{left:96px;top:128px}
+.v-sA6-book2{left:480px;top:128px}
+/* 論文の紙は下端を本と揃える（平台の一区画なので底で揃う）：底 y384 */
+.v-sA6-sheet{left:864px;top:264px}
+.v-sA6-seal{position:absolute;left:976px;top:264px}
+.v-sA6-col{position:absolute;top:400px;display:flex;flex-direction:column;align-items:flex-start}
+.v-sA6-c1{left:96px;width:328px}
+.v-sA6-c2{left:480px;width:328px}
+.v-sA6-c3{left:864px;width:320px}
+.v-sA6-ttl{font-size:19px;font-weight:600;line-height:28px;letter-spacing:.03em;color:var(--ink);white-space:nowrap}
+.v-sA6-col .src{display:block;line-height:20px;margin-top:6px}
+.v-sA6-pub{font-size:15px;line-height:20px;letter-spacing:.06em;color:var(--sub);margin-top:6px;white-space:nowrap}
+.v-sA6-say{font-size:19px;line-height:1.6;letter-spacing:.03em;color:var(--ink2);margin-top:10px;white-space:nowrap}
+.v-sA6-col .v-sA6-say + .src,.v-sA6-col .v-sA6-say + .v-sA6-pub{margin-top:8px}
+.rule-mid.v-sA6-mid{top:584px}
+.v-sA6-lbl{position:absolute;left:96px;top:610px;line-height:22px}
+.v-sA6-four{position:absolute;top:608px;width:120px}
+.v-sA6-four .v-seal{width:120px;justify-content:center}
+.v-sA6-four .src{position:absolute;left:0;top:34px;width:120px;text-align:center;line-height:20px}
+/* 価格の注は価格の欄（第一欄）の中、ISBN の下 */
+.v-sA6-col .src.v-sA6-price{margin-top:4px}
+/* @@BATCH B4 END@@ */
+/* @@BATCH B5 START@@ */
+/* S03 ｜ 右下の小さな X（模式図）。x900–1184 / y500–658。対句・横罫・末句は動かさない。
+   灰の線（アメリカ）は 1983 の縦線で終わり、章の色の線（日本）が同じ点から上がる。目盛りなし。 */
+.v-s03-x{position:absolute;left:900px;top:520px;overflow:visible;fill:none}
+.v-s03-tick{stroke:#C9C4B8;stroke-width:1.5}
+.v-s03-us{stroke:#C9C4B8;stroke-width:2;stroke-linejoin:round}
+.v-s03-yr,.v-s03-us-l,.v-s03-jp-l,.v-s03-cap{position:absolute;white-space:nowrap}
+.v-s03-yr{left:1020px;top:498px;font-family:var(--mono);font-size:14px;line-height:22px;letter-spacing:.12em;color:var(--sub)}
+.v-s03-us-l,.v-s03-jp-l{font-size:15px;line-height:22px;letter-spacing:.04em;color:var(--muted)}
+/* 二つの国名は、それぞれの線の端点の 12px 上（線の外接矩形に掛からない位置）。「日本」は 1983 と同じ高さ。 */
+.v-s03-us-l{left:900px;top:514px}
+.v-s03-jp-l{right:96px;top:498px}
+.v-s03-cap.figcap-id{left:900px;top:642px;line-height:18px;color:var(--sub)}
+
+/* S18 ｜ 02 行の主題語の後ろに図標（g-shelf / g-story）。セルの組みは変えない。 */
+
+/* S20 ｜ .s15-list を v-gl-row にして、三語の前に図標。一行のまま（折らない）。
+   【決定の更新】.s15-list 上の旧注記（「対応づけは口頭に任せ、面では列挙だけを示す」）は古い。
+   図標＝S07（値付け）/ S18（棚・物語）と面で対応させる、と spec で決めた。図標を外さないこと。
+   区切り「／」の左右は 16px（図標→語の 10px より広くし、図標が後ろの語に付いて読めるように）。 */
+.s15-list.v-gl-row .s15-sep{margin:0 16px}
+/* g-refill（S20 専用の描き分け）: 本体＝墨 1.5、ソフトの小箱3つ＝橄欖の面、次の破線箱＝灰 1・破線 2 2（S07 の鎖の縮図）。 */
+.v-glyph .v-s20-rf-d{stroke:#C9C4B8;stroke-width:1;stroke-dasharray:2 2;fill:none}
+
+/* A3 ｜ 各列の番号の右 12px に図標。番号と図標を一行に並べ、列の位置は変えない。 */
+/* 番号の span は原本どおり（pptx で列が一つの文字箱のまま）。図標は列（relative）に対して absolute。
+   left 31 ＝ 番号の幅 19 ＋ 12、top 31 ＝ 番号の行の中心に合わせる（抽出で y235–253）。 */
+.ax3-col .v-sA3-gl{position:absolute;left:31px;top:31px}
+/* A3 の「安い話ではない…」は 19px なので明朝を外して本文の黒体に（明朝は 30px 以上だけ）。 */
+.ax3-sum-txt.ax3-sum-cost{font-family:var(--sans)}
+/* @@BATCH B5 END@@ */
+/* @@V-BATCH-CSS@@ */
+
+/* ============================ 整合版（2026-09-23）追補 ============================
+   Keynote で組み直した「整合版」を原本に戻し、主線を一本にした。
+   絵の枚（.s-pic）：導入 → 建前/物語/実感の図（v-gap--full）→ 罫 → 明朝の一行 → 添え。
+   S02 で一度だけ形を教え、S05 / S10 / S14 / S17 で同じ座標に四回描く。 */
+.s-pic .rule-mid{top:420px}
+.v-pic-gap{top:192px}
+.pic-say{position:absolute;left:96px;right:96px;top:448px}
+.pic-say::before{content:"";display:block;width:20px;height:2px;background:var(--accent);margin-bottom:20px}
+.pic-big{font-family:var(--serif);font-size:40px;font-weight:600;line-height:1.45;letter-spacing:.04em;color:var(--ink)}
+.pic-sub{margin-top:14px;font-size:22px;line-height:1.7;letter-spacing:.03em;color:var(--ink2)}
+/* 絵の枚の出典・但し書き（S05 / S14）。締めの二行の下に一行だけ */
+.pic-src{margin-top:18px}
+/* 絵の枚の締めが問いのとき（S17）。締めの短い罫の下、問いの上に置く札 */
+.pic-lbl{margin:0 0 8px;font-size:14px;letter-spacing:.16em;color:var(--accent)}
+/* S01：本の四つの主張が今日の話の軸。右の列は、その主張の証拠になる事例。
+   後の枚の「HOLT 0x」の印は、この番号を指す（番号は話す順：03＝Cyberpunk、04＝原神）。 */
+.s01-four{margin-top:30px}
+/* 主張の列は最長の一行（02、22px で約 480px）に合わせて止め、事例をすぐ右に置く。
+   1fr にすると事例が右端まで離れて、どの主張の証拠かを目で辿れなくなる。 */
+.s01-row{display:grid;grid-template-columns:44px 520px 1fr;align-items:baseline;
+         border-bottom:1px solid var(--hair);padding:9px 0}
+.s01-head{border-bottom-color:var(--rule);padding:0 0 8px}
+.s01-h{font-size:14px;letter-spacing:.16em;color:var(--sub)}
+.s01-cl{font-size:22px;line-height:1.5;letter-spacing:.02em;color:var(--ink)}
+.s01-ev{font-size:15px;letter-spacing:.04em;color:var(--muted)}
+/* 主張を指す印の置き場 */
+.v-s02-seal{position:absolute;right:96px;top:128px}
+.v-s09-seal{position:absolute;left:966px;top:120px}
+.v-s12-seal{position:absolute;right:96px;top:176px}
+.v-s16-seal{position:absolute;right:0;top:16px}
+.v-s17-seal{position:absolute;right:96px;top:128px}   /* 問いの一行目の高さ。二行目は右端まで字が来る */
+.pic-act-k{font-size:14px;letter-spacing:.16em;color:var(--accent);margin-right:18px}
+
+/* S01：本の右の主張のあと、年表の下に一行だけ添える */
+.v-s01-cap{position:absolute;left:376px;top:486px;margin:0;font-size:19px;line-height:1.8;letter-spacing:.03em;color:var(--muted)}
+
+/* 三駅の帯（S12 / S13）。S11 の道のりと同じ作法で、駅を三つ等間隔に置く。 */
+.stn{position:absolute;left:96px;top:430px;width:1088px;height:120px}
+.stn > svg{position:absolute;left:0;top:0;overflow:visible}
+.stn-ln{fill:none;stroke:#33312A;stroke-width:1.5}
+.stn-open{fill:none;stroke:#C9C4B8;stroke-width:1.5;stroke-dasharray:2 6}
+.stn-pt{fill:#33312A;stroke:none}
+.stn-pt--cur{fill:#FAF9F5;stroke:var(--act);stroke-width:2}
+.stn-d{position:absolute;top:36px;font-family:var(--mono);font-size:15px;font-weight:600;letter-spacing:.08em;line-height:20px;color:var(--sub);white-space:nowrap}
+.stn-l{position:absolute;top:64px;font-size:19px;font-weight:500;line-height:1.6;letter-spacing:.03em;color:var(--ink);white-space:nowrap}
+.stn-s{display:block;margin-top:4px;font-family:var(--mono);font-size:14px;font-weight:400;letter-spacing:.08em;color:var(--sub)}
+.v-s13-src{position:absolute;left:96px;top:600px;margin:0;white-space:nowrap}
+.s16-gen-pre.v-pre-w{width:1088px}
+
+/* S15 / S16：表の下の結論。行が三つなので原本（S18）より 60px 上げる。 */
+.cmp-row.ruled{padding-top:18px;padding-bottom:20px}   /* 三行なので原本（24/26）より詰める */
+.brace.v-s15-brace{top:486px}
+.closer.v-s15-closer{top:540px}
+.closer-sub{margin:10px 0 0;font-size:22px;line-height:1.7;letter-spacing:.03em;color:var(--muted)}
+/* S16：建前／実感の二列 */
+.cmp-row--2{grid-template-columns:176px 1fr 1fr}
+.co-name.co-k{font-size:19px;letter-spacing:.14em;color:var(--ink2)}
+.co-en.is-ja{font-family:var(--sans);letter-spacing:.06em;color:var(--muted)}
+.cmp-cell.is-real{font-weight:600;color:var(--ink)}
+</style>
+</head>
+
+<body>
+<div class="viewport">
+<div class="stage" id="stage">
+
+  
+
+<section class="slide" data-no="01">
+  <div class="canvas">
+    <div class="meta">
+      <div class="meta-l"><span class="meta-no">S01</span><span class="meta-ttl">本の四つの主張</span></div>
+      <div class="meta-r">DOUGLAS HOLT, 2004</div>
+    </div>
+    <div class="rule-top"></div>
+    <!-- 今日の話は、この一冊から始まる。Keynote では表紙の実写に差し替えてある（pptx には画像を載せられない）。 -->
+    <div class="v-book v-book--l v-s01-book">
+      <div class="v-book-pg"></div>
+      <div class="v-book-cv"></div>
+      <div class="v-book-sp"></div>
+      <div class="v-book-tx">
+        <p class="v-book-au is-ja">ダグラス・B・ホルト</p>
+        <p class="v-book-ttl">『ブランドが<br>神話になる日』</p>
+        <p class="v-book-en">HOW BRANDS<br>BECOME ICONS</p>
+        <div class="v-book-rl"></div>
+        <p class="v-book-meta">原著 2004 ／ 邦訳 2005</p>
+      </div>
+    </div>
+    <div class="s01-book v-s01-wrap">
+      <div class="s01-say">
+        <p class="s01-origin">今日の話の軸は、この本の主張です。</p>
+        <div class="s01-four">
+          <div class="s01-row s01-head"><span></span><span class="s01-h">主張</span><span class="s01-h">事例</span></div>
+          <div class="s01-row"><span class="idx">01</span><span class="s01-cl">建前と実感には、いつもズレがある</span><span class="s01-ev">三社すべて</span></div>
+          <div class="s01-row"><span class="idx">02</span><span class="s01-cl">強いブランドは、そのズレを埋める<span class="term">物語</span>を売る</span><span class="s01-ev">三社すべて</span></div>
+          <div class="s01-row"><span class="idx">03</span><span class="s01-cl"><span class="term">物語</span>には、賞味期限がある</span><span class="s01-ev">Cyberpunk</span></div>
+          <div class="s01-row"><span class="idx">04</span><span class="s01-cl"><span class="term">物語</span>の材料は、商売の外から採る</span><span class="s01-ev">原神</span></div>
+        </div>
+      </div>
+    </div>
+    <p class="v-s01-cap">最後に、私たちのマーケティングに問いを立てます。</p>
+  </div>
+</section>
+
+<section class="slide s-pic" data-no="02">
+  <div class="canvas">
+    <div class="meta">
+      <div class="meta-l"><span class="meta-no">S02</span><span class="meta-ttl">今日の見方</span></div>
+      <div class="meta-r">DOUGLAS HOLT, 2004</div>
+    </div>
+    <div class="rule-top"></div>
+    <p class="s14-lead">本の主張を、一枚の絵にすると。</p>
+    <div class="v-seal v-seal--holt v-s02-seal"><svg class="v-seal-fr" aria-hidden="true"><rect width="100%" height="100%"/></svg><svg class="v-glyph g-book" width="12" height="16" viewBox="0 0 12 16" aria-hidden="true"><rect class="gb" x="0.75" y="0.75" width="10.5" height="14.5"/><path class="gb" d="M3.5 0.75V15.25"/></svg><span class="v-seal-tx">HOLT 01・02</span></div>
+    <div class="v-gap v-gap--full v-pic-gap">
+        <svg width="800" height="184" viewBox="0 0 800 184" aria-hidden="true">
+          <rect class="v-gap-top" x="0" y="0" width="672" height="56"/>
+          <rect class="v-gap-bridge" x="32" y="64" width="672" height="56"/>
+          <rect class="v-gap-bot" x="64" y="128" width="672" height="56"/>
+          <path class="v-gap-ext" d="M672 56H788"/>
+          <path class="v-gap-ext" d="M736 128H788"/>
+          <path class="v-gap-dim" d="M776 58V126"/>
+          <path class="v-gap-dim" d="M768 57H784"/>
+          <path class="v-gap-dim" d="M768 127H784"/>
+        </svg>
+        <div class="v-gap-tk">建前</div>
+        <div class="v-gap-tv">みんなが言っていること</div>
+        <div class="v-tag v-gap-st"><span class="ja">物語</span><span class="en">STORY</span></div>
+        <div class="v-gap-sv">ズレを埋める物語</div>
+        <div class="v-gap-jk">実感</div>
+        <div class="v-gap-jv">本当に起きていること</div>
+        <div class="v-gap-zl">ズレ</div>
+      </div>
+    <div class="rule-mid"></div>
+    <div class="pic-say">
+      <p class="pic-big">強いブランドは、真ん中の<span class="term">物語</span>を売っている。</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide s-open" data-act="nin" data-no="03">
+  <div class="canvas">
+    <div class="meta">
+      <div class="meta-l"><span class="meta-no">S03</span><span class="meta-ttl">事例 1｜任天堂</span></div>
+      <div class="meta-r">1983 — 1985</div>
+    </div>
+    <div class="rule-top"></div>
+    <div class="s03-lead">
+      <p><span class="n">1983</span>年、アメリカでゲーム機が急に売れなくなった（アタリショック）。</p>
+      <p>「ビデオゲームは、もう終わった」。みんながそう言った。</p>
+      <p><span class="n">1985</span>年、任天堂はそのアメリカで売ろうとした。</p>
+    </div>
+    <div class="s03-cut"></div>
+    <p class="s03-key v-s04-key">でも、店に<span class="key">置いてもらえない</span>。</p>
+    <div class="v-shelf v-s04-shelf">
+      <svg width="384" height="84" viewBox="0 0 384 84" aria-hidden="true">
+        <rect class="v-shelf-nb" x="18" y="12" width="96" height="48"/>
+        <rect class="v-shelf-gh" x="136" y="12" width="112" height="48"/>
+        <path class="v-acc-stroke v-acc-thin" d="M136 12L248 60M248 12L136 60" fill="none"/>
+        <rect class="v-shelf-nb" x="270" y="12" width="96" height="48"/>
+        <line class="v-shelf-bd v-shelf-bd--dead" x1="6" y1="60" x2="378" y2="60"/>
+      </svg>
+      <div class="v-shelf-l v-shelf-l--gh" style="left:136px;top:-22px;width:112px;line-height:24px">ゲーム機</div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-act="nin" data-no="04">
+  <div class="canvas">
+
+    <div class="meta">
+      <div class="meta-l"><span class="meta-no">S04</span><span class="meta-ttl">任天堂がやったこと</span></div>
+      <div class="meta-r">NINTENDO ENTERTAINMENT SYSTEM</div>
+    </div>
+    <div class="rule-top"></div>
+
+    <!-- 結論を先に置く。色が乗るのは「やめた」1語だけ。
+         表の中では色を使わない（4行に色を散らすと、どこを見ればいいか消える）。 -->
+    <p class="s04-lead">ゲーム機として売るのを<span class="key">やめた</span>。</p>
+
+    <div class="s04-head s04-row">
+      <div></div>
+      <div><span class="lbl">やったこと</span></div>
+      <div><span class="lbl">狙い</span></div>
+    </div>
+
+    <!-- 4行に data-step。→ キーで上から1行ずつ立ち上がる。
+         見出し行には data-step を付けない（列の意味は最初から見せる）。 -->
+    <div class="s04-tbl">
+      <div class="s04-row" data-step="1">
+        <div class="s04-no"><span class="idx">01</span></div>
+        <div class="s04-act">名前を <span class="n">Entertainment System</span> に</div>
+        <div class="s04-int">「ゲーム機」と呼ばない</div>
+      </div>
+      <div class="s04-row" data-step="2">
+        <div class="s04-no"><span class="idx">02</span></div>
+        <div class="s04-act">見た目をビデオデッキ風に</div>
+        <div class="s04-int">家電に見せる</div>
+      </div>
+      <div class="s04-row" data-step="3">
+        <div class="s04-no"><span class="idx">03</span></div>
+        <div class="s04-act">ロボットを付けた</div>
+        <div class="s04-int">玩具に見せる</div>
+      </div>
+      <div class="s04-row" data-step="4">
+        <div class="s04-no"><span class="idx">04</span></div>
+        <div class="s04-act">玩具店に置いた</div>
+        <div class="s04-int">玩具の隣に並ぶ</div>
+        <!-- 置き換えの図。この行（data-step=4）の子なので、行と一緒に沈み、一緒に立ち上がる。
+             まだ「棚」とは呼ばない（定義は次の S06）。位置の基準は .s04-tbl。 -->
+        <div class="v-shelf v-s05-move">
+          <svg width="740" height="86" viewBox="0 0 740 86" aria-hidden="true">
+            <rect class="v-shelf-nb" x="12" y="42" width="100" height="40"/>
+            <rect class="v-shelf-gh" x="124" y="42" width="72" height="40"/>
+            <rect class="v-shelf-nb" x="208" y="42" width="100" height="40"/>
+            <line class="v-shelf-bd v-shelf-bd--past" x1="0" y1="82" x2="320" y2="82"/>
+            <path class="v-shelf-mv" d="M340 62L400 62L394 58.5L400 62L394 65.5"/>
+            <rect class="v-shelf-nb" x="432" y="42" width="100" height="40"/>
+            <rect class="v-acc-stroke v-acc-wash" x="544" y="42" width="72" height="40"/>
+            <rect class="v-shelf-nb" x="628" y="42" width="100" height="40"/>
+            <line class="v-shelf-bd" x1="420" y1="82" x2="740" y2="82"/>
+            <path class="v-shelf-cmp" d="M492 20.5L486 24L492 27.5L486 24L576 24L570 20.5L576 24L570 27.5"/>
+            <path class="v-shelf-cmp" d="M590 20.5L584 24L590 27.5L584 24L674 24L668 20.5L674 24L668 27.5"/>
+          </svg>
+          <div class="v-shelf-l" style="left:12px;top:42px;width:100px;line-height:40px">ゲーム機</div>
+          <div class="v-shelf-l v-shelf-l--lat v-shelf-l--gh" style="left:124px;top:42px;width:72px;line-height:40px">NES</div>
+          <div class="v-shelf-l" style="left:208px;top:42px;width:100px;line-height:40px">ゲーム機</div>
+          <div class="v-shelf-l" style="left:432px;top:42px;width:100px;line-height:40px">玩具</div>
+          <div class="v-shelf-l v-shelf-l--lat v-shelf-l--hero" style="left:544px;top:42px;width:72px;line-height:40px">NES</div>
+          <div class="v-shelf-l" style="left:628px;top:42px;width:100px;line-height:40px">玩具</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="s04-note">
+      <span class="figcap-tx"><span class="n">1985</span>年、ニューヨークで試しに売ったとき。</span>
+    </div>
+
+    <!-- 締めの一行は S06 に分けた。表を読み終えた面のまま、次の一枚で言う。 -->
+
+  </div>
+
+  
+</section>
+
+<section class="slide s-pic" data-act="nin" data-no="05">
+  <div class="canvas">
+    <div class="meta">
+      <div class="meta-l"><span class="meta-no">S05</span><span class="meta-ttl">任天堂の絵</span></div>
+      <div class="meta-r">NINTENDO ENTERTAINMENT SYSTEM, 1985</div>
+    </div>
+    <div class="rule-top"></div>
+    <p class="s14-lead"><span class="n">1985</span>年、アメリカ。</p>
+    <div class="v-gap v-gap--full v-pic-gap">
+        <svg width="800" height="184" viewBox="0 0 800 184" aria-hidden="true">
+          <rect class="v-gap-top" x="0" y="0" width="672" height="56"/>
+          <rect class="v-gap-bridge" x="32" y="64" width="672" height="56"/>
+          <rect class="v-gap-bot" x="64" y="128" width="672" height="56"/>
+          <path class="v-gap-ext" d="M672 56H788"/>
+          <path class="v-gap-ext" d="M736 128H788"/>
+          <path class="v-gap-dim" d="M776 58V126"/>
+          <path class="v-gap-dim" d="M768 57H784"/>
+          <path class="v-gap-dim" d="M768 127H784"/>
+        </svg>
+        <div class="v-gap-tk">建前</div>
+        <div class="v-gap-tv">ビデオゲームは、もう終わった</div>
+        <div class="v-tag v-gap-st"><span class="ja">物語</span><span class="en">STORY</span></div>
+        <div class="v-gap-sv">ゲーム機ではなく、家族の玩具</div>
+        <div class="v-gap-jk">実感</div>
+        <div class="v-gap-jv">子どもは、まだ遊びたがっていた</div>
+        <div class="v-gap-zl">ズレ</div>
+      </div>
+    <div class="rule-mid"></div>
+    <div class="pic-say">
+      <p class="pic-big">売っていたのは、機械ではなく「<span class="key">家族の玩具</span>」。</p>
+      <p class="pic-sub"><span class="term">物語</span>を変えたら、並ぶ店まで変わった。</p>
+      <p class="src pic-src">実感は、結果から考えたもの。</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide s-open" data-act="cyb" data-no="06">
+  <div class="canvas">
+
+    <div class="meta">
+      <div class="meta-l"><span class="meta-no">S06</span><span class="meta-ttl">事例 2｜Cyberpunk 2077</span></div>
+      <div class="meta-r">CD PROJEKT RED — POLAND</div>
+    </div>
+    <div class="rule-top"></div>
+
+    <p class="s08-lead">ポーランドの会社が、<br><span class="n">8</span>年半かけて作ったゲーム。</p>
+
+    <p class="s08-sub">発売前の予約は、<span class="key">800万本</span>。<br><span class="src">会社発表（2020年12月）</span></p>
+
+    <div class="rule-mid v-s10-up"></div>
+
+    <div class="s08-genre">
+      <div>
+        <span class="lbl">サイバーパンク</span>
+        <span class="lbl-en">CYBERPUNK</span>
+      </div>
+    </div>
+
+    <!-- ジャンルの定義 = v-gap の開いた版（上：建前の板は中空／下：墨の板を右へ 32px ずらす）。
+         橋も「ズレ」の札もまだ置かない。S14 で同じ形が橋を得て、S21 で 2/3 になって戻る。
+         旧 .s08-def の縦線（「のに」のヒンジ）は、板のずれそのものが引き受けたので外した。 -->
+    <div class="v-gap v-gap--open v-s10-gap">
+      <svg width="392" height="96" viewBox="0 0 392 96" aria-hidden="true">
+        <rect class="v-gap-top" x="0" y="0" width="360" height="36"/>
+        <rect class="v-gap-bot" x="32" y="60" width="360" height="36"/>
+      </svg>
+      <div class="v-gap-tv">技術は、すごく進んだのに</div>
+      <div class="v-gap-jv">人の暮らしは、<span class="v-s10-hisan">ひどい</span></div>
+    </div>
+    <p class="v-s10-tail">——そんな世界の話。</p>
+
+  </div>
+
+  
+</section>
+
+<section class="slide" data-act="cyb" data-no="07">
+  <div class="canvas">
+
+    <div class="meta">
+      <div class="meta-l"><span class="meta-no">S07</span><span class="meta-ttl">崩壊</span></div>
+      <div class="meta-r">2020.12</div>
+    </div>
+    <div class="rule-top"></div>
+
+    <div class="s09-seq">
+      <p class="s09-line"><span class="n">2020</span>年<span class="n">12</span>月、発売。</p>
+      <p class="s09-line">バグだらけで、古いゲーム機ではまともに動かなかった。</p>
+    </div>
+
+    <div class="s09-hit">
+      <div class="s09-mark"></div>
+      <p class="s09-hit-txt">PlayStation ストアから、<span class="key">削除</span>。</p>
+      <p class="s09-hit-sub">返金になり、ストアに戻るまで半年かかった。</p>
+    </div>
+
+  </div>
+
+  
+</section>
+
+<section class="slide" data-act="cyb" data-no="08">
+  <div class="canvas">
+
+    <div class="meta">
+      <div class="meta-l"><span class="meta-no">S08</span><span class="meta-ttl">復活</span></div>
+      <div class="meta-r">CYBERPUNK: EDGERUNNERS ｜ NETFLIX / TRIGGER</div>
+    </div>
+    <div class="rule-top"></div>
+
+    <div class="s10-work">
+      <p class="s10-work-ttl">『サイバーパンク エッジランナーズ』</p>
+      <span class="lbl-en">CYBERPUNK: EDGERUNNERS</span>
+    </div>
+
+    <div class="s10-facts">
+      <span class="s10-fact"><span class="s10-fact-k">配信</span><span class="n">2022</span>年<span class="n">9</span>月 ／ Netflix</span>
+      <i class="s10-sep"></i>
+      <span class="s10-fact"><span class="s10-fact-k">制作</span>TRIGGER（日本）</span>
+    </div>
+
+    <div class="s10-claim">
+      <div class="s10-mark"></div>
+      <p class="s10-claim-txt">アニメの中で、ゲームの宣伝は一度もない。</p>
+    </div>
+
+    <div class="rule-mid v-s12-up"></div>
+
+    <div class="band v-s12-up">
+      <span class="band-lbl">結果</span>
+      <p class="band-txt">配信後、プレイヤーが<em>戻ってきた</em>。</p>
+    </div>
+
+  </div>
+
+  
+</section>
+
+<section class="slide s-chart" data-act="cyb" data-no="09">
+    <div class="canvas">
+
+      <div class="meta">
+        <div class="meta-l"><span class="meta-no">S09</span><span class="meta-ttl">なぜ跳ねたのか</span></div>
+        <div class="meta-r">CYBERPUNK 2077 — CD PROJEKT RED</div>
+      </div>
+      <div class="rule-top"></div>
+
+      <!-- 図: 目盛りを持たない模式図。数値軸は作らない。
+           上から 技術 → 物語 → 結果 の順に置き、視線が落ちる動きがそのまま
+           前提 → 事象 → 帰結 の順になる。
+           アクセントの縦線1本だけが三段すべてを貫き、この図で最も太い線である。
+           色は章の色（琥珀）。技術の線だけが無彩のまま走り抜ける。 -->
+      <div class="chart">
+        <svg width="1088" height="330" viewBox="0 0 1088 330" fill="none"
+             aria-label="パッチの配信は縦線を跨いでも等間隔に続いているのに対し、結果の線はアニメ配信の縦線の直後にだけ跳ねていることを示す模式図">
+
+          <!-- 技術: 等間隔に打たれ続けたティック。縦線を無視して同じ間隔で走り抜ける -->
+          <g stroke="#7A776B" stroke-width="1.5" stroke-linecap="round">
+            <path d="M176 24V42"/><path d="M288 24V42"/><path d="M400 24V42"/>
+            <path d="M512 24V42"/><path d="M624 24V42"/><path d="M736 24V42"/>
+            <path d="M848 24V42"/><path d="M960 24V42"/><path d="M1072 24V42"/>
+          </g>
+
+          <!-- 結果: アニメ以前。ほぼ水平・無彩色 -->
+          <path d="M154 280C240 278 320 282 400 279C480 276 560 281 640 278C700 276 750 280 798 277"
+                stroke="#7A776B" stroke-width="2" stroke-linecap="round"/>
+
+          <!-- 結果: アニメ以後。色が切り替わり、立ち上がる。
+               塗りの床は「アニメ以前の水準」（y=277）に置いてある。
+               ＝ 塗られている面積は、それまでの水準を上回っている分だけを指す。 -->
+          <path class="fig-wash"
+                d="M798 277C818 272 836 228 858 208C868 199 878 196 890 199C930 209 980 231 1040 243L1088 247L1088 277L798 277Z"/>
+          <path class="fig-acc"
+                d="M798 277C818 272 836 228 858 208C868 199 878 196 890 199C930 209 980 231 1040 243L1088 247"
+                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+          <!-- 物語: この図で唯一の縦線。三段すべてを貫き、他のどの線より太い。
+               色は .fig-* 経由でこの枚の章の色（琥珀）。附録 A1 の図も同じクラスを使う。 -->
+          <path class="fig-acc" d="M798 16V292" stroke-width="3"/>
+          <circle class="fig-dot" cx="798" cy="123" r="5.5"/>
+          <path class="fig-acc" d="M806 123H826" stroke-width="1.5"/>
+        </svg>
+
+        <div class="ch-lbl" style="top:18px"><b>技術</b><span>修正パッチ</span></div>
+        <div class="ch-lbl" style="top:96px"><b class="v-s13-story">物語</b><span>アニメ</span></div>
+        <div class="ch-lbl" style="top:206px"><b>結果</b><span>遊んだ人の数</span></div>
+
+        <div class="ch-txt" style="left:326px;top:76px;width:456px;text-align:right">
+          サイバーパンク エッジランナーズ
+        </div>
+        <div class="ch-date" style="left:582px;top:140px;width:200px;text-align:right">2022.09</div>
+
+        <div class="ch-year" style="left:154px;top:302px">2022</div>
+        <!-- 「直前3か月の約7倍」を言う以上、比べている範囲がどこまでかを面で示しておく。
+           2021年1月のピーク（225,670）は2022年9月（136,724）より高いので、
+           図の範囲は2022年だけ。ここを広げると主張が成り立たなくなる。 -->
+        <div class="ch-lbl" style="left:238px;top:304px;width:420px"><span>それより前の山は、図の外</span></div>
+        <div class="ch-call" style="left:788px;top:300px;width:300px;text-align:right">直前3か月の約7倍</div>
+        <!-- 実数は二つだけ。図注から図の中へ移した。曲線は模式なので、点や線で曲線に結び付けない
+             （比例を暗示しない）。山の右上と、平らな線の上・物語の縦線の左の余白に置く。 -->
+      </div>
+
+      <div class="figcap">
+        <span class="figcap-tx">Steam で同時に遊んだ人の数。線の形は模式図。</span>
+      </div>
+
+      <div class="rule-mid"></div>
+
+      <!-- 面の右下は空けたまま。旧 S11 ではここに建前/実感が入っていた。
+           それは次の一枚に渡してある。 -->
+      <!-- 段階表示は1段だけ。図（技術の等間隔／物語の縦線／結果の跳ね）は最初から全部出す。
+           図の説明が終わってから、→ を1回叩いて結論を出す ＝ ノートの「結論を読んだら5秒待つ／
+           図を指しながら喋らない」がそのまま面の順序になる。
+           図の側を2段に割ることは検討して見送った。跳ねの線を沈めても、作品名・2022.09・
+           「直前3か月の約7倍」は HTML 側にあって残るうえ、既存 JS は要素1つ＝1クリックなので、
+           それらを一緒に沈めるとクリックが4回に増える。 -->
+      <div class="band" data-step="1">
+        <span class="band-lbl">結論</span>
+        <p class="band-txt">足りなかったのは技術ではなく、<span style="white-space:nowrap">新しい<span class="term">物語</span>だった。</span></p>
+        <div class="v-seal v-seal--holt v-s09-seal"><svg class="v-seal-fr" aria-hidden="true"><rect width="100%" height="100%"/></svg><svg class="v-glyph g-book" width="12" height="16" viewBox="0 0 12 16" aria-hidden="true"><rect class="gb" x="0.75" y="0.75" width="10.5" height="14.5"/><path class="gb" d="M3.5 0.75V15.25"/></svg><span class="v-seal-tx">HOLT 03</span></div>
+        </div>
+
+    </div>
+
+    
+  </section>
+
+<section class="slide s-pic" data-act="cyb" data-no="10">
+  <div class="canvas">
+    <div class="meta">
+      <div class="meta-l"><span class="meta-no">S10</span><span class="meta-ttl">Cyberpunk の絵</span></div>
+      <div class="meta-r">CYBERPUNK: EDGERUNNERS, 2022</div>
+    </div>
+    <div class="rule-top"></div>
+    <p class="s14-lead"><span class="n">2022</span>年、アニメ配信のあと。</p>
+    <div class="v-gap v-gap--full v-pic-gap">
+        <svg width="800" height="184" viewBox="0 0 800 184" aria-hidden="true">
+          <rect class="v-gap-top" x="0" y="0" width="672" height="56"/>
+          <rect class="v-gap-bridge" x="32" y="64" width="672" height="56"/>
+          <rect class="v-gap-bot" x="64" y="128" width="672" height="56"/>
+          <path class="v-gap-ext" d="M672 56H788"/>
+          <path class="v-gap-ext" d="M736 128H788"/>
+          <path class="v-gap-dim" d="M776 58V126"/>
+          <path class="v-gap-dim" d="M768 57H784"/>
+          <path class="v-gap-dim" d="M768 127H784"/>
+        </svg>
+        <div class="v-gap-tk">建前</div>
+        <div class="v-gap-tv">頑張れば報われる</div>
+        <div class="v-tag v-gap-st"><span class="ja">物語</span><span class="en">STORY</span></div>
+        <div class="v-gap-sv">駆け上がり、そして壊れる</div>
+        <div class="v-gap-jk">実感</div>
+        <div class="v-gap-jv">社会は、人をつぶす</div>
+        <div class="v-gap-zl">ズレ</div>
+      </div>
+    <div class="rule-mid"></div>
+    <div class="pic-say">
+      <p class="pic-big">売っていたのは、ゲームではなく、<br>「駆け上がり、<span class="key">壊れる</span>人の話」。</p>
+      <p class="pic-sub">本に書いてあったことが、そのまま起きた。</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide s-open" data-act="gen" data-no="11">
+  <div class="canvas">
+    <div class="meta">
+      <div class="meta-l"><span class="meta-no">S11</span><span class="meta-ttl">事例 3｜原神</span></div>
+      <div class="meta-r">GENSHIN IMPACT — miHoYo, 2020</div>
+    </div>
+    <div class="rule-top"></div>
+    <p class="s16-gen-lead">伝統を、世界で遊ばれる<span class="term">物語</span>にした会社。</p>
+    <p class="s16-gen-pre v-pre-w">中国の <span class="n">miHoYo</span> が、<span class="n">2020</span>年に出したアニメ調のゲーム。</p>
+    <!-- 三社の道のり。節点の x は S01 と同じ 376 / 646 / 916。三つ目＝いま（青碧の環）。 -->
+    <div class="v-nav" aria-label="三社の道のり。アメリカとポーランドは済み、いまは中国。">
+      <svg class="v-nav-ln" width="808" height="24" viewBox="0 0 808 24" aria-hidden="true"><path class="done" d="M0 12H540"/><path class="open" d="M540 12H808"/><circle class="n-done" cx="0" cy="12" r="5"/><circle class="n-done" cx="270" cy="12" r="5"/><circle class="n-cur" cx="540" cy="12" r="7"/></svg>
+      <div class="v-nav-yr" style="left:0px">1985</div>
+      <div class="v-nav-yr" style="left:270px">2020</div>
+      <div class="v-nav-yr" style="left:540px">2020</div>
+      <div class="v-nav-co" style="left:0px">アメリカ</div>
+      <div class="v-nav-co" style="left:270px">ポーランド</div>
+      <div class="v-nav-co" style="left:540px">中国</div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-act="gen" data-no="12">
+  <div class="canvas">
+    <div class="meta">
+      <div class="meta-l"><span class="meta-no">S12</span><span class="meta-ttl">原神がやったこと</span></div>
+      <div class="meta-r">GENSHIN IMPACT</div>
+    </div>
+    <div class="rule-top"></div>
+    <p class="s16-gen-lead">材料は、広告ではなく、<span class="key">伝統</span>から採った。</p>
+    <div class="v-seal v-seal--holt v-s12-seal"><svg class="v-seal-fr" aria-hidden="true"><rect width="100%" height="100%"/></svg><svg class="v-glyph g-book" width="12" height="16" viewBox="0 0 12 16" aria-hidden="true"><rect class="gb" x="0.75" y="0.75" width="10.5" height="14.5"/><path class="gb" d="M3.5 0.75V15.25"/></svg><span class="v-seal-tx">HOLT 04</span></div>
+    <p class="s16-gen-pre v-pre-w">山の景色、春節の祭り、京劇の歌。発売のあとも、足し続けた。</p>
+    <div class="stn">
+      <svg width="1088" height="24" viewBox="0 0 1088 24" aria-hidden="true"><path class="stn-ln" d="M0 12H724"/><path class="stn-open" d="M724 12H1088"/><circle class="stn-pt" cx="0" cy="12" r="5"/><circle class="stn-pt" cx="362" cy="12" r="5"/><circle class="stn-pt stn-pt--cur" cx="724" cy="12" r="7"/></svg>
+      <div class="stn-d" style="left:0px">2020.09</div>
+      <div class="stn-l" style="left:0px">中国の山の景色<span class="stn-s">発売時</span></div>
+      <div class="stn-d" style="left:362px">2021.02</div>
+      <div class="stn-l" style="left:362px">春節の祭り</div>
+      <div class="stn-d" style="left:724px">2022.01</div>
+      <div class="stn-l" style="left:724px">京劇の歌『神女劈観』</div>
+      </div>
+  </div>
+</section>
+
+<section class="slide" data-act="gen" data-no="13">
+  <div class="canvas">
+    <div class="meta">
+      <div class="meta-l"><span class="meta-no">S13</span><span class="meta-ttl">歌が届いた先</span></div>
+      <div class="meta-r">GENSHIN IMPACT, 2022.01</div>
+    </div>
+    <div class="rule-top"></div>
+    <p class="s16-gen-lead">その歌は、ゲームの<span class="key">外</span>まで届いた。</p>
+    <p class="s16-gen-pre v-pre-w">海外の人が、<span class="n">2</span>年前の京劇の動画まで見に行った。</p>
+    <div class="stn">
+      <svg width="1088" height="24" viewBox="0 0 1088 24" aria-hidden="true"><path class="stn-ln" d="M0 12H724"/><path class="stn-open" d="M724 12H1088"/><circle class="stn-pt" cx="0" cy="12" r="5"/><circle class="stn-pt" cx="362" cy="12" r="5"/><circle class="stn-pt stn-pt--cur" cx="724" cy="12" r="7"/></svg>
+      <div class="stn-d" style="left:0px">中国で</div>
+      <div class="stn-l" style="left:0px">歌の動画 1980万回</div>
+      <div class="stn-d" style="left:362px">海外で</div>
+      <div class="stn-l" style="left:362px">歌の動画 544万回</div>
+      <div class="stn-d" style="left:724px">ゲームの外で</div>
+      <div class="stn-l" style="left:724px">京劇の動画 60万回</div>
+      </div>
+    <p class="src v-s13-src">2022年3月の報道値。出典：人民日報海外版（2022.03.28）</p>
+  </div>
+</section>
+
+<section class="slide s-pic" data-act="gen" data-no="14">
+  <div class="canvas">
+    <div class="meta">
+      <div class="meta-l"><span class="meta-no">S14</span><span class="meta-ttl">原神の絵</span></div>
+      <div class="meta-r">GENSHIN IMPACT, 2022</div>
+    </div>
+    <div class="rule-top"></div>
+    <p class="s14-lead"><span class="n">2022</span>年、京劇の歌のあと。</p>
+    <div class="v-gap v-gap--full v-pic-gap">
+        <svg width="800" height="184" viewBox="0 0 800 184" aria-hidden="true">
+          <rect class="v-gap-top" x="0" y="0" width="672" height="56"/>
+          <rect class="v-gap-bridge" x="32" y="64" width="672" height="56"/>
+          <rect class="v-gap-bot" x="64" y="128" width="672" height="56"/>
+          <path class="v-gap-ext" d="M672 56H788"/>
+          <path class="v-gap-ext" d="M736 128H788"/>
+          <path class="v-gap-dim" d="M776 58V126"/>
+          <path class="v-gap-dim" d="M768 57H784"/>
+          <path class="v-gap-dim" d="M768 127H784"/>
+        </svg>
+        <div class="v-gap-tk">建前</div>
+        <div class="v-gap-tv">伝統は、若者に届かない</div>
+        <div class="v-tag v-gap-st"><span class="ja">物語</span><span class="en">STORY</span></div>
+        <div class="v-gap-sv">遊びの中で、伝統を歌う</div>
+        <div class="v-gap-jk">実感</div>
+        <div class="v-gap-jv">本物の伝統には、心が動く</div>
+        <div class="v-gap-zl">ズレ</div>
+      </div>
+    <div class="rule-mid"></div>
+    <div class="pic-say">
+      <p class="pic-big">売っていたのは、絵柄ではなく「いま<span class="key">歌われる</span>伝統」。</p>
+      <p class="pic-sub">日本は、このゲームの二番目に大きな市場になった。</p>
+      <p class="src pic-src">スマホの課金だけで約24%（Sensor Tower 推計・2022年9月）</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-no="15">
+  <div class="canvas">
+    <div class="meta">
+      <div class="meta-l"><span class="meta-no">S15</span><span class="meta-ttl">三つの事例を並べる</span></div>
+      <div class="meta-r"></div>
+    </div>
+    <div class="rule-top"></div>
+    <div class="cmp">
+      <div class="cmp-row">
+        <div></div>
+        <div class="co co-nin"><div class="co-name">任天堂</div></div>
+        <div class="co co-cyb"><div class="co-name">Cyberpunk 2077</div></div>
+        <div class="co co-gen"><div class="co-name">原神</div></div>
+      </div>
+      <div class="cmp-row ruled" data-step="1">
+        <div class="cmp-key"><span class="idx">01</span><span class="k">建前</span></div>
+        <div class="cmp-cell">「ビデオゲームは終わった」</div>
+        <div class="cmp-cell">「頑張れば報われる」</div>
+        <div class="cmp-cell">「伝統は、若者に届かない」</div>
+      </div>
+      <!-- 真ん中の行が、売っていたもの。S02 の「真ん中の物語」と同じ位置。 -->
+      <div class="cmp-row ruled same" data-step="2">
+        <div class="cmp-key"><span class="idx">02</span><span class="k">物語</span></div>
+        <div class="cmp-cell">家族の玩具</div>
+        <div class="cmp-cell">駆け上がり、壊れる人の話</div>
+        <div class="cmp-cell">いま歌われる伝統</div>
+      </div>
+      <div class="cmp-row ruled" data-step="3">
+        <div class="cmp-key"><span class="idx">03</span><span class="k">実感</span></div>
+        <div class="cmp-cell">子どもは、遊びたがっていた</div>
+        <div class="cmp-cell">社会は、人をつぶす</div>
+        <div class="cmp-cell">本物の伝統には、心が動く</div>
+      </div>
+    </div>
+    <div class="brace v-s15-brace" data-step="4">
+      <svg width="872" height="44" viewBox="0 0 872 44" fill="none" aria-hidden="true">
+        <path d="M1 0v44M1 12h870M871 12V0" stroke="#4A5D3A" stroke-opacity=".55" stroke-width="1.5"/>
+      </svg>
+    </div>
+    <div class="closer v-s15-closer" data-step="5">
+      <div class="closer-lbl"><span>結論</span></div>
+      <div>
+        <p class="closer-txt">売っていたのは、ズレを埋める<span class="term">物語</span>。</p>
+        <p class="closer-sub">では、私たちは？</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-no="16">
+  <div class="canvas">
+    <div class="meta">
+      <div class="meta-l"><span class="meta-no">S16</span><span class="meta-ttl">お客さんのズレ｜よく聞く話</span></div>
+      <div class="meta-r"></div>
+    </div>
+    <div class="rule-top"></div>
+    <div class="cmp">
+      <div class="cmp-row cmp-row--2">
+        <div></div>
+        <div class="co"><div class="co-name co-k">建前</div><span class="co-en is-ja">みんなが言っていること</span></div>
+        <div class="co"><div class="co-name co-k">実感</div><span class="co-en is-ja">本当に起きていること</span></div>
+      </div>
+      <div class="cmp-row cmp-row--2 ruled" data-step="1">
+        <div class="cmp-key"><span class="idx">01</span></div>
+        <div class="cmp-cell">「ユーザー中心」</div>
+        <div class="cmp-cell is-real">決める人は、ユーザーに会っていない</div>
+      </div>
+      <div class="cmp-row cmp-row--2 ruled" data-step="2">
+        <div class="cmp-key"><span class="idx">02</span></div>
+        <div class="cmp-cell">「DX推進」</div>
+        <div class="cmp-cell is-real">結局、Excel とハンコ</div>
+      </div>
+      <div class="cmp-row cmp-row--2 ruled" data-step="3">
+        <div class="cmp-key"><span class="idx">03</span></div>
+        <div class="cmp-cell">「スピード重視」</div>
+        <div class="cmp-cell is-real">承認に、<span class="n">1</span>か月</div>
+      </div>
+    </div>
+    <div class="closer v-s15-closer" data-step="4">
+      <div class="closer-lbl"><span>問い</span></div>
+      <div>
+        <p class="closer-txt">このズレを埋める<span class="term">物語</span>を、<br>私たちのマーケティングは語れているか。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 社長への問いの枚。S16 の問い（全員へ）を受けて、BMX の物語を社長に預ける。答えは面に書かない。
+     物語の板は破線の空（30枚版 S21 と同じ型）。「真ん中」は S02 の「強いブランドは、真ん中の物語を売っている」を指す。
+     四枚目の絵：三社と同じ形を、私たちに当てる。売り込みにしない（サービス紹介の枚ではない）。
+     建前と実感は、本人の現場の実感「ブランドの話と今期の数字の話が、まだ同じ言葉になっていない」から。
+     問いは敬体。責める問いにしない（30枚版ノート：言い切ったら黙る、告発にしない）。 -->
+<section class="slide s-pic" data-no="17">
+  <div class="canvas">
+    <div class="meta">
+      <div class="meta-l"><span class="meta-no">S17</span><span class="meta-ttl">問い｜Goodpatch BMX</span></div>
+      <div class="meta-r">GOODPATCH BMX</div>
+    </div>
+    <div class="rule-top"></div>
+    <p class="s14-lead">BMX は、ブランドとマーケティングを、一つの意思として設計する。</p>
+    <div class="v-seal v-seal--holt v-s17-seal"><svg class="v-seal-fr" aria-hidden="true"><rect width="100%" height="100%"/></svg><svg class="v-glyph g-book" width="12" height="16" viewBox="0 0 12 16" aria-hidden="true"><rect class="gb" x="0.75" y="0.75" width="10.5" height="14.5"/><path class="gb" d="M3.5 0.75V15.25"/></svg><span class="v-seal-tx">HOLT 02</span></div>
+    <div class="v-gap v-gap--full v-pic-gap">
+        <svg width="800" height="184" viewBox="0 0 800 184" aria-hidden="true">
+          <rect class="v-gap-top" x="0" y="0" width="672" height="56"/>
+          <rect class="v-gap-bridge--empty" x="32" y="64" width="672" height="56"/>
+          <rect class="v-gap-bot" x="64" y="128" width="672" height="56"/>
+          <path class="v-gap-ext" d="M672 56H788"/>
+          <path class="v-gap-ext" d="M736 128H788"/>
+          <path class="v-gap-dim" d="M776 58V126"/>
+          <path class="v-gap-dim" d="M768 57H784"/>
+          <path class="v-gap-dim" d="M768 127H784"/>
+        </svg>
+        <div class="v-gap-tk">建前</div>
+        <div class="v-gap-tv">ブランドは大事だ</div>
+        <div class="v-tag v-gap-st"><span class="ja">物語</span><span class="en">STORY</span></div>
+        <div class="v-gap-sv">？</div>
+        <div class="v-gap-jk">実感</div>
+        <div class="v-gap-jv">決めるのは、今期の数字</div>
+        <div class="v-gap-zl">ズレ</div>
+      </div>
+    <div class="rule-mid"></div>
+    <div class="pic-say">
+      <p class="pic-lbl">社長への問い</p>
+      <p class="pic-big">この真ん中に、何を書きますか。</p>
+      <p class="pic-sub">BMX の<span class="term">物語</span>を、一行で。</p>
+    </div>
+  </div>
+</section>
+
+
+
+</div><!-- /.stage -->
+
+<div class="fontwarn">Noto Sans JP がこの機械に入っていません。<br>
+別の書体で描かれているので、行の折り返しが設計と違います。<br>
+投影前に、書体を入れるか、全枚を目で確認してください。</div>
+<div class="hint" id="hint" title="発表者ノート">?</div>
+</div><!-- /.viewport -->
+
+<script>
+(function () {
+  var stage = document.getElementById('stage');
+  var all   = [].slice.call(document.querySelectorAll('.slide'));
+
+  // 本編と附録は別の並び。附録は ← → の流れには出てこない。
+  var main = all.filter(function (s) { return !s.hasAttribute('data-appendix'); });
+  var apx  = all.filter(function (s) { return  s.hasAttribute('data-appendix'); });
+
+  var deck = main;   // いま辿っている並び
+  var i    = 0;
+  var back = 0;      // 附録に入る前にいた本編の位置
+  var backSteps = 0; // そのときの開示ステップ数
+
+  // 1280x720 のステージをビューポートにフィットさせる
+  function fit() {
+    var s = Math.min(window.innerWidth / 1280, window.innerHeight / 720);
+    stage.style.transform = 'translate(-50%,-50%) scale(' + s + ')';
+  }
+
+  function steps(slide) {
+    return [].slice.call(slide.querySelectorAll('[data-step]'))
+             .sort(function (a, b) { return a.dataset.step - b.dataset.step; });
+  }
+
+  function show(slide, upTo) {   // upTo = 表示済みにするステップ数
+    steps(slide).forEach(function (el, k) { el.classList.toggle('is-shown', k < upTo); });
+  }
+
+  function go(n, openSteps) {
+    i = Math.max(0, Math.min(deck.length - 1, n));
+    all.forEach(function (s) { s.classList.remove('is-active'); });
+    var cur = deck[i];
+    cur.classList.add('is-active');
+    show(cur, openSteps === 'all' ? steps(cur).length : (+openSteps || 0));
+    if (deck === main) history.replaceState(null, '', '#s' + cur.dataset.no);
+  }
+
+  function shown(slide) {
+    return steps(slide).filter(function (el) { return el.classList.contains('is-shown'); }).length;
+  }
+
+  // 段階表示があるスライドでは、まず次のステップを出してから次の1枚へ進む
+  function next() {
+    var cur = deck[i], n = shown(cur);
+    if (n < steps(cur).length) { show(cur, n + 1); return; }
+    if (i < deck.length - 1) go(i + 1);
+  }
+  function prev() {
+    var cur = deck[i], n = shown(cur);
+    if (n > 0) { show(cur, n - 1); return; }
+    if (i > 0) go(i - 1, 'all');   // 戻るときは前の1枚を展開済みで見せる
+  }
+
+  function toggleAppendix() {
+    if (!apx.length) return;
+    if (deck === main) { back = i; backSteps = shown(deck[i]); deck = apx; go(0); }
+    else               { deck = main; go(back, backSteps); }
+    document.body.classList.toggle('appendix-on', deck === apx);
+  }
+
+  function toggleNotes() { document.body.classList.toggle('notes-on'); }
+
+  var NEXT = ['ArrowRight', 'ArrowDown', 'PageDown', ' ', 'Spacebar'];
+  var PREV = ['ArrowLeft', 'ArrowUp', 'PageUp', 'Backspace'];
+
+  window.addEventListener('keydown', function (e) {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (NEXT.indexOf(e.key) > -1)      { e.preventDefault(); next(); }
+    else if (PREV.indexOf(e.key) > -1) { e.preventDefault(); prev(); }
+    else if (e.key === 'Home')         { e.preventDefault(); go(0); }
+    else if (e.key === 'End')          { e.preventDefault(); go(deck.length - 1, 'all'); }
+    // A = 附録（質疑応答用）。もう一度 A で元の位置に戻る。
+    else if (e.key === 'a' || e.key === 'A') { e.preventDefault(); toggleAppendix(); }
+    else if (e.key === 'Escape') {
+      if (document.body.classList.contains('notes-on')) document.body.classList.remove('notes-on');
+      else if (deck === apx) toggleAppendix();
+    }
+    // JISキーボードでは / が無シフトで打てる。素の / でノートが開くと
+    // 登壇中に手が当たっただけで投影面にノートが出るので、Shift を必須にする。
+    else if (e.key === '?' || (e.key === '/' && e.shiftKey)) { e.preventDefault(); toggleNotes(); }
+    // Firefox の Quick Find に ← → を奪われないよう、素の / も握りつぶす
+    else if (e.key === '/') { e.preventDefault(); }
+  });
+
+  document.getElementById('hint').addEventListener('click', function (e) {
+    e.stopPropagation(); toggleNotes();
+  });
+
+  // クリックで前進。ノート内と、テキスト選択中は送らない。
+  window.addEventListener('click', function (e) {
+    if (e.target.closest('.speaker-notes')) return;
+    var sel = window.getSelection();
+    if (sel && String(sel).length) return;
+    next();
+  });
+
+  // 番号は data-no を唯一の出所にして埋め直す。1枚差し込んでも他を触らなくてよい。
+  // マークアップ側にも番号は書いてあるので、JS が落ちても印刷には出る。
+  function stamp(list, total, pre) {
+    list.forEach(function (s) {
+      var f = s.querySelectorAll('.stamp .n');
+      if (f.length > 1) { f[0].textContent = s.dataset.no; f[1].textContent = total; }
+      var m = s.querySelector('.meta-no'); if (m) m.textContent = pre + s.dataset.no;
+      var n = s.querySelector('.sn-no');   if (n) n.textContent = pre + s.dataset.no;
+    });
+  }
+  stamp(main, String(main.length - 1).padStart(2, '0'), 'S');   // S00 は分母に数えない
+  stamp(apx, 'A' + apx.length, '');                             // 附録は "A1"。'S' を足さない
+  apx.forEach(function (s) { var f = s.querySelector('.ax-flag'); if (f) f.textContent = 'APPENDIX'; });
+
+  // 発表する機械に本文書体が入っているか。無ければ行分割が設計と変わるので警告を出す。
+  (function () {
+    try {
+      var c = document.createElement('canvas').getContext('2d');
+      var probe = 'あ漢字カナ0123ABC';
+      var gens = ['monospace', 'serif', 'sans-serif'];
+      var found = false;
+      for (var i = 0; i < gens.length; i++) {
+        c.font = '72px ' + gens[i];
+        var base = c.measureText(probe).width;
+        c.font = '72px "Noto Sans JP", ' + gens[i];
+        // 総称書体の既定が Noto Sans JP 自身だと差が出ないので、3つ全部と比べる
+        if (Math.abs(c.measureText(probe).width - base) > 0.5) { found = true; break; }
+      }
+      if (!found) document.body.classList.add('font-missing');
+    } catch (e) { /* 測れない環境では黙って通す */ }
+  })();
+
+  window.addEventListener('resize', fit);
+  fit();
+
+  // #s11 のようなハッシュで直接開ける
+  var start = -1;
+  main.forEach(function (s, k) { if ('#s' + s.dataset.no === location.hash) start = k; });
+  go(start > -1 ? start : 0);
+})();
+</script>
+</body>
+</html>

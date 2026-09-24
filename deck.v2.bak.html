@@ -1,0 +1,2226 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>この会社は、何を売っていたのか。｜社内研修（トーン確認 S01 / S11 / S14）</title>
+
+<!--
+  ==========================================================================
+  社内研修デッキ ／ トーン確認版
+  収録: S01（問い） / S11（なぜ跳ねたのか） / S14（三つを並べる）
+  ==========================================================================
+
+  ■ 構造
+    .viewport > .stage(1280x720) > section.slide > .canvas
+    残り14枚を足すときは section.slide をこの順に並べるだけ。
+    JS・CSS は触らなくてよい。data-no がインジケーターと印刷ページ番号を兼ねる。
+
+  ■ 操作
+    → ↓ Space PageDown / クリック : 次へ（段階表示があればまずそれを1つ出す）
+    ← ↑ Backspace PageUp          : 前へ
+    ?  (Shift + /)                : 発表者ノート
+    A                             : 附録（質疑応答用）へ。もう一度 A で元の位置に戻る
+    Home / End                    : 先頭 / 末尾
+    Esc                           : ノートを閉じる（開いていなければ附録から戻る）
+
+  ■ ネットワーク依存について（重要・当日までに要対応）
+    Tailwind と Noto Sans JP を CDN から読んでいる。会議室のWi-Fiが無い／
+    プロキシで塞がれている場合に備え、レイアウトに効く指定はすべて下の
+    <style> にネイティブCSSで書いてある。CDNが落ちても版面は崩れない。
+    TODO: 本番前に Tailwind をローカルにベンダリングし、Noto Sans JP も
+          同梱するか、和文フォールバック（下の --sans）で通す判断をする。
+
+  ■ 数値の扱い
+    同時接続数・売上・順位・価格は一切書いていない。
+    未確定は .todo チップで「意図的な未確定」として面に出す。
+  ==========================================================================
+-->
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  // 追加スライドを書くときに使うトークン。レイアウトの土台は <style> 側にある。
+  tailwind.config = {
+    theme: { extend: {
+      fontFamily: {
+        sans: ['"Noto Sans JP"','"Hiragino Kaku Gothic ProN"','"Yu Gothic"','Meiryo','sans-serif'],
+        mono: ['ui-monospace','SFMono-Regular','Menlo','Consolas','monospace']
+      },
+      colors: {
+        paper:'#FAF9F5', ink:'#1B1A16', ink2:'#33312A',
+        muted:'#5C5A50', sub:'#6E6B60',
+        rule:'#C9C4B8', hair:'#DFDBD0',
+        accent:'#4A5D3A', accent2:'#6E8555'
+      }
+    }}
+  }
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================== tokens */
+:root{
+  --desk:#E7E3DC;              /* ステージ外。16:10 / 4:3 の投影で版面の縁を見せる */
+  --paper:#FAF9F5;
+  --paper2:#F3F1E9;
+  --ink:#1B1A16;               /* 15.6:1 */
+  --ink2:#33312A;              /* 11.4:1 */
+  --muted:#5C5A50;             /*  6.6:1  本文の副次 */
+  --sub:#6E6B60;               /*  5.1:1  英語併記の下限。これより薄い色に文字を置かない */
+  --rule:#C9C4B8;              /* 構造罫。プロジェクタで生き残る濃さ */
+  --hair:#DFDBD0;              /* 補助罫。消えても意味が落ちないものだけ */
+  --accent:#4A5D3A;            /* hsl(93 23% 30%) 低彩度の深いオリーブ / 6.9:1 */
+  --accent2:#6E8555;
+  --wash:rgba(74,93,58,.055);
+  --sans:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:var(--desk);color:var(--ink);
+  font-family:var(--sans);font-weight:400;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  overflow:hidden;cursor:default;
+}
+
+/* ====================================================== stage & slides */
+.viewport{position:fixed;inset:0;overflow:hidden}
+.stage{
+  position:absolute;left:50%;top:50%;
+  width:1280px;height:720px;
+  transform-origin:50% 50%;
+  background:var(--paper);
+  box-shadow:0 0 0 1px #D6D0C6;   /* 版面の縁。投影が切れているのか余白なのかを判別できる */
+  /* 和文の折り返し規則を既定任せにしない */
+  line-break:strict;
+  word-break:normal;
+  overflow-wrap:normal;
+  text-spacing-trim:trim-start;   /* 行頭の「（ 等の全角約物を詰める */
+}
+.slide{position:absolute;inset:0;display:none}
+.slide.is-active{display:block}
+.canvas{position:absolute;inset:0;overflow:hidden}
+
+/* =============================================== typography primitives */
+/* 数字・英字は和文より少し重く、少し大きく */
+.n{font-size:1.06em;font-weight:500;letter-spacing:.01em;font-variant-numeric:tabular-nums}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+/* 上部メタ行 ------------------------------------------------------------ */
+.meta{
+  position:absolute;left:96px;right:96px;top:46px;
+  display:flex;justify-content:space-between;align-items:baseline;
+}
+.meta-l{display:flex;align-items:baseline;gap:16px}
+.meta-no{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.16em;color:var(--accent)}
+.meta-ttl{font-size:14px;letter-spacing:.12em;color:var(--ink2)}
+.meta-r{font-family:var(--mono);font-size:13px;letter-spacing:.14em;color:var(--sub)}
+.rule-top{position:absolute;left:96px;right:96px;top:84px;height:1px;background:var(--rule)}
+
+/* ラベル → 内容 のペア -------------------------------------------------- */
+.lbl{font-size:15px;letter-spacing:.12em;color:var(--muted)}
+.lbl-en{display:block;font-family:var(--mono);font-size:14px;letter-spacing:.12em;color:var(--sub);margin-top:6px}
+/* --accent2(#6E8555) は紙面比 3.87:1 で AA 未達。小さい序数に使うと投影で沈むので
+   .idx は --accent(6.9:1) を使う。--accent2 は線・面など文字以外に限る。 */
+.idx{font-family:var(--mono);font-size:13px;letter-spacing:.18em;color:var(--accent)}
+
+/* 未確定チップ ---------------------------------------------------------- */
+.todo{
+  display:inline-flex;align-items:baseline;gap:7px;
+  font-family:var(--mono);font-size:13px;letter-spacing:.1em;
+  color:var(--accent);border-bottom:1px dotted var(--accent2);
+  padding-bottom:2px;white-space:nowrap;
+}
+.todo::before{content:"TODO";font-weight:600;letter-spacing:.16em;opacity:.7}
+
+/* 現在位置（各スライドが自分の番号を持つ。JS が落ちても印刷でも出る） ---- */
+.stamp{
+  position:absolute;right:96px;bottom:28px;
+  font-family:var(--mono);font-size:13px;letter-spacing:.16em;
+  color:var(--sub);font-variant-numeric:tabular-nums;user-select:none;
+}
+.stamp .sep{color:var(--sub);opacity:.55;margin:0 .5em}
+
+/* 操作ヒント（ステージ外＝スライドの一部ではない） ---------------------- */
+.hint{
+  position:fixed;left:18px;bottom:16px;z-index:5;
+  font-family:var(--mono);font-size:11px;letter-spacing:.14em;
+  color:#8C877D;border:1px solid #D2CCC2;padding:4px 7px 5px;
+  background:rgba(255,255,255,.6);cursor:pointer;
+}
+body.notes-on .hint{color:var(--accent);border-color:var(--accent2)}
+
+/* ======================================================================
+   S01 / S17 共有コンポーネント: .question
+   S17 は .q-echo を1行足すだけ。.question は上端固定なので
+   1行目の座標は 1px も動かず、視覚的な対句が成立する。
+   罫の長さ・行頭 x・ブロックの y は S1 と S17 で絶対に変えないこと。
+   ====================================================================== */
+.question{position:absolute;left:96px;top:262px;right:96px}
+.q-rule{width:44px;height:2px;background:var(--accent);margin-bottom:54px}
+.q-line{font-size:56px;font-weight:500;line-height:1.45;letter-spacing:.012em;color:var(--ink)}
+.q-echo{font-weight:400;color:var(--muted);margin-top:10px}
+.q-aside{position:absolute;left:96px;top:606px;max-width:560px}
+.q-aside p{font-size:16px;line-height:1.9;letter-spacing:.03em;color:var(--muted)}
+
+/* ======================================================================
+   S11 ｜ なぜ跳ねたのか
+   論証の核 = 「技術（パッチ）は縦線を跨いでも何も変わらない ／
+   結果が動いたのは物語（アニメ）の後だけ」という非対称。
+   図の中の文字を最小にし、ラベルを 19px 以上で組めるところまで要素を削った。
+   ====================================================================== */
+
+/* 図版プレースホルダ。「物語」の帯の中、縦線のすぐ右に置く。
+   ＝ 写真そのものが「2022.09 にこれが届いた」というマーカーになる。
+   面上に説明文は出さない（何を入れるかは data-image-note に書く）。 */
+.plate{position:absolute;left:826px;top:66px;width:216px;height:114px}
+.plate .marks{position:absolute;inset:0}
+
+.chart{position:absolute;left:96px;top:116px;width:1088px;height:330px}
+.chart > svg{position:absolute;left:0;top:0}
+/* 図の中の文字はすべて HTML 側で組む（和文の字送りと折り返しのため） */
+.ch-lbl{position:absolute;left:0;width:130px}
+.ch-lbl b{display:block;font-size:19px;font-weight:500;letter-spacing:.08em;color:var(--ink2)}
+.ch-lbl span{display:block;font-size:14px;letter-spacing:.06em;color:var(--sub);margin-top:5px}
+.ch-txt{position:absolute;font-size:19px;font-weight:500;line-height:1.6;letter-spacing:.03em;color:var(--ink)}
+.ch-en{display:block;font-family:var(--mono);font-size:14px;font-weight:400;letter-spacing:.1em;color:var(--sub);margin-top:6px}
+.ch-date{position:absolute;font-family:var(--mono);font-size:17px;font-weight:600;letter-spacing:.08em;color:var(--accent)}
+.ch-year{position:absolute;font-family:var(--mono);font-size:15px;letter-spacing:.12em;color:var(--sub)}
+.ch-call{position:absolute;font-size:17px;line-height:1.7;letter-spacing:.03em;color:var(--ink)}
+
+.figcap{
+  position:absolute;left:96px;right:96px;top:462px;
+  display:flex;align-items:baseline;gap:18px;
+}
+.figcap-id{font-family:var(--mono);font-size:13px;letter-spacing:.16em;color:var(--ink2);white-space:nowrap}
+.figcap-tx{font-size:14px;line-height:1.8;letter-spacing:.02em;color:var(--muted)}
+
+.rule-mid{position:absolute;left:96px;right:96px;top:510px;height:1px;background:var(--rule)}
+
+.band{position:absolute;left:96px;top:534px}
+.band-lbl{display:block;font-size:14px;letter-spacing:.18em;color:var(--accent);margin-bottom:14px}
+.band-lbl::before{content:"";display:block;width:20px;height:2px;background:var(--accent);margin-bottom:12px}
+.band-txt{width:640px;font-size:34px;font-weight:500;line-height:1.45;letter-spacing:.02em;color:var(--ink)}
+.band-txt em{font-style:normal;font-weight:600;color:var(--accent)}
+
+/* 建前 / 実感 — S16 で同じ形のまま再登場させる視覚言語。
+   面に .c-line の形で出るのは S11 と S16 の2回（S12 は項目01の散文で受ける）。
+   ここで最小形に確定させる: ラベル1語 + 本文1行。差はウェイトとサイズで作り、
+   色の濃淡には依存させない（淡い側が投影で消えると対比が成立しないため）。 */
+.contrast{position:absolute;left:800px;top:534px;width:384px}
+.c-line{display:flex;align-items:baseline;gap:20px;padding:11px 0}
+.c-line + .c-line{border-top:1px solid var(--hair)}
+.c-key{flex:none;width:38px;font-size:14px;letter-spacing:.14em;color:var(--muted)}
+.c-val{font-size:18px;line-height:1.6;letter-spacing:.02em;color:var(--ink2)}
+.c-val.is-real{font-weight:600;font-size:19px;color:var(--ink)}
+
+/* ======================================================================
+   S14 ｜ 三つを並べる
+   縦罫は引かない。横罫と余白だけで表を作る。
+   「変えなかったもの」の行は、地色ではなく 2px のアクセント罫＋ウェイトで
+   差をつける（薄いティントは投影で消えるため、そちらは補助にとどめる）。
+   ====================================================================== */
+.cmp{position:absolute;left:96px;right:96px;top:120px}
+.cmp-row{display:grid;grid-template-columns:176px repeat(3,1fr);column-gap:40px;align-items:start}
+.cmp-row.ruled{border-top:1px solid var(--rule);padding-top:24px;padding-bottom:26px}
+.cmp-key .idx{display:block;margin-bottom:8px}
+.cmp-key .k{display:block;font-size:15px;letter-spacing:.1em;color:var(--ink2)}
+.cmp-cell{font-size:19px;line-height:1.75;letter-spacing:.02em;color:var(--ink2)}
+.co{padding-bottom:22px}
+.co-name{font-size:22px;font-weight:600;letter-spacing:.02em;color:var(--ink)}
+.co-en{display:block;font-family:var(--mono);font-size:14px;letter-spacing:.14em;color:var(--sub);margin-top:8px}
+
+.cmp-row.same{
+  border-left:2px solid var(--accent);
+  margin-left:-18px;padding-left:16px;
+  background:var(--wash);
+}
+.cmp-row.same .cmp-cell{color:var(--accent);font-weight:600;font-size:20px}
+.cmp-row.same .k,.cmp-row.same .idx{color:var(--accent)}
+
+/* 三列を束ねて、締めの一行に落とすブレース。
+   .cmp の実高（120 + 84 + 101*3 = 507）の直下に置く。行の文字量を変えたら
+   ここも合わせて動かすこと。 */
+.brace{position:absolute;left:312px;top:519px}   /* x = 96 + 176 + 40 */
+
+.closer{position:absolute;left:96px;right:96px;top:577px;
+        display:grid;grid-template-columns:176px 1fr;column-gap:40px;align-items:start}
+.closer-lbl::before{content:"";display:block;width:20px;height:2px;background:var(--accent);margin-bottom:12px}
+.closer-lbl span{font-size:14px;letter-spacing:.16em;color:var(--accent)}
+.closer-txt{font-size:34px;font-weight:500;line-height:1.45;letter-spacing:.02em;color:var(--ink)}
+
+/* ======================================================================
+   段階表示（data-step）
+   1枚の中で順に強調したいとき、要素に data-step="1" … を振る。
+   → キーはまず未表示のステップを出し、全部出てから次のスライドへ進む。
+   消さずに沈めるのは、聴衆が「あと何項目あるか」を把握できるようにするため。
+   印刷では全ステップを表示する。
+   ====================================================================== */
+[data-step]{opacity:.26;transition:opacity .22s ease}
+[data-step].is-shown{opacity:1}
+
+/* ======================================================================
+   附録スライド（data-appendix）
+   通常の ← → の流れには出てこない。A キーで入って A / Esc で戻る。
+   質疑で聞かれたときに、キーを1つ叩けば答えのスライドが出る。
+   ====================================================================== */
+.slide[data-appendix] .stamp{color:var(--accent)}
+.ax-flag{
+  position:absolute;left:96px;bottom:28px;
+  font-family:var(--mono);font-size:13px;letter-spacing:.18em;color:var(--accent);
+}
+
+/* ================================================== 発表者ノート（画面） */
+.speaker-notes{display:none}
+/* 画面用の指定は必ず @media screen で囲う。囲わないと詳細度で印刷用を
+   打ち負かし、「表示中のスライドのノートだけ」が帯として本文に重なって刷られる。 */
+@media screen{
+  body.notes-on .slide.is-active .speaker-notes{
+    display:block;position:absolute;left:0;right:0;bottom:0;
+    max-height:340px;overflow-y:auto;      /* 面の半分以上を覆わない */
+    background:var(--paper);border-top:2px solid var(--accent);
+    padding:24px 96px 28px;
+    box-shadow:0 -30px 44px -30px rgba(27,26,22,.18);
+  }
+}
+.sn-head{display:flex;align-items:baseline;gap:16px;margin-bottom:14px}
+.sn-tag{font-family:var(--mono);font-size:11px;letter-spacing:.24em;color:var(--accent)}
+.sn-no{font-family:var(--mono);font-size:11px;letter-spacing:.18em;color:var(--sub)}
+/* 和文の可読行長は 35〜45字。15px なら 600px 前後で必ず折る */
+.speaker-notes p{font-size:15px;line-height:1.95;letter-spacing:.02em;color:var(--ink2);max-width:600px}
+.speaker-notes p + p{margin-top:10px}
+.speaker-notes .sn-todo{margin-top:14px}
+
+/* ================================================================ print */
+/*
+  1スライド = 1ページ。ページをステージと同寸（1280x720px = 338.67 x 190.5mm）に
+  固定し、scale を解除する。画面と印刷で 1px もずれない。
+  既定ではノートを刷らない（＝配布用）。? で開いた状態で刷ると、
+  各スライドの直後にノート単独ページが出る（＝発表者の手元用）。
+*/
+@media print{
+  @page{size:338.67mm 190.6mm;margin:0}
+  html,body{height:auto;overflow:visible;background:#fff}
+  body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .viewport{position:static;overflow:visible}
+  .stage{position:static;transform:none !important;width:1280px;height:auto;box-shadow:none}
+  .slide{position:static;display:block !important;width:1280px;height:auto}
+  .canvas{
+    position:relative;inset:auto;width:1280px;height:720px;overflow:hidden;
+    break-after:page;page-break-after:always;
+  }
+  body:not(.notes-on) .slide:last-of-type .canvas{break-after:auto;page-break-after:auto}
+  .hint{display:none}
+  /* 紙は投影より階調が出るので、罫は元の細さに戻してよい */
+  .rule-top,.rule-mid,.cmp-row.ruled{border-color:#DCD7CC}
+  .rule-top,.rule-mid{background:#DCD7CC}
+  /* 段階表示は紙では全部出す */
+  [data-step]{opacity:1 !important}
+
+  .speaker-notes{display:none}
+  body.notes-on .speaker-notes{
+    display:block;position:static;width:1280px;height:720px;
+    padding:72px 150px;background:#fff;border:0;box-shadow:none;overflow:hidden;
+    break-after:page;page-break-after:always;
+  }
+  body.notes-on .speaker-notes p{font-size:17px;line-height:1.95;max-width:680px}
+  body.notes-on .slide:last-of-type .speaker-notes{break-after:auto;page-break-after:auto}
+}
+
+/* ================================================== G1 追加分 */
+/* ======================================================================
+   S00 ｜ 今日話すこと
+   三つの事例を「年と場所」だけで横に置く。会社名はここでは出さない
+   （S02 以降で一社ずつ出す。ここで名前を出すと引きが消える）。
+   三つ目だけ年号を持たず、線も右端で切らずに破線で逃がしてある。
+   ＝「三つ目はまだ終わっていない」を、文ではなく版面側で言う。
+   ====================================================================== */
+.s00-lead{position:absolute;left:96px;top:124px;width:860px}
+.s00-lead p{font-size:32px;font-weight:500;line-height:1.5;letter-spacing:.02em;color:var(--ink)}
+.s00-lead .s00-sub{
+  margin-top:18px;
+  font-size:20px;font-weight:400;line-height:1.8;letter-spacing:.03em;color:var(--ink2);
+}
+
+/* 年 → 線 → 国名 の三段。線だけ SVG、文字はすべて HTML 側で組む（S11 と同じ作法） */
+.s00-band{position:absolute;left:96px;top:268px;width:1088px;height:156px}
+.s00-band > svg{position:absolute;left:0;top:0}
+.s00-ln{stroke:var(--rule);stroke-width:1.5}
+.s00-ln-open{stroke:var(--rule);stroke-width:1.5;stroke-dasharray:2 7;stroke-linecap:round}
+.s00-tick{stroke:var(--rule);stroke-width:1.5}
+.s00-tick-now{stroke:var(--accent);stroke-width:2.5}   /* この図で唯一の色 */
+
+.s00-pt{position:absolute;top:0;width:300px;height:156px}
+.s00-yr{
+  position:absolute;left:0;top:0;
+  font-family:var(--mono);font-size:52px;font-weight:500;line-height:1;
+  letter-spacing:.03em;color:var(--ink);font-variant-numeric:tabular-nums;
+}
+/* 三つ目だけ数字ではない。書体が変わること自体が「まだ歴史になっていない」の合図 */
+.s00-now{font-family:var(--sans);letter-spacing:.06em;color:var(--accent)}
+.s00-co{
+  position:absolute;left:0;top:96px;
+  font-size:22px;font-weight:500;line-height:1.4;letter-spacing:.06em;color:var(--ink2);
+}
+
+/* 締めの一行。上とは大きさも色も距離も変えて、明確に「添え」にする */
+.s00-tail{position:absolute;left:96px;top:580px;width:640px}
+.s00-tail::before{content:"";display:block;width:36px;height:1px;background:var(--rule);margin-bottom:22px}
+.s00-tail p{font-size:22px;line-height:1.8;letter-spacing:.03em;color:var(--ink2)}
+
+/* ======================================================================
+   S02 ｜ 前提｜アタリショック
+   前提説明ではなく蝶番。1983 を主役の大きさで置き、下半分で
+   「同じ年に、二つのことが起きた」を対にする。上＝崩壊、下＝誕生。
+   ファミコンの価格・発売日はここでは触れない（TODO も置かない）。
+   ====================================================================== */
+.s02-year{
+  position:absolute;left:96px;top:112px;
+  font-family:var(--mono);font-size:76px;font-weight:500;line-height:1;
+  letter-spacing:.02em;color:var(--ink);font-variant-numeric:tabular-nums;
+}
+/* 年号のわきに掛ける名前の対。和製語と英語表記を面の上で並べる */
+.s02-term{position:absolute;left:400px;top:158px;width:340px}
+
+.s02-lead{position:absolute;left:96px;top:232px;width:780px}
+.s02-lead p{font-size:19px;line-height:1.75;letter-spacing:.03em;color:var(--ink2)}
+.s02-lead p + p{margin-top:12px}
+
+.s02-flag{position:absolute;left:96px;top:372px}
+.s02-rule{position:absolute;left:96px;right:96px;top:410px;height:1px;background:var(--rule)}
+
+.s02-cue{
+  position:absolute;left:96px;top:430px;
+  font-size:19px;line-height:1.4;letter-spacing:.06em;color:var(--muted);
+}
+.s02-cue::before{content:"";display:block;width:20px;height:2px;background:var(--accent);margin-bottom:12px}
+
+/* 縦罫は引かない。横罫1本と余白だけで対を作る（S14 と同じ規律） */
+.s02-hinge{position:absolute;left:96px;right:96px;top:484px}
+.s02-row{display:grid;grid-template-columns:200px 1fr;column-gap:40px;align-items:baseline;padding:16px 0}
+.s02-row + .s02-row{border-top:1px solid var(--rule)}
+.s02-side{font-size:19px;line-height:1.4;letter-spacing:.1em;color:var(--muted)}
+.s02-st{font-size:28px;font-weight:500;line-height:1.4;letter-spacing:.02em;color:var(--ink2)}
+/* 差はウェイトとサイズで作る。薄い側を薄くしない（投影で消えるため） */
+.s02-st-key{font-weight:600;color:var(--ink)}
+.s02-st em{font-style:normal;font-weight:600;color:var(--accent)}
+
+/* ======================================================================
+   S03 ｜ 死んだ市場
+   S02 が蝶番で密度を持つので、この一枚は明確に落とす。
+   要素は「前置きの三行」と「締めの一行」だけ。締めの一行が主役。
+   ====================================================================== */
+.s03-lead{position:absolute;left:96px;top:150px;width:720px}
+.s03-lead p{font-size:19px;line-height:1.9;letter-spacing:.03em;color:var(--ink2)}
+.s03-lead p + p{margin-top:14px}
+.s03-cut{position:absolute;left:96px;top:430px;width:44px;height:2px;background:var(--accent)}
+.s03-key{
+  position:absolute;left:96px;top:470px;width:900px;
+  font-size:46px;font-weight:500;line-height:1.45;letter-spacing:.02em;color:var(--ink);
+}
+
+/* 紙は投影より階調が出る。既存の @media print と同じ罫色に合わせる */
+@media print{
+  .s02-rule{background:#DCD7CC}
+  .s02-row + .s02-row{border-color:#DCD7CC}
+  .s00-ln,.s00-ln-open,.s00-tick{stroke:#DCD7CC}
+}
+
+/* ================================================== G2 追加分 */
+/* ======================================================================
+   S04 ｜ 任天堂の解法      /      S05 ｜ もう一つの仕掛け
+   ----------------------------------------------------------------------
+   ■ S04 の表を S14 の表と別物にするための決め事
+     S14 = 176px の固定ラベル列 + 3等分の均等割り。上端の罫だけで下は開く。
+     S04 = 2列だが左右を非対称にする（施策 580 / 意図 336、間に 64 の余白）。
+           番号列 44px を先頭に置き、表の下にも罫を引いて「閉じた表」にする。
+           どちらも縦罫は引かない。構造は横罫と余白だけで作る。
+     結果、遠目のシルエットが「均等な3本の柱」と「重い左＋軽い右」で割れる。
+
+   ■ S05 は構造を持たせない一枚（時間が押したとき最初に削る候補）
+     機構を2行で置き、余白を挟んで、主役の一行を大きく落とす。
+     現代の対照は主役の下に小さく添えるだけ。ここを構造化すると話が散る。
+     単独で抜いても S04 → S06 が繋がるよう、前後を参照する文言は入れていない。
+
+   ■ 座標の実測（1280x720 / 本文下端 660 の制約）
+     S04  lead 112–151 ／ 見出し 182–204 ／ 表 216–508 ／ 注 524–549 ／ 締め 578–643
+     S05  機構 144–237 ／ 注 258–277 ／ 主役 324–395 ／ 対照 474–501
+   ====================================================================== */
+
+/* ---------------------------------------------------------------- S04 */
+.s04-lead{
+  position:absolute;left:96px;right:96px;top:112px;
+  font-size:26px;font-weight:600;line-height:1.5;letter-spacing:.03em;color:var(--ink);
+}
+
+/* 番号 / 施策 / 意図。左右の重みを変えるのがこの表の全部。 */
+.s04-row{
+  display:grid;grid-template-columns:44px 580px 336px;column-gap:64px;
+  align-items:baseline;
+}
+.s04-head{position:absolute;left:96px;right:96px;top:182px}
+
+.s04-tbl{position:absolute;left:96px;right:96px;top:216px;border-bottom:1px solid var(--rule)}
+.s04-tbl .s04-row{border-top:1px solid var(--rule);padding-top:18px;padding-bottom:20px}
+
+.s04-act{font-size:21px;font-weight:500;line-height:1.6;letter-spacing:.03em;color:var(--ink)}
+.s04-int{font-size:19px;line-height:1.6;letter-spacing:.03em;color:var(--ink2)}
+
+.s04-note{position:absolute;left:96px;right:96px;top:524px}
+
+/* 締めの一行。表より大きく、罫から離す。ラベル語は置かず、印だけ。 */
+.s04-closer{position:absolute;left:96px;right:96px;top:578px}
+.s04-closer::before{content:"";display:block;width:20px;height:2px;background:var(--accent);margin-bottom:14px}
+.s04-closer-txt{font-size:34px;font-weight:500;line-height:1.45;letter-spacing:.02em;color:var(--ink)}
+.s04-closer-txt em{font-style:normal;font-weight:600;color:var(--accent)}
+
+/* ---------------------------------------------------------------- S05 */
+.s05-mech{position:absolute;left:96px;top:144px;width:620px}
+.s05-m{display:flex;align-items:baseline;column-gap:20px;
+       font-size:22px;line-height:1.7;letter-spacing:.03em;color:var(--ink2)}
+.s05-m + .s05-m{margin-top:18px}
+.s05-m-no{flex:none;width:28px}
+
+.s05-note{position:absolute;left:96px;top:258px}
+
+/* この一枚の主役。ラベルは置かない。印を1つ置いて、そこから落とす。 */
+.s05-hero{position:absolute;left:96px;right:96px;top:324px}
+.s05-hero::before{content:"";display:block;width:20px;height:2px;background:var(--accent);margin-bottom:20px}
+.s05-hero-txt{font-size:30px;font-weight:500;line-height:1.45;letter-spacing:.02em;color:var(--ink)}
+.s05-hero-txt em{font-style:normal;font-weight:600;color:var(--accent)}
+
+/* 現代の対照。添えるだけ。大きくすると主役を食う。 */
+.s05-echo{position:absolute;left:96px;right:96px;top:474px;
+          display:flex;align-items:baseline;column-gap:44px}
+.s05-e{font-size:17px;line-height:1.6;letter-spacing:.04em;color:var(--ink2)}
+
+/* ================================================== G3 追加分 */
+/* ======================================================================
+   S06 ｜ 理論①｜マーケティング近視眼
+   この一枚の主役は「反転」。同じ面の中で理論を紹介し、同じ面の中で崩す。
+   反転は矢印やアイコンではなく、位置と罫だけで示す:
+     上半分 = 左に見出し柱を立て、左から右へ読ませる（--ink2）
+     境目   = 1px の構造罫。その右端 44px だけが accent で厚くなる ＝ 重心が右へ移る
+     下半分 = 行頭を揃えず右端で揃える。色を一段落とす（--muted）
+   締めの一行だけが --ink / 34px で戻ってくる。この一枚で最大の文字。
+   ====================================================================== */
+.s06-lead{
+  position:absolute;left:96px;right:96px;top:124px;
+  display:grid;grid-template-columns:216px 1fr;column-gap:40px;align-items:start;
+}
+.s06-key{padding-top:6px}                 /* 26px 本文の半行分だけ下げて視覚的に頭を揃える */
+.s06-tick{width:20px;height:2px;background:var(--accent);margin-bottom:12px}
+.s06-say p{font-size:26px;line-height:1.8;letter-spacing:.03em;color:var(--ink2)}
+
+/* 反転の境目 */
+.s06-turn{position:absolute;left:96px;right:96px;top:352px;height:1px;background:var(--rule)}
+.s06-turn-end{position:absolute;right:96px;top:351px;width:44px;height:3px;background:var(--accent)}
+
+/* 下半分 */
+.s06-counter{position:absolute;left:96px;right:96px;top:400px;text-align:right}
+.s06-counter p{font-size:20px;line-height:1.85;letter-spacing:.03em;color:var(--muted)}
+.s06-closer{
+  position:absolute;left:96px;right:96px;top:540px;text-align:right;
+  font-size:34px;font-weight:500;line-height:1.45;letter-spacing:.02em;color:var(--ink);
+}
+.s06-closer em{font-style:normal;font-weight:600;color:var(--accent)}
+.s06-note{position:absolute;left:96px;top:636px}   /* 下端 657 < 660 */
+
+@media print{ .s06-turn{background:#DCD7CC} }      /* 既存の罫と同じ紙用の濃さに揃える */
+
+/* ======================================================================
+   S07 ｜ 転換（ブリッジ）
+   .question をそのまま使う。S01・S17 と同じ静けさを保ったまま、
+   「これは問いではなく橋である」ことだけを最小の差分で示す:
+     ・罫を accent から構造罫の色（--rule）へ落とす ＝ 問いの合図を消す
+     ・2行目を小さく --muted に ＝ 答えではなく、次への引き渡し
+   .question / .q-rule / .q-line の座標には一切触れない。1行目の頭は S01 と同じ y。
+   ====================================================================== */
+.q-rule.s07-rule{display:none}
+.slide[data-no="07"] .question{top:330px}
+.slide[data-no="07"] .q-line{font-size:40px}
+.q-line.s07-sub{
+  font-size:24px;font-weight:400;line-height:1.75;letter-spacing:.03em;
+  color:var(--muted);margin-top:26px;
+}
+
+/* ================================================== G4 追加分 */
+/* ======================================================================
+   S08 ｜ 前提｜Cyberpunk 2077
+   上半分 = 事実（誰が / どれだけかけて / どう期待されていたか）。
+   .rule-mid の下 = ジャンルの定義。ここは非母語話者向けの生命線なので、
+   面の下段を丸ごと1文に明け渡している。
+
+   ジャンル説明を .contrast で組まないのは、意味が違うため。
+   建前 / 実感（S11・S12・S16）は「上が嘘で下が本当」という上下の否定関係だが、
+   サイバーパンクの二つの節は「どちらも同時に本当」である。
+   そこで、上下2段に積まず横1本に並べ、両側のウェイトとサイズを揃えた。
+   間の縦線は「のに」というヒンジの視覚化であって、優劣の線ではない。
+   ====================================================================== */
+.s08-lead{
+  position:absolute;left:96px;top:168px;width:660px;
+  font-size:30px;font-weight:500;line-height:1.45;letter-spacing:.02em;color:var(--ink);
+}
+.s08-sub{
+  position:absolute;left:96px;top:308px;width:716px;
+  font-size:22px;line-height:1.7;letter-spacing:.03em;color:var(--ink2);
+}
+
+.s08-genre{
+  position:absolute;left:96px;right:96px;top:534px;
+  display:grid;grid-template-columns:176px 1fr;column-gap:40px;align-items:start;
+}
+.s08-def{display:flex;align-items:center}
+.s08-def span{
+  font-size:25px;font-weight:500;line-height:1.55;letter-spacing:.02em;
+  color:var(--ink);white-space:nowrap;
+}
+.s08-bar{flex:none;width:1px;height:30px;background:var(--rule);margin:0 26px}
+.s08-def-tail{margin-top:12px;font-size:18px;line-height:1.7;letter-spacing:.03em;color:var(--muted)}
+
+/* ======================================================================
+   S09 ｜ 崩壊
+   本文は2行だけ。y=258 から y=452 までの空白がこの一枚の主役で、
+   そこが「落ちる」時間になる。文字を足すと落差が消えるので足さない。
+   一番強い事実（棚から消えた）だけを最大サイズにする。
+   ====================================================================== */
+.s09-seq{position:absolute;left:96px;top:160px;width:900px}
+.s09-line{font-size:26px;line-height:1.7;letter-spacing:.03em;color:var(--ink2)}
+.s09-line + .s09-line{margin-top:10px}
+
+.s09-hit{position:absolute;left:96px;top:452px;width:1000px}
+.s09-mark{width:44px;height:2px;background:var(--accent);margin-bottom:34px}
+.s09-hit-txt{font-size:38px;font-weight:600;line-height:1.4;letter-spacing:.02em;color:var(--ink)}
+.s09-hit-sub{margin-top:22px;font-size:24px;line-height:1.7;letter-spacing:.03em;color:var(--ink2)}
+
+/* ======================================================================
+   S10 ｜ 復活
+   作品情報（上）→ 主張（中）→ 事実（下）。
+   主張だけ S09 の「削除」と同じ 44px に揃えてあり、崩壊と復活が
+   同じ大きさで対になる。数値とグラフは一切置かない（S11 の取り分）。
+   ====================================================================== */
+.s10-work{position:absolute;left:96px;top:140px;width:900px}
+.s10-work-ttl{font-size:30px;font-weight:500;line-height:1.4;letter-spacing:.02em;color:var(--ink)}
+
+.s10-facts{position:absolute;left:96px;top:238px;display:flex;align-items:center}
+.s10-fact{font-size:18px;line-height:1.7;letter-spacing:.04em;color:var(--ink2)}
+.s10-fact-k{font-size:14px;letter-spacing:.16em;color:var(--muted);margin-right:14px}
+.s10-sep{flex:none;width:1px;height:20px;background:var(--hair);margin:0 26px}
+
+.s10-claim{position:absolute;left:96px;top:322px;width:1000px}
+.s10-mark{width:44px;height:2px;background:var(--accent);margin-bottom:32px}
+.s10-claim-txt{font-size:38px;font-weight:600;line-height:1.35;letter-spacing:.02em;color:var(--ink)}
+.s10-claim-sub{margin-top:20px;font-size:26px;line-height:1.7;letter-spacing:.03em;color:var(--ink2)}
+
+/* ================================================== G5 追加分 */
+/* ======================================================================
+   S12 ｜ 理論②｜Holt
+   4項目は「読む表」ではなく「1本ずつ立ち上がる行」。段階表示（data-step）が
+   主役なので、行の中に要素を増やさない。1行 = 番号 + 1文。それだけ。
+   4項目目だけ 32px / accent / 2px罫 で、他の3行（21px）から明確に離す。
+   締めは .rule-mid を1本挟んだ下に置き、4項目とは別の階層にする。
+   ====================================================================== */
+.s12-head{position:absolute;left:96px;right:96px;top:110px}
+/* 出典。英字なので 14px / var(--sub) の下限で組む（併記の規定どおり） */
+.s12-src{font-family:var(--mono);font-size:14px;line-height:1.4;letter-spacing:.09em;color:var(--sub)}
+.s12-src-t{font-weight:600;letter-spacing:.07em;color:var(--ink2)}
+/* 「日本ではほとんど紹介されていない」は聴衆が読む本文なので 18px を割らない */
+.s12-note{width:1000px;margin-top:9px;font-size:18px;line-height:1.8;letter-spacing:.03em;color:var(--muted)}
+
+.s12-list{position:absolute;left:96px;right:96px;top:190px}
+.s12-item{display:grid;grid-template-columns:46px 1fr;column-gap:24px;align-items:baseline;padding:13px 0}
+.s12-item + .s12-item{border-top:1px solid var(--hair)}
+.s12-tx{font-size:21px;font-weight:500;line-height:1.65;letter-spacing:.03em;color:var(--ink2)}
+/* 理論用語だけ併記する。他の3項目には英語を付けない */
+.s12-term{display:block;margin-top:7px;font-size:15px;line-height:1.5;letter-spacing:.1em;color:var(--muted)}
+.s12-term-en{font-family:var(--mono);font-size:14px;letter-spacing:.12em;color:var(--sub);margin-left:16px}
+
+/* 4項目目 = この理論の要。地色ではなく 2px のアクセント罫とサイズで差をつける */
+.s12-item.s12-key{border-top:2px solid var(--accent);padding:16px 0 14px}
+.s12-key .idx{color:var(--accent);font-size:15px}
+.s12-key .s12-tx{font-size:32px;font-weight:600;line-height:1.4;letter-spacing:.02em;color:var(--accent)}
+
+.s12-closer{position:absolute;left:96px;right:96px;top:530px}
+/* 36字ぶんで 955px。1088px の版面に1行で収まる。折り返させない */
+.s12-closer-tx{margin-top:15px;font-size:26px;font-weight:500;line-height:1.55;letter-spacing:.02em;color:var(--ink)}
+.s12-quote{font-weight:400;color:var(--muted)}
+
+/* ======================================================================
+   S13 ｜ 3つ目｜原神
+   意図的に軽く作る一枚。S12（構造4段）と S14（3列の表）に挟まれるので、
+   ここで山を作ると三連続になって聴衆が飽和する。
+   新しい型は作らず、S11 で確定した .c-line（ラベル1語 + 本文1行）に
+   棚 / 物語 を流し込むだけ。面の中で大きいのは結果の一行だけにする。
+   ====================================================================== */
+.s13-lead{position:absolute;left:96px;top:118px;width:640px;
+          font-size:26px;font-weight:500;line-height:1.5;letter-spacing:.03em;color:var(--ink)}
+.s13-pre{position:absolute;left:96px;top:174px;width:880px;
+         font-size:19px;line-height:1.8;letter-spacing:.03em;color:var(--ink2)}
+
+/* 当時の常識＝これから覆される前提。聴衆の声として引用の扱いにする（S15 と同じ語彙） */
+.s13-myth{position:absolute;left:96px;top:252px;width:920px;
+          border-left:2px solid var(--rule);padding-left:22px}
+.s13-myth-tx{margin-top:8px;font-size:20px;line-height:1.7;letter-spacing:.03em;color:var(--muted)}
+
+.s13-did{position:absolute;left:96px;top:340px;width:860px}
+.s13-did-hd{margin-bottom:14px}
+/* 固有名詞の併記。並び順が本文の「璃月、京劇」と対応する */
+.s13-en{display:block;margin-top:6px;font-family:var(--mono);font-size:14px;letter-spacing:.12em;color:var(--sub)}
+
+.s13-result{position:absolute;left:96px;right:96px;top:540px;
+            display:grid;grid-template-columns:38px 1fr;column-gap:20px;align-items:start}
+.s13-result-tx{font-size:30px;font-weight:500;line-height:1.5;letter-spacing:.02em;color:var(--ink)}
+.s13-todo{margin-top:16px}
+
+/* ================================================== G6 追加分 */
+/* ======================================================================
+   S15 ｜ 反論を先に潰す
+   聴衆の声（引用）と、こちらの答えを縦に積む。引用が「別の人の声」だと
+   一目で分かるよう、ラベル / インデント / 左罫 / --muted の4点で本文から離す。
+   締めの一行は S11・S14 と同じ帯（rule-mid=510 の下、y=534）に置き、
+   .closer-lbl / .closer-txt をそのまま借りる。新しい締めの形は作らない。
+   ====================================================================== */
+.s15-lbl{position:absolute;left:96px;top:122px}
+.s15-quote{
+  position:absolute;left:96px;right:96px;top:178px;
+  padding-left:32px;border-left:2px solid var(--rule);
+}
+.s15-q{font-size:28px;font-weight:400;line-height:1.5;letter-spacing:.02em;color:var(--muted)}
+.s15-ans{
+  position:absolute;left:96px;right:96px;top:300px;
+  font-size:30px;font-weight:500;line-height:1.6;letter-spacing:.03em;color:var(--ink);
+}
+/* 三つは S04・S11・S13 の事例に一対一で対応するが、番号を振ると
+   S14 の列順（任天堂 / Cyberpunk / 原神）と読み手が勝手に対応づけてしまう。
+   対応づけは口頭に任せ、面では列挙であることだけを示す。 */
+.s15-list{
+  position:absolute;left:96px;right:96px;top:372px;
+  font-size:28px;font-weight:500;line-height:1.5;letter-spacing:.04em;color:var(--ink2);
+}
+.s15-sep{font-size:.82em;color:var(--sub);margin:0 .42em}
+.s15-closer{position:absolute;left:96px;top:534px;width:860px}
+.s15-closer-tx{margin-top:14px}
+
+/* ======================================================================
+   S16 ｜ 自社へ
+   .contrast は S11 と同じ座標（left:800 / top:534）のまま使う。
+   三度目の登場で位置まで同じだから、聴衆は読む前に「またあれだ」と分かる。
+   だから CSS には一行も触らない。代わりに面の残りをその周りで組む。
+   構造は1つ＝「01 ズレ / 02 物語」の記入欄。答えは書かない。
+   下段左（S11 で結論が入っていた位置）は空欄にしてある。
+   結論があるはずの場所が空いていることが、この一枚の主張。
+   ====================================================================== */
+/* 読む順は原稿どおり「建前 → 実感 → だからこのズレをどう埋めるか」。
+   ズレの中身を先に見せてから問いを出す。逆にすると、まだ見ていないものを
+   指して「このズレ」と言うことになる。 */
+.s16-gap{position:absolute;left:96px;top:116px;width:620px}
+.s16-gap .s16-cap{position:static;width:auto;margin-bottom:10px}
+/* .contrast の定義そのものは触らない。S16 では主役なので置き場所だけ変える */
+.s16-gap .contrast{position:static;width:100%}
+.s16-gap .c-val{font-size:20px}
+.s16-gap .c-val.is-real{font-size:21px}
+
+.s16-thesis{
+  position:absolute;left:96px;top:290px;width:920px;
+  font-size:42px;font-weight:500;line-height:1.45;letter-spacing:.02em;color:var(--ink);
+}
+.s16-note{position:absolute;left:96px;top:356px}
+.s16-form{position:absolute;left:96px;right:96px;top:400px;
+          display:grid;grid-template-columns:1fr 1fr;column-gap:64px;align-items:start}
+.s16-row{display:grid;grid-template-columns:56px 1fr;column-gap:28px;align-items:baseline}
+.s16-q{font-size:24px;font-weight:500;line-height:1.5;letter-spacing:.03em;color:var(--ink)}
+/* 記入欄。箱で囲わない。罫は一本だけ引いて、上に何も乗せない。 */
+.s16-slot{margin-top:14px;height:28px;border-bottom:1px solid var(--rule)}
+.s16-act{position:absolute;left:96px;top:540px;width:700px}
+.s16-act-slot{margin-top:18px;padding-bottom:16px;border-bottom:1px solid var(--rule)}
+
+/* ================================================== AX 追加分 */
+/* ======================================================================
+   附録 A1〜A4 ｜ 質疑応答用
+   A キーで入る。本編の ← → の流れには出てこない。
+   既存トークン・既存コンポーネントのみで組み、新規クラスは .ax1- 〜 .ax4- で
+   名前空間を切ってある。既存ルールは一切書き換えていない。
+   色は SVG も含めて S11 と同じ値だけを使う（#7A776B ＝ 技術の線、
+   #4A5D3A ＝ var(--accent) ＝ 物語の線、rgba(74,93,58,.08) ＝ 塗り）。
+   本文は 18px 以上、ラベルは 14px 以上、本文下端は y=660 を超えない。
+   ====================================================================== */
+
+/* ---------------------------------------------------------------- A1 --
+   図は .chart / .ch-lbl / .ch-txt / .ch-date / .ch-year / .figcap を
+   S11 からそのまま借りる。下段だけ新規。
+   左に「観測」二つ、右に「切り分け」の一行。rule-mid（top:510）の下、
+   530 から始めて 650 で終わる。                                       */
+.ax1-obs{position:absolute;left:96px;top:530px;width:576px}
+.ax1-row{display:flex;align-items:baseline;gap:20px;padding:9px 0}
+.ax1-row + .ax1-row{border-top:1px solid var(--hair)}
+.ax1-k{flex:none;width:86px;font-size:14px;letter-spacing:.14em;color:var(--muted)}
+.ax1-v{font-size:18px;line-height:1.65;letter-spacing:.02em;color:var(--ink2)}
+.ax1-v em{font-style:normal;font-weight:600;color:var(--ink)}
+
+.ax1-sum{position:absolute;left:700px;top:530px;width:484px}
+.ax1-sum-txt{font-size:21px;font-weight:500;line-height:1.55;letter-spacing:.02em;color:var(--ink)}
+.ax1-sum-txt + .ax1-sum-txt{margin-top:6px}
+.ax1-sum-txt em{font-style:normal;font-weight:600;color:var(--accent)}
+
+/* ---------------------------------------------------------------- A2 --
+   自社の話なので断定を置かない。上に想定質問、中に論点三つ、
+   下は空欄（.todo）にして本人が埋める。                               */
+.ax2-ask{position:absolute;left:96px;top:114px;width:1000px}
+.ax2-ask-q{font-size:22px;line-height:1.7;letter-spacing:.02em;color:var(--muted)}
+
+.ax2-defs{position:absolute;left:96px;right:96px;top:236px}
+.ax2-def{display:grid;grid-template-columns:150px 1fr;column-gap:40px;align-items:start;
+         padding:20px 0;border-top:1px solid var(--rule)}
+.ax2-k{font-size:15px;letter-spacing:.1em;color:var(--ink2)}
+.ax2-v{font-size:20px;line-height:1.7;letter-spacing:.02em;color:var(--ink2)}
+.ax2-v em{font-style:normal;font-weight:600;color:var(--ink)}
+
+.ax2-open{position:absolute;left:96px;top:530px;width:1000px}
+.ax2-open-tx{font-size:20px;line-height:1.7;letter-spacing:.02em;color:var(--ink2)}
+.ax2-open-todo{margin-top:14px}
+
+/* ---------------------------------------------------------------- A3 --
+   S14 の三列比較は「横罫で全列を貫く表」。ここは逆に、
+   列ごとに切れたアクセント罫を頭に載せた縦のスタックにする。
+   同じ三列でも、走る向きが違うので見た目が混ざらない。               */
+.ax3-lead{position:absolute;left:96px;top:118px;width:1000px;
+          font-size:22px;line-height:1.7;letter-spacing:.02em;color:var(--ink2)}
+
+.ax3-cols{position:absolute;left:96px;right:96px;top:204px;
+          display:grid;grid-template-columns:repeat(3,1fr);column-gap:56px}
+.ax3-col{position:relative;padding-top:30px}
+.ax3-col::before{content:"";position:absolute;left:0;top:0;width:100%;height:2px;background:var(--accent)}
+.ax3-col .idx{display:block;margin-bottom:12px}
+.ax3-item{margin-top:6px;font-size:19px;line-height:1.7;letter-spacing:.02em;color:var(--ink)}
+.ax3-kind{margin-top:14px;font-size:16px;line-height:1.6;letter-spacing:.04em;color:var(--muted)}
+
+.ax3-sum{position:absolute;left:96px;top:506px;width:600px}
+.ax3-sum-txt{font-size:21px;font-weight:500;line-height:1.55;letter-spacing:.02em;color:var(--ink)}
+.ax3-sum-txt + .ax3-sum-txt{margin-top:6px}
+.ax3-sum-txt em{font-style:normal;font-weight:600;color:var(--accent)}
+
+.ax3-self{position:absolute;left:748px;top:506px;width:436px}
+.ax3-self-tx{font-size:18px;line-height:1.7;letter-spacing:.02em;color:var(--ink2)}
+.ax3-self-todo{margin-top:14px}
+
+/* ---------------------------------------------------------------- A4 --
+   附録でいちばん静かな一枚。事実を三行置いて終わる。               */
+.ax4-body{position:absolute;left:96px;top:180px;width:900px}
+.ax4-line{font-size:28px;font-weight:500;line-height:1.75;letter-spacing:.02em;color:var(--ink)}
+.ax4-line + .ax4-line{margin-top:24px}
+.ax4-en{display:block;font-family:var(--mono);font-size:14px;font-weight:400;
+        letter-spacing:.12em;color:var(--sub);margin-top:10px}
+
+.ax4-open{position:absolute;left:96px;right:96px;top:532px}
+.ax4-todos{display:flex;flex-wrap:wrap;gap:14px 30px}
+
+/* 見出しラベルに .lbl を借りるときの下余白だけ足す（.lbl 自体は触らない） */
+.ax2-ask .lbl,.ax3-self .lbl,.ax4-open .lbl{display:block;margin-bottom:14px}
+/* ======================================================================
+   附録 A5 ｜ 成功例だけを選んでいないか（生存者バイアス）
+   認める → 主張を正しい強さに下げる → 反証条件を示す、の3段。
+   ====================================================================== */
+.ax5-q{position:absolute;left:96px;top:120px;width:1000px;border-left:2px solid var(--rule);padding-left:24px}
+.ax5-q-tx{margin-top:10px;font-size:26px;line-height:1.6;letter-spacing:.03em;color:var(--muted)}
+.ax5-defs{position:absolute;left:96px;right:96px;top:226px}
+.ax5-def{display:grid;grid-template-columns:172px 1fr;column-gap:32px;align-items:baseline;padding:16px 0}
+.ax5-def + .ax5-def{border-top:1px solid var(--hair)}
+.ax5-k{font-size:15px;letter-spacing:.12em;color:var(--muted)}
+.ax5-v{font-size:20px;line-height:1.7;letter-spacing:.03em;color:var(--ink2)}
+.ax5-v em{font-style:normal;font-weight:600;color:var(--accent)}
+.ax5-sum{position:absolute;left:96px;top:570px;width:900px}
+/* .rule-mid は共有なので、この枚だけ下げる */
+.slide[data-no="A5"] .rule-mid{top:548px}
+.ax5-sum-tx{margin-top:14px;font-size:24px;font-weight:500;line-height:1.6;letter-spacing:.02em;color:var(--ink)}
+.ax5-sum-tx em{font-style:normal;font-weight:600;color:var(--accent)}
+
+/* S11 の結論だけ 42px。デッキ中いちばん証明を要する枚の主張が、
+   S09（38px）や S10（38px）の事実提示より小さいのは順序が逆だった。
+   .band は S10 と共有なので、S11 に限定して上げる。 */
+/* 幅は 656px。700px だと「…ではなく、物 / 語だった。」と主題語が行をまたいで割れる。
+   ここで折る位置を固定しておくこと。 */
+.slide[data-no="11"] .band-txt{font-size:42px;width:656px;line-height:1.4}
+/* 結論を 42px に上げたぶん、この枚だけ下段を 20px 繰り上げる。
+   .chart / .figcap / .rule-mid / .band / .contrast は他の枚と共有しているので
+   必ず data-no で限定すること。 */
+.slide[data-no="11"] .chart{top:104px}
+.slide[data-no="11"] .figcap{top:448px}
+.slide[data-no="11"] .rule-mid{top:492px}
+.slide[data-no="11"] .band{top:514px}
+.slide[data-no="11"] .contrast{top:514px}
+
+/* ============================== 通し確認後の追補 ============================== */
+/* S13: 反例を自分で先に出す一行と、「二次元」の注釈。どちらも脇に置いて主役にしない */
+.s13-myth-ex{margin-top:12px;font-size:17px;line-height:1.7;letter-spacing:.03em;color:var(--sub)}
+.s13-gloss{display:block;margin-top:8px;font-size:16px;line-height:1.7;letter-spacing:.03em;color:var(--sub)}
+
+/* S14: 主題語（棚 / 物語）を正式名称として立て、原稿の言い回しを副として下に置く */
+.cmp-sub{display:block;margin-top:6px;font-size:15px;line-height:1.6;letter-spacing:.03em;color:var(--sub);font-weight:400}
+.cmp-row.same .cmp-sub{color:var(--sub)}
+
+/* A3: 費目だけでは「で、高いのか安いのか」に答えていない */
+.ax3-sum-cost{margin-top:14px;font-size:18px;font-weight:400;color:var(--muted)}
+
+/* S16: .lbl は1語のラベル用。ここは文なので本文として組む */
+.s16-note p{font-size:18px;line-height:1.7;letter-spacing:.03em;color:var(--muted)}
+/* 記入欄2本の高さを揃える（01 側だけ英語併記が1行入って 27px ずれていた）*/
+.s16-form > div:last-child .s16-q{padding-bottom:26px}
+.s16-act{width:428px}
+
+/* S12: 4項目目だけ 32px / accent / 2px罫 で、開示前から落としどころが漏れていた */
+.s12-key .s12-tx[data-step]:not(.is-shown){opacity:.08}
+
+/* 図版プレースホルダは配布 PDF に空枠を残さない。当日までに写真が入らない場合は
+   この1行をコメントアウトすれば、印刷にもトンボが出る。 */
+@media print{ .plate{display:none} }
+</style>
+</head>
+
+<body>
+<div class="viewport">
+<div class="stage" id="stage">
+
+  <section class="slide" data-no="00">
+  <div class="canvas">
+
+    <div class="meta">
+      <div class="meta-l"><span class="meta-no">S00</span><span class="meta-ttl">今日話すこと</span></div>
+      <div class="meta-r">AGENDA</div>
+    </div>
+    <div class="rule-top"></div>
+
+    <div class="s00-lead">
+      <p>今日は、三つのゲーム会社の話をします。</p>
+      <p class="s00-sub">同じ業界の中でも、国も時代もビジネスモデルも違います。それでも、起きていることは同じです。</p>
+    </div>
+
+    <div class="s00-band">
+      <svg width="1088" height="156" viewBox="0 0 1088 156" fill="none"
+           aria-label="1983年のアメリカ、2020年のポーランド、現在の中国を左から順に置いた時間の線。三つ目より右は破線で、まだ続いていることを示す。">
+        <path class="s00-ln" d="M0 76H792"/>
+        <path class="s00-ln-open" d="M792 76H1088"/>
+        <path class="s00-tick" d="M1 64V88"/>
+        <path class="s00-tick" d="M396 64V88"/>
+        <path class="s00-tick-now" d="M792 60V92"/>
+      </svg>
+
+      <div class="s00-pt" style="left:0">
+        <span class="s00-yr">1983</span>
+        <span class="s00-co">アメリカ<span class="lbl-en">UNITED STATES</span></span>
+      </div>
+      <div class="s00-pt" style="left:396px">
+        <span class="s00-yr">2020</span>
+        <span class="s00-co">ポーランド<span class="lbl-en">POLAND</span></span>
+      </div>
+      <div class="s00-pt" style="left:792px">
+        <span class="s00-yr s00-now">現在</span>
+        <span class="s00-co">中国<span class="lbl-en">CHINA</span></span>
+      </div>
+    </div>
+
+    <div class="s00-tail">
+      <p>最後に、それが私たちの仕事とどう繋がるかをお話しします。</p>
+    </div>
+
+    <footer class="stamp"><span class="n">00</span><span class="sep">/</span><span class="n">17</span></footer>
+  </div>
+
+  <aside class="speaker-notes" data-n="00">
+    <div class="sn-head"><span class="sn-tag">SPEAKER NOTES</span><span class="sn-no">S00</span></div>
+    <p>今日話すのは、三つのゲーム会社です。1983年のアメリカ、2020年のポーランド、そして中国。</p>
+    <p>三つ目だけ、年号を書いていません。まだ終わっていない話だからです。線も右端で切らずに、破線のままにしてあります。</p>
+    <p>三つとも同じゲーム業界です。ただし国も時代もビジネスモデルも違う。それでも起きていることは同じです。今日はそこだけ持って帰ってください。</p>
+    <p>会社名はここではまだ出しません。次の一枚では、問いだけを置きます。</p>
+    <p>ここは1分。地図を配るだけのつもりで、早めに抜ける。</p>
+  </aside>
+</section>
+
+  <section class="slide" data-no="01">
+    <div class="canvas">
+
+      <div class="question">
+        <div class="q-rule"></div>
+        <p class="q-line">この会社は、何を売っていたのか。</p>
+        <!-- ▼ S17 ではこの一行を足すだけ。上の行は 1px も動かない。
+        <p class="q-line q-echo">—— そして、私たちは。</p>
+        -->
+      </div>
+
+      <!-- 「この問いは最後にもう一度出てきます」の添えは削除した。
+           S17 の仕掛けを事前に明かすうえ、発表者ノートに同じ内容があるため
+           口頭で足りる。結果、この一枚の要素は「罫」と「問い」の2つだけになる。 -->
+
+      <footer class="stamp"><span class="n">01</span><span class="sep">/</span><span class="n">17</span></footer>
+    </div>
+
+    <aside class="speaker-notes" data-n="01">
+      <div class="sn-head"><span class="sn-tag">SPEAKER NOTES</span><span class="sn-no">S01</span></div>
+      <p>まず、この問いだけ置かせてください。今日は三つの会社の話をしますが、全部この問いに戻ってきます。</p>
+      <p>答えは今は言いません。最後のスライドで、まったく同じ形でもう一度出てきます。そのとき皆さんの中の答えが変わっていたら、今日の25分は成功です。</p>
+      <p>読み上げたら、五秒黙ってから次へ。ここは急がない。</p>
+    </aside>
+  </section>
+
+  <section class="slide" data-no="02">
+  <div class="canvas">
+
+    <div class="meta">
+      <div class="meta-l"><span class="meta-no">S02</span><span class="meta-ttl">前提｜アタリショック</span></div>
+      <div class="meta-r">VIDEO GAME CRASH OF 1983</div>
+    </div>
+    <div class="rule-top"></div>
+
+    <!-- このスライドの主役。以降の本文はこの数字を「この年」と呼ぶ -->
+    <div class="s02-year">1983</div>
+
+    <div class="s02-term">
+      <span class="lbl">日本でいう「アタリショック」</span>
+    </div>
+
+    <!-- 図版プレースホルダ。塗りも枠も置かず、四隅のトンボだけ。
+         年号の右、同じ下端に揃えて置く。面上に説明文は出さない。
+         .plate は S11 の座標を持っているので、この一枚ぶんだけ行内で置き直す
+         （既存ルールは触らない）。 -->
+    <figure class="plate" style="left:968px;top:96px"
+            data-image-note="1983年前後のアメリカの店頭写真を1枚。ワゴンに山積みされた投げ売りのカートリッジなど、『売れ残り』が一目で伝わる画。特定メーカーのロゴが主役に写るものは避ける。彩度を落として敷く。出典と権利の確認が必要。">
+      <svg class="marks" viewBox="0 0 216 114" fill="none" stroke="#A49E92" stroke-width="2" aria-hidden="true">
+        <path d="M0 14V0h14M202 0h14v14M216 100v14h-14M14 114H0v-14"/>
+      </svg>
+    </figure>
+
+    <!-- 一文＝一行。母語でない人が目で追えるところで切る -->
+    <div class="s02-lead">
+      <p><span class="n">1970</span>年代後半、アメリカで家庭用ゲーム機が大流行した。最大手が <span class="n">Atari</span>。</p>
+      <p>その市場が、この年、突然崩壊した。</p>
+      <p>原因の一つは粗製濫造。誰でもソフトを作れたので質の低い商品が溢れ、小売に在庫が積み上がった。<span class="todo" style="margin-left:14px">崩壊の規模と出典を確定</span></p>
+    </div>
+
+    <div class="s02-rule"></div>
+
+    <p class="s02-cue">同じ年に、二つのことが起きている。</p>
+
+    <div class="s02-hinge">
+      <div class="s02-row">
+        <span class="s02-side">アメリカ</span>
+        <p class="s02-st">ゲーム機の市場が、死んだ。</p>
+      </div>
+      <div class="s02-row">
+        <span class="s02-side">日本</span>
+        <p class="s02-st s02-st-key">ファミリーコンピュータが、<em>生まれた</em>。<span class="lbl-en">FAMILY COMPUTER</span></p>
+      </div>
+    </div>
+
+    <footer class="stamp"><span class="n">02</span><span class="sep">/</span><span class="n">17</span></footer>
+  </div>
+
+  <aside class="speaker-notes" data-n="02">
+    <div class="sn-head"><span class="sn-tag">SPEAKER NOTES</span><span class="sn-no">S02</span></div>
+    <p>前提を一つだけ入れます。1970年代の後半、アメリカで家庭用ゲーム機が大流行しました。最大手がアタリです。</p>
+    <p>1983年、その市場が突然崩れます。原因は粗製濫造でした。誰でもソフトを作れたので、質の低い商品が溢れた。</p>
+    <p>日本語では「アタリショック」と言いますが、これは和製語です。英語の資料を当たるときは video game crash of 1983 で探してください。</p>
+    <p>そして同じ年、日本ではファミリーコンピュータが生まれています。片方で市場が死に、もう片方で次の主役が生まれた。今日の話は、この年から動きます。</p>
+    <p>ちなみに1983年です、と一言だけ添えて流す。書くと接待に見えるが、言うと機知になる。深追いしない。</p>
+        <p>主因は一つではありません。他に、安いホームコンピュータへの需要流出と、小売が在庫リスクを負わされたことがあります。今日の話に効くのは「小売が在庫で焼かれた」という一点なので、そこだけ強調します。</p>
+      <p>1983年から85年まで、北米の市場は回復していません。だから任天堂は、回復した市場に入ったのではなく、死んだままの市場に入っています。</p>
+</aside>
+</section>
+
+  <section class="slide" data-no="03">
+  <div class="canvas">
+
+    <div class="meta">
+      <div class="meta-l"><span class="meta-no">S03</span><span class="meta-ttl">死んだ市場</span></div>
+      <div class="meta-r">1985</div>
+    </div>
+    <div class="rule-top"></div>
+
+    <div class="s03-lead">
+      <p>アメリカの小売店は、「ゲーム機」という商品を、もう店に置きたくなくなっていた。</p>
+      <p>任天堂が<span class="n">1985</span>年に入ろうとしたのは、この市場。</p>
+      <p>つまり、良い製品を作れば売れる状況ではなかった。</p>
+    </div>
+
+    <div class="s03-cut"></div>
+    <p class="s03-key">そもそも棚に置いてもらえない。</p>
+
+    <footer class="stamp"><span class="n">03</span><span class="sep">/</span><span class="n">17</span></footer>
+  </div>
+
+  <aside class="speaker-notes" data-n="03">
+    <div class="sn-head"><span class="sn-tag">SPEAKER NOTES</span><span class="sn-no">S03</span></div>
+    <p>任天堂の話に入る前に、そのとき市場がどうなっていたかだけ言っておきます。</p>
+    <p>アメリカの小売店は、ゲーム機という商品をもう置きたくありませんでした。任天堂が1985年に入ろうとしたのは、この市場です。</p>
+    <p>つまり、良い製品を作れば売れる、という状況ではなかった。そもそも棚に置いてもらえない。今日はここから始まります。</p>
+    <p>最後の一行だけ読み上げて、一拍おいてから次へ。ここは急がない。</p>
+  </aside>
+</section>
+
+  <section class="slide" data-no="04">
+  <div class="canvas">
+
+    <div class="meta">
+      <div class="meta-l"><span class="meta-no">S04</span><span class="meta-ttl">任天堂の解法</span></div>
+      <div class="meta-r">NINTENDO ENTERTAINMENT SYSTEM</div>
+    </div>
+    <div class="rule-top"></div>
+
+    <p class="s04-lead">ゲーム機として売るのをやめた。</p>
+
+    <div class="s04-head s04-row">
+      <div></div>
+      <div><span class="lbl">施策</span></div>
+      <div><span class="lbl">効果</span></div>
+    </div>
+
+    <div class="s04-tbl">
+      <div class="s04-row">
+        <div class="s04-no"><span class="idx">01</span></div>
+        <div class="s04-act">名前を <span class="n">Entertainment System</span> に</div>
+        <div class="s04-int">「ゲーム機」という言葉を避けた</div>
+      </div>
+      <div class="s04-row">
+        <div class="s04-no"><span class="idx">02</span></div>
+        <div class="s04-act">見た目をビデオデッキ風に</div>
+        <div class="s04-int">家電に見せた</div>
+      </div>
+      <div class="s04-row">
+        <div class="s04-no"><span class="idx">03</span></div>
+        <div class="s04-act">ロボット（<span class="n">R.O.B.</span>）を同梱</div>
+        <div class="s04-int">玩具に見せた</div>
+      </div>
+      <div class="s04-row">
+        <div class="s04-no"><span class="idx">04</span></div>
+        <div class="s04-act">玩具売場に置いてもらった</div>
+        <div class="s04-int">比較対象を変えた</div>
+      </div>
+    </div>
+
+    <div class="s04-note">
+      <span class="figcap-tx">北米市場での施策。<span class="todo" style="margin-left:16px">R.O.B. 同梱と玩具売場での扱いを一次資料で確認</span></span>
+    </div>
+
+    <div class="s04-closer">
+      <p class="s04-closer-txt">変えたのは製品ではなく、<em>誰と並べて比べられるか</em>。</p>
+    </div>
+
+    <footer class="stamp"><span class="n">04</span><span class="sep">/</span><span class="n">17</span></footer>
+  </div>
+
+  <aside class="speaker-notes" data-n="04">
+    <div class="sn-head"><span class="sn-tag">SPEAKER NOTES</span><span class="sn-no">S04</span></div>
+    <p>任天堂がやったことは、一言でいうと、ゲーム機として売るのをやめた、です。当時の北米の小売にとって「ゲーム機」は、焦げ付いた在庫の記憶そのものでした。</p>
+    <p>表の左が実際にやったこと、右がその狙いです。名前、見た目、同梱物、置き場所。四つとも、中身の話をしていません。</p>
+    <p>一番効いたのは最後の行だと思っています。玩具売場に置くと、比べられる相手が、他のゲーム機ではなく玩具になる。同じ製品でも、隣に何が並ぶかで意味が変わります。</p>
+    <p>ここは急がない。四行を順に指しながら読むだけで十分です。読み終えたら、締めの一行で一拍おく。</p>
+          <p>右の列は「効果」です。任天堂自身が理由として語っているものと、こちらが結果から読み取ったものが混ざっています。聞かれたら「社内資料を見たわけではなく、起きたことからの整理です」と答える。</p>
+      <p>「置きたくない相手が、なぜ置いたのか」と来た場合。売れ残りのリスクを任天堂側が引き受ける条件を出しています。小売にとっては在庫リスクがゼロになる。製品ではなく取引条件を変えて棚を取った、という話です。<span class="todo">条件の内容を一次資料で確認</span></p>
+<p class="sn-todo"><span class="todo">R.O.B. 同梱と玩具売場での扱いを一次資料で確認</span></p>
+  </aside>
+</section>
+
+  <section class="slide" data-no="05">
+  <div class="canvas">
+
+    <div class="meta">
+      <div class="meta-l"><span class="meta-no">S05</span><span class="meta-ttl">もう一つの仕掛け</span></div>
+      <div class="meta-r">RAZOR AND BLADES</div>
+    </div>
+    <div class="rule-top"></div>
+
+    <div class="s05-mech">
+      <p class="s05-m"><span class="s05-m-no"><span class="idx">01</span></span><span>本体は安く売る。</span></p>
+      <p class="s05-m"><span class="s05-m-no"><span class="idx">02</span></span><span>利益はソフトで回収する。</span></p>
+    </div>
+
+    <div class="s05-note">
+      <span class="todo">本体価格を出すかは要判断。出すなら一次資料で確定</span>
+    </div>
+
+    <div class="s05-hero">
+      <p class="s05-hero-txt">売っていたのは機械ではなく、<em>遊びが更新され続ける状態</em>。</p>
+    </div>
+
+    <div class="s05-echo">
+      <span class="lbl">いまも同じ形</span>
+      <span class="s05-e">サブスクリプション</span>
+      <span class="s05-e">プリンターとインク</span>
+    </div>
+
+    <footer class="stamp"><span class="n">05</span><span class="sep">/</span><span class="n">17</span></footer>
+  </div>
+
+  <aside class="speaker-notes" data-n="05">
+    <div class="sn-head"><span class="sn-tag">SPEAKER NOTES</span><span class="sn-no">S05</span></div>
+    <p>仕掛けはもう一つあります。本体は安く売って、利益はソフトで回収する。プリンターとインク、いまのサブスクリプションと同じ形です。</p>
+    <p>大事なのは、この形にすると売っているものが変わることです。機械を一度売って終わりではなく、遊びが更新され続ける状態を売っていることになる。</p>
+    <p>買った人の側から見ると、箱を買ったのではなく、これから増えていく何かを買ったことになります。棚に何として並ぶか、という話とここで繋がります。</p>
+    <p>時間が押していたら、この一枚は飛ばして構いません。前後は繋がります。</p>
+          <p>原価割れで売っていたという意味ではありません。値付けの重心が本体側ではなくソフト側にある、という「形」の話です。そう聞かれたらそう答える。</p>
+<p class="sn-todo"><span class="todo">本体価格を出すかは要判断。出すなら一次資料で確定</span></p>
+  </aside>
+</section>
+
+  <section class="slide" data-no="06">
+  <div class="canvas">
+
+    <div class="meta">
+      <div class="meta-l"><span class="meta-no">S06</span><span class="meta-ttl">理論①｜マーケティング近視眼</span></div>
+      <div class="meta-r">THEODORE LEVITT, 1960</div>
+    </div>
+    <div class="rule-top"></div>
+
+    <!-- 上半分: 左に柱、左から右へ -->
+    <div class="s06-lead">
+      <div class="s06-key">
+        <div class="s06-tick"></div>
+        <span class="lbl">『マーケティング近視眼』</span>
+        <span class="lbl-en">MARKETING MYOPIA</span>
+      </div>
+      <div class="s06-say">
+        <p>アメリカの鉄道会社は衰退した。</p>
+        <p>自動車や飛行機が現れたからではない。</p>
+        <p>自分たちを「鉄道業」だと定義していたから。</p>
+      </div>
+    </div>
+
+    <!-- 境目。右端だけが厚い -->
+    <div class="s06-turn"></div>
+    <div class="s06-turn-end"></div>
+
+    <!-- 下半分: 右で受ける -->
+    <div class="s06-counter">
+      <p>ただし、定義を広げるだけなら危険。</p>
+      <p>「うちは輸送業だ」と航空会社を買っていたら、もっと早く潰れていたかもしれない。</p>
+    </div>
+
+    <p class="s06-closer">定義を広げることと、戦う場所を選ぶことは、<em>別のこと</em>。</p>
+
+    <p class="s06-note"><span class="todo">レビット論文の初出（掲載誌・号）を確定</span></p>
+
+    <footer class="stamp"><span class="n">06</span><span class="sep">/</span><span class="n">17</span></footer>
+  </div>
+
+  <aside class="speaker-notes" data-n="06">
+    <div class="sn-head"><span class="sn-tag">SPEAKER NOTES</span><span class="sn-no">S06</span></div>
+    <p>ここで一度、理論を挟みます。レビットの「マーケティング近視眼」。日本のビジネス書では必ず引かれる有名な話なので、聞いたことがある方も多いと思います。</p>
+    <p>アメリカの鉄道会社は、自動車や飛行機に負けたのではありません。自分の商売を「鉄道業」だと定義していた。だから、そこから出られなかった。</p>
+    <p>この理論は、たいていここまでで紹介されます。でも、そこで止めるのは危ないと思っています。だから同じ一枚の中で、自分で崩します。</p>
+    <p>「うちは輸送業だ」と言って航空会社を買っていたら、もっと早く潰れていました。定義を広げれば強くなる、という話ではないんです。</p>
+    <p>下の一行だけ、持って帰ってください。読み上げて、一拍おいてから次へ。</p>
+          <p>この史実の読み方自体にも反論があります。事実としてではなく、レビットという人の主張として紹介している、と最初に言っておく。そうしておけば批判が来ても議論の外に置けます。</p>
+<p class="sn-todo"><span class="todo">原文の引用を入れるかは初出を確認してから決める</span></p>
+  </aside>
+</section>
+
+  <section class="slide" data-no="07">
+  <div class="canvas">
+
+    <div class="question">
+      <div class="q-rule s07-rule"></div>
+      <p class="q-line">ここまでが、<span class="n">1</span>つ目。</p>
+      <p class="q-line s07-sub"><span class="n">2</span>つ目は、自分が何を作っているか完璧に分かっていて、それでも崩れた会社の話。</p>
+    </div>
+
+    <footer class="stamp"><span class="n">07</span><span class="sep">/</span><span class="n">17</span></footer>
+  </div>
+
+  <aside class="speaker-notes" data-n="07">
+    <div class="sn-head"><span class="sn-tag">SPEAKER NOTES</span><span class="sn-no">S07</span></div>
+    <p>ここで一区切りです。ここまでが、一つ目の話でした。</p>
+    <p>一つ目は、棚の話でした。商品そのものではなく、どこに並ぶかで結果が変わった。二つ目は、少し種類が違います。</p>
+    <p>自分が何を作っているかは、完璧に分かっていた会社です。それでも崩れました。社名はここでは出さずに、次の一枚から入ります。</p>
+    <p>形は最初の一枚と似ていますが、これは問いではありません。息継ぎです。読んだら、間を取ってから進む。</p>
+  </aside>
+</section>
+
+  <section class="slide" data-no="08">
+  <div class="canvas">
+
+    <div class="meta">
+      <div class="meta-l"><span class="meta-no">S08</span><span class="meta-ttl">前提｜Cyberpunk 2077</span></div>
+      <div class="meta-r">CD PROJEKT RED — POLAND</div>
+    </div>
+    <div class="rule-top"></div>
+
+    <p class="s08-lead">ポーランドの <span class="n">CD PROJEKT RED</span> が、発表から<span class="n">8</span>年かけて出したゲーム。</p>
+
+    <p class="s08-sub">発売前の期待は、史上最大級だった。<span class="todo" style="margin-left:20px">期待の規模を一次ソースで確定</span></p>
+
+    <!-- 図版プレースホルダ。塗りも枠も置かず、四隅のトンボだけ。
+         S11 と同じ .plate。この一枚では上段の右に置き、事実の側に添える。
+         面上に説明文は出さない。 -->
+    <figure class="plate" style="left:864px;top:158px;width:320px;height:200px"
+            data-image-note="ゲーム本編のナイトシティ俯瞰、または雨のネオン街の1カット。ロゴ・パッケージ・キービジュアルは使わない。人物が写っていなくてよく、『技術は超発達／生活は悲惨』が一目で分かる街の情景を選ぶ。彩度を落として敷く。CD PROJEKT RED の権利確認が必要。">
+      <svg class="marks" viewBox="0 0 320 200" fill="none" stroke="#A49E92" stroke-width="2" aria-hidden="true">
+        <path d="M0 14V0h14M306 0h14v14M320 186v14h-14M14 200H0v-14"/>
+      </svg>
+    </figure>
+
+    <div class="rule-mid"></div>
+
+    <div class="s08-genre">
+      <div>
+        <span class="lbl">サイバーパンク</span>
+        <span class="lbl-en">CYBERPUNK</span>
+      </div>
+      <div>
+        <p class="s08-def">
+          <span>技術は超発達しているのに</span>
+          <i class="s08-bar"></i>
+          <span>人間の生活は悲惨</span>
+        </p>
+        <p class="s08-def-tail">——そういう世界を描くジャンル。</p>
+      </div>
+    </div>
+
+    <footer class="stamp"><span class="n">08</span><span class="sep">/</span><span class="n">17</span></footer>
+  </div>
+
+  <aside class="speaker-notes" data-n="08">
+    <div class="sn-head"><span class="sn-tag">SPEAKER NOTES</span><span class="sn-no">S08</span></div>
+    <p>ここからは、ポーランドの会社の話です。八年かけて一本のゲームを作りました。発売前の期待は、たぶん皆さんが想像しているより大きかったと思ってください。</p>
+    <p>その前に、サイバーパンクというジャンルだけ説明させてください。ここを飛ばすと、このあと三枚ぜんぶ意味が分からなくなります。</p>
+    <p>技術はとんでもなく進んでいる。でも、そこで暮らしている人間はまったく幸せではない。その落差そのものを描くジャンルです。空飛ぶ車の下で、人が野垂れ死んでいる。そういう世界です。</p>
+    <p>この落差が、あとで効いてきます。今は覚えなくていいので、絵の雰囲気だけ見ておいてください。</p>
+          <p>8年は最初の発表からの年数です。「本格的な開発体制に入ったのはもっと後では」という指摘は正しいので、来たら素直に認める。</p>
+<p class="sn-todo"><span class="todo">期待の規模を一次ソースで確定</span></p>
+  </aside>
+</section>
+
+  <section class="slide" data-no="09">
+  <div class="canvas">
+
+    <div class="meta">
+      <div class="meta-l"><span class="meta-no">S09</span><span class="meta-ttl">崩壊</span></div>
+      <div class="meta-r">2020.12</div>
+    </div>
+    <div class="rule-top"></div>
+
+    <div class="s09-seq">
+      <p class="s09-line"><span class="n">2020</span>年<span class="n">12</span>月、発売。</p>
+      <p class="s09-line">バグだらけで、一つ前の世代の機種では、まともに動かなかった。</p>
+    </div>
+
+    <div class="s09-hit">
+      <div class="s09-mark"></div>
+      <p class="s09-hit-txt">PlayStation ストアから、削除。</p>
+      <p class="s09-hit-sub">返金対応。<span class="todo" style="margin-left:20px">削除と返金の時系列を確定</span></p>
+    </div>
+
+    <footer class="stamp"><span class="n">09</span><span class="sep">/</span><span class="n">17</span></footer>
+  </div>
+
+  <aside class="speaker-notes" data-n="09">
+    <div class="sn-head"><span class="sn-tag">SPEAKER NOTES</span><span class="sn-no">S09</span></div>
+    <p>ここは事実だけ、淡々と読みます。発売しました。バグだらけでした。一つ前の世代の機種では、まともに動きませんでした。</p>
+    <p>そして、PlayStation のストアから、商品そのものが消えました。返金にも応じています。</p>
+    <p>ゲームを普段やらない方のために言い換えると、店の棚から自社製品が撤去された、という状態です。並べてもらえなくなった、ではなく、下ろされた。</p>
+    <p>読み終わったら一拍おいてください。ここで足すことは何もありません。</p>
+          <p>半年ほどでストアに復帰しています。ここでは触れずに進みますが、聞かれたら「復帰しています。だから次のスライドで戻ってこられた」と答える。<span class="todo">復帰時期を確定</span></p>
+<p class="sn-todo"><span class="todo">削除と返金の時系列を確定</span></p>
+  </aside>
+</section>
+
+  <section class="slide" data-no="10">
+  <div class="canvas">
+
+    <div class="meta">
+      <div class="meta-l"><span class="meta-no">S10</span><span class="meta-ttl">復活</span></div>
+      <div class="meta-r">CYBERPUNK: EDGERUNNERS ｜ NETFLIX / TRIGGER</div>
+    </div>
+    <div class="rule-top"></div>
+
+    <div class="s10-work">
+      <p class="s10-work-ttl">『サイバーパンク エッジランナーズ』</p>
+      <span class="lbl-en">CYBERPUNK: EDGERUNNERS</span>
+    </div>
+
+    <div class="s10-facts">
+      <span class="s10-fact"><span class="s10-fact-k">配信</span><span class="n">2022</span>年<span class="n">9</span>月 ／ Netflix</span>
+      <i class="s10-sep"></i>
+      <span class="s10-fact"><span class="s10-fact-k">制作</span>TRIGGER（日本）</span>
+      <i class="s10-sep"></i>
+      <span class="s10-fact"><span class="s10-fact-k">企画</span><span class="n">CD PROJEKT RED</span></span>
+    <span class="todo" style="margin-left:28px">配信開始日を確定</span>
+    </div>
+
+    <div class="s10-claim">
+      <div class="s10-mark"></div>
+      <p class="s10-claim-txt">作品の中で、ゲームは一度も薦められない。</p>
+      <p class="s10-claim-sub">宣伝ではなく、一本の作品として作られている。</p>
+    </div>
+
+    <div class="rule-mid"></div>
+
+    <div class="band">
+      <span class="band-lbl">結果</span>
+      <p class="band-txt">配信後、プレイヤーが<em>戻ってきた</em>。</p>
+    </div>
+
+    <footer class="stamp"><span class="n">10</span><span class="sep">/</span><span class="n">17</span></footer>
+  </div>
+
+  <aside class="speaker-notes" data-n="10">
+    <div class="sn-head"><span class="sn-tag">SPEAKER NOTES</span><span class="sn-no">S10</span></div>
+    <p>しばらく経って、Netflix でアニメが配信されます。日本の TRIGGER が作った、全十話の作品です。</p>
+    <p>大事なのはここです。これは、ゲームの宣伝ではありませんでした。ゲームを売るための番組ではなくて、独立した一本の作品として作られています。</p>
+    <p>作り手は、ゲームを買ってくださいとは一度も言っていません。あの世界で必死に生きて、そして壊れていく人間の話をしただけです。</p>
+    <p>そのあとで、プレイヤーが戻ってきました。どれくらい戻ってきたのかは、次のページで見ます。ここでは数字を出しません。</p>
+          <p>制作費は CD PROJEKT RED が出しています。宣伝ではない、というのは出資の話ではなく、作品の中で商品を一度も薦めていない、という意味です。ここは自分から先に言ってしまう。</p>
+<p class="sn-todo"><span class="todo">配信開始日を確定</span></p>
+  </aside>
+</section>
+
+  <section class="slide" data-no="11">
+    <div class="canvas">
+
+      <div class="meta">
+        <div class="meta-l"><span class="meta-no">S11</span><span class="meta-ttl">なぜ跳ねたのか</span></div>
+        <div class="meta-r">CYBERPUNK 2077 — CD PROJEKT RED</div>
+      </div>
+      <div class="rule-top"></div>
+
+      <!-- 図: 目盛りを持たない模式図。数値軸は作らない。
+           上から 技術 → 物語 → 結果 の順に置き、視線が落ちる動きがそのまま
+           前提 → 事象 → 帰結 の順になる。
+           アクセントの縦線1本だけが三段すべてを貫き、この図で最も太い線である。 -->
+      <div class="chart">
+        <svg width="1088" height="330" viewBox="0 0 1088 330" fill="none"
+             aria-label="パッチの配信は縦線を跨いでも等間隔に続いているのに対し、結果の線はアニメ配信の縦線の直後にだけ跳ねていることを示す模式図">
+
+          <!-- 技術: 等間隔に打たれ続けたティック。縦線を無視して同じ間隔で走り抜ける -->
+          <g stroke="#7A776B" stroke-width="1.5" stroke-linecap="round">
+            <path d="M176 24V42"/><path d="M232 24V42"/><path d="M288 24V42"/><path d="M344 24V42"/>
+            <path d="M400 24V42"/><path d="M456 24V42"/><path d="M512 24V42"/><path d="M568 24V42"/>
+            <path d="M624 24V42"/><path d="M680 24V42"/><path d="M736 24V42"/><path d="M792 24V42"/>
+            <path d="M848 24V42"/><path d="M904 24V42"/><path d="M960 24V42"/><path d="M1016 24V42"/>
+            <path d="M1072 24V42"/>
+          </g>
+
+          <!-- 結果: アニメ以前。ほぼ水平・無彩色 -->
+          <path d="M154 280C240 278 320 282 400 279C480 276 560 281 640 278C700 276 750 280 798 277"
+                stroke="#7A776B" stroke-width="2" stroke-linecap="round"/>
+
+          <!-- 結果: アニメ以後。色が切り替わり、立ち上がる。
+               塗りの床は「アニメ以前の水準」（y=277）に置いてある。
+               ＝ 塗られている面積は、それまでの水準を上回っている分だけを指す。 -->
+          <path d="M798 277C818 272 836 228 858 208C868 199 878 196 890 199C930 209 980 231 1040 243L1088 247L1088 277L798 277Z"
+                fill="rgba(74,93,58,.08)"/>
+          <path d="M798 277C818 272 836 228 858 208C868 199 878 196 890 199C930 209 980 231 1040 243L1088 247"
+                stroke="#4A5D3A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+          <!-- 物語: この図で唯一の縦線。三段すべてを貫き、他のどの線より太い -->
+          <path d="M798 16V292" stroke="#4A5D3A" stroke-width="3"/>
+          <circle cx="798" cy="123" r="5.5" fill="#4A5D3A"/>
+          <path d="M806 123H826" stroke="#4A5D3A" stroke-width="1.5"/>
+        </svg>
+
+        <div class="ch-lbl" style="top:18px"><b>技術</b><span>パッチ配信</span></div>
+        <div class="ch-lbl" style="top:96px"><b>物語</b><span>アニメ配信</span></div>
+        <div class="ch-lbl" style="top:206px"><b>結果</b><span>同時接続数（Steam）</span></div>
+
+        <div class="ch-txt" style="left:326px;top:76px;width:456px;text-align:right">
+          サイバーパンク エッジランナーズ
+          <span class="ch-en">CYBERPUNK: EDGERUNNERS ｜ NETFLIX / TRIGGER</span>
+        </div>
+        <div class="ch-date" style="left:582px;top:140px;width:200px;text-align:right">2022.09</div>
+
+        <!-- 図版プレースホルダ。塗りも枠も置かず、四隅のトンボだけ。
+             縦線のすぐ右、「物語」の帯の中に置いて、事象そのものにする。
+             面上に説明文は出さない（＝聴衆への情報ではないため）。 -->
+        <figure class="plate"
+                data-image-note="『サイバーパンク エッジランナーズ』本編のカットを1枚。キービジュアルやロゴではなく、主人公デイビッドが走っている／立ち尽くしている静かな場面。彩度を落として敷く。Netflix / TRIGGER の権利確認が必要。">
+          <svg class="marks" viewBox="0 0 216 114" fill="none" stroke="#A49E92" stroke-width="2" aria-hidden="true">
+            <path d="M0 14V0h14M202 0h14v14M216 100v14h-14M14 114H0v-14"/>
+          </svg>
+        </figure>
+
+        <div class="ch-year" style="left:154px;top:302px">2021</div>
+        <!-- 「以後の最高」を言う以上、比較対象がどこにあるかを面で示しておく -->
+        <div class="ch-lbl" style="left:238px;top:304px;width:420px"><span>発売直後（2020.12）の山は、この範囲の外</span></div>
+        <div class="ch-call" style="left:788px;top:300px;width:300px;text-align:right">発売直後を除けば、以後の最高</div>
+      </div>
+
+      <div class="figcap">
+        <span class="figcap-id">図 11–1</span>
+        <span class="figcap-tx">Steam の同時接続数。他機種の数字は非公開。模式図で、目盛りと曲線の形・パッチ間隔は実データではない。<span class="todo" style="margin-left:16px">実数と出典（SteamDB）を確定</span></span>
+      </div>
+
+      <div class="rule-mid"></div>
+
+      <div class="band">
+        <span class="band-lbl">結論</span>
+        <p class="band-txt">足りなかったのは技術ではなく、<em>物語</em>だった。</p>
+      </div>
+
+      <div class="contrast">
+        <div class="c-line"><span class="c-key">建前</span><span class="c-val">頑張れば報われる</span></div>
+        <div class="c-line"><span class="c-key">実感</span><span class="c-val is-real">システムは人をすり潰す</span></div>
+      </div>
+
+      <footer class="stamp"><span class="n">11</span><span class="sep">/</span><span class="n">17</span></footer>
+    </div>
+
+    <aside class="speaker-notes" data-n="11">
+      <div class="sn-head"><span class="sn-tag">SPEAKER NOTES</span><span class="sn-no">S11</span></div>
+      <p>今日いちばん言いたいのは、ここです。</p>
+      <p>直したのは技術です。2021年からパッチはずっと当て続けていました。上の段がそれです。でも、あの跳ね方はしなかった。跳ねたのは、アニメが配信されたあとです。</p>
+      <p>ゲーム本体は一行も書き換わっていません。変わったのは、この世界がどう語られるかだけでした。</p>
+      <p>アニメが供給したのは物語です。必死に努力して駆け上がって、そして壊れる話。頑張れば報われるという建前と、システムは人をすり潰すだけだという実感、その間の話です。</p>
+      <p>この「建前と実感」の対比は、このあともう一度、最後の自社の話で出てきます。覚えておいてください。</p>
+            <p>技術が要らなかったという話ではありません。技術は必要でした。ただ、それだけでは足りなかった、という話です。そう聞かれたらそう答える。</p>
+      <p>数字は Steam だけです。他機種は公開されていません。範囲は自分から先に言う。</p>
+      <p>結論を読んだら5秒待つ。図を指しながら喋らない。</p>
+<p class="sn-todo"><span class="todo">図は模式図。数値は当日までに一次ソースで確定する</span></p>
+    </aside>
+  </section>
+
+  <section class="slide" data-no="12">
+  <div class="canvas">
+
+    <div class="meta">
+      <div class="meta-l"><span class="meta-no">S12</span><span class="meta-ttl">理論②｜ブランドはいかにして偶像になるか（仮訳）</span></div>
+      <div class="meta-r">DOUGLAS HOLT, 2004</div>
+    </div>
+    <div class="rule-top"></div>
+
+    <div class="s12-head">
+      <p class="s12-src"><span class="s12-src-t">HOW BRANDS BECOME ICONS</span></p>
+      <p class="s12-note">欧米のブランド論では標準的に引かれるが、日本ではあまり紹介されていない。<span class="todo" style="margin-left:16px">邦訳の有無と書名を確認</span></p>
+    </div>
+
+    <div class="s12-list">
+      <div class="s12-item">
+        <span class="idx">01</span>
+        <p class="s12-tx" data-step="1">社会の建前と、人々の実感の間には、いつもズレがある
+          <span class="s12-term">文化的矛盾<span class="s12-term-en">CULTURAL CONTRADICTION</span></span>
+        </p>
+      </div>
+
+      <div class="s12-item">
+        <span class="idx">02</span>
+        <p class="s12-tx" data-step="2">強いブランドは、そのズレを埋める物語を提供している</p>
+      </div>
+
+      <div class="s12-item">
+        <span class="idx">03</span>
+        <p class="s12-tx" data-step="3">材料は、商業的でない場所から採ってくる</p>
+      </div>
+
+      <!-- ここが要。他3行との差はサイズ・ウェイト・罫の太さで作る（薄い地色に頼らない） -->
+      <div class="s12-item s12-key">
+        <span class="idx">04</span>
+        <p class="s12-tx" data-step="4">物語には賞味期限がある</p>
+      </div>
+    </div>
+
+    <div class="rule-mid"></div>
+
+    <div class="s12-closer" data-step="5">
+      <div class="closer-lbl"><span>含意</span></div>
+      <p class="s12-closer-tx"><span class="s12-quote">「ブランドは一貫性が大事」</span>という前提そのものが、衰退の原因になり得る。</p>
+    </div>
+
+    <footer class="stamp"><span class="n">12</span><span class="sep">/</span><span class="n">17</span></footer>
+  </div>
+
+  <aside class="speaker-notes" data-n="12">
+    <div class="sn-head"><span class="sn-tag">SPEAKER NOTES</span><span class="sn-no">S12</span></div>
+    <p>二つ目の理論です。ダグラス・ホルトという人が2004年に書いた本で、欧米のブランド論では標準的な引用元になっています。日本ではほとんど紹介されていないので、今日いちばんの持ち帰りはここかもしれません。</p>
+    <p>一つずつ出します。まず、社会の建前と、人々が実際に感じていることの間には、いつもズレがある。さっきの「頑張れば報われる」と「すり潰される」が、まさにこれです。</p>
+    <p>二つ目。強いブランドは、そのズレを埋める物語を出している。三つ目。その材料は、広告ではなく、映画や音楽やストリートから採ってくる。商業的でない場所から採るから、信じてもらえる。</p>
+    <p>四つ目が今日の要点です。物語には賞味期限がある。社会のズレのほうが変わったのに、同じ話をし続けている会社は、そこで止まります。</p>
+    <p>だから、よく言われる「ブランドは一貫性が大事」という前提そのものが、衰退の原因になり得る。ここは経営の話なので、言い切ったあと一拍おいてください。</p>
+          <p>「では一貫性は要らないのか」と来た場合。一貫していなくていい、という話ではありません。一貫させるべきなのは語る内容ではなく、誰の側に立つか、です。この返しはそのまま最後の自社の話に繋がります。</p>
+<p class="sn-todo"><span class="todo">邦訳の有無と書名を確認</span></p>
+  </aside>
+</section>
+
+  <section class="slide" data-no="13">
+  <div class="canvas">
+
+    <div class="meta">
+      <div class="meta-l"><span class="meta-no">S13</span><span class="meta-ttl">3つ目｜原神</span></div>
+      <div class="meta-r">GENSHIN IMPACT — miHoYo, 2020</div>
+    </div>
+    <div class="rule-top"></div>
+
+    <!-- ここは「新情報」ではなく「答え合わせ」。直前の S12 と直後の S14 が重いので、
+         文字量を意図的に落としてある。導入と前提は口頭で足りる分を削った。 -->
+    <p class="s13-lead">両方を、同時にやった会社。</p>
+
+    <p class="s13-pre">中国の <span class="n">miHoYo</span> が<span class="n">2020</span>年に出したゲーム。ジャンルは「二次元」。<span class="s13-gloss">アニメ調の絵柄を核にした作品群を指す、中国での呼び名。</span></p>
+
+    <div class="s13-myth">
+      <span class="lbl">当時よく言われていたこと</span>
+      <p class="s13-myth-tx">日本のゲーム業界では、二次元ものは内需向けで海外では売れない、と言われていた。</p>
+    </div>
+
+    <div class="s13-did">
+      <div class="s13-did-hd"><span class="lbl">やったこと</span></div>
+      <div class="c-line">
+        <span class="c-key">棚</span>
+        <span class="c-val"><span class="n">PC</span>・スマホ・<span class="n">PS4</span>を同日に全世界配信。代理店を通さず自社で配信</span>
+      </div>
+      <div class="c-line">
+        <span class="c-key">物語</span>
+        <span class="c-val">中国の風景と文化を、説明ではなく世界そのものに書き込んだ（璃月、京劇の唱）
+          <span class="s13-en">LIYUE / PEKING OPERA</span>
+        </span>
+      </div>
+    </div>
+
+    <div class="rule-mid"></div>
+
+    <div class="s13-result">
+      <div class="closer-lbl"><span>結果</span></div>
+      <div>
+        <p class="s13-result-tx">日本が、主要な市場の一つになった。</p>
+        <p class="s13-todo"><span class="todo">第三者推計（Sensor Tower 等）で位置づけを確定</span></p>
+      </div>
+    </div>
+
+    <footer class="stamp"><span class="n">13</span><span class="sep">/</span><span class="n">17</span></footer>
+  </div>
+
+  <aside class="speaker-notes" data-n="13">
+    <div class="sn-head"><span class="sn-tag">SPEAKER NOTES</span><span class="sn-no">S13</span></div>
+    <p>ここは90秒で終わらせます。詳しく話すと一つの章になってしまって、構成が崩れます。掴みは口頭で一文だけ——「日本の会社が作りそうなものを、中国の会社が、日本より先に世界に出した。」</p>
+    <p>棚の話です。プラットフォームを絞らず、代理店も通さず、自社で全世界に同日で出した。並ぶ棚を、最初から世界に設定したということです。</p>
+    <p>物語の話です。中国の風景や文化を、説明として足すのではなく、世界そのものに書き込んだ。璃月という土地と、京劇の唱がその例です。</p>
+    <p>ここは言い方に注意してください。京劇の唱は雲菫の『神女劈観』で、リリース時ではなく後から追加されたものです。「最初から入っていた」とは言わないこと。むしろ後から足された点が、S05で話した「遊びが更新され続ける状態」と繋がります。</p>
+    <p>結果は一行置いて、すぐ次へ。数字は言いません。ここは答え合わせなので、山を作らないこと。</p>
+          <p>「二次元」は中国での呼び名です。ここを飛ばすと、この枚の前提が伝わりません。一言だけ添える。</p>
+      <p>「先例はあった」と指摘されたら、その通りだと認める。原神が違ったのは、家庭用機まで含めて同じ日に世界へ出したことです。反例は自分から先に出しておく。</p>
+<p class="sn-todo"><span class="todo">日本市場での位置づけを一次ソースで確定</span></p>
+  </aside>
+</section>
+
+  <section class="slide" data-no="14">
+    <div class="canvas">
+
+      <div class="meta">
+        <div class="meta-l"><span class="meta-no">S14</span><span class="meta-ttl">三つを並べる</span></div>
+        <div class="meta-r">SUMMARY</div>
+      </div>
+      <div class="rule-top"></div>
+
+      <div class="cmp">
+        <div class="cmp-row">
+          <div></div>
+          <div class="co"><div class="co-name">任天堂</div><span class="co-en">NINTENDO</span></div>
+          <div class="co"><div class="co-name">Cyberpunk 2077</div><span class="co-en">CD PROJEKT RED</span></div>
+          <div class="co"><div class="co-name">原神</div><span class="co-en">GENSHIN IMPACT</span></div>
+        </div>
+
+        <div class="cmp-row ruled">
+          <div class="cmp-key"><span class="idx">01</span><span class="k">問題</span></div>
+          <div class="cmp-cell">棚に置いてもらえない</div>
+          <div class="cmp-cell">作品の外に物語がなかった</div>
+          <div class="cmp-cell">「日本向け」の棚しかなかった</div>
+        </div>
+
+        <div class="cmp-row ruled">
+          <div class="cmp-key"><span class="idx">02</span><span class="k">変えたもの</span></div>
+          <div class="cmp-cell">棚<span class="cmp-sub">比べられる相手</span></div>
+          <div class="cmp-cell">物語<span class="cmp-sub">語られる内容</span></div>
+          <div class="cmp-cell">棚と物語<span class="cmp-sub">両方</span></div>
+        </div>
+
+        <div class="cmp-row ruled same">
+          <div class="cmp-key"><span class="idx">03</span><span class="k">変えなかったもの</span></div>
+          <div class="cmp-cell">製品そのもの</div>
+          <div class="cmp-cell">ゲームそのもの</div>
+          <div class="cmp-cell">ゲームそのもの</div>
+        </div>
+      </div>
+
+      <!-- 三列を束ねて、左端から締めの一行に落とす -->
+      <div class="brace">
+        <svg width="872" height="44" viewBox="0 0 872 44" fill="none" aria-hidden="true">
+          <path d="M1 0v44M1 12h870M871 12V0" stroke="#4A5D3A" stroke-opacity=".55" stroke-width="1.5"/>
+        </svg>
+      </div>
+
+      <div class="closer">
+        <div class="closer-lbl"><span>結論</span></div>
+        <p class="closer-txt">どの会社も、モノは変えていない。</p>
+      </div>
+
+      <footer class="stamp"><span class="n">14</span><span class="sep">/</span><span class="n">17</span></footer>
+    </div>
+
+    <aside class="speaker-notes" data-n="14">
+      <div class="sn-head"><span class="sn-tag">SPEAKER NOTES</span><span class="sn-no">S14</span></div>
+      <p>三つ、並べます。聞いている側は自分では繋げてくれないので、こちらで明示的に並べます。</p>
+      <p>上の二行は会社ごとに違います。抱えていた問題も、手を入れた場所も違う。</p>
+      <p>でも一番下の行だけ、三つとも同じことが書いてあります。製品そのものは、どこも変えていない。作り直したのは、置かれ方と語られ方だけです。</p>
+      <p>ここで一拍おいてから次へ。急がない。</p>
+    </aside>
+  </section>
+
+  <section class="slide" data-no="15">
+  <div class="canvas">
+
+    <div class="meta">
+      <div class="meta-l"><span class="meta-no">S15</span><span class="meta-ttl">反論を先に潰す</span></div>
+      <div class="meta-r">OBJECTION</div>
+    </div>
+    <div class="rule-top"></div>
+
+    <div class="s15-lbl"><span class="lbl">想定される反論</span></div>
+
+    <div class="s15-quote">
+      <p class="s15-q">「ゲームの話をされても、うちの事業と関係ない」</p>
+    </div>
+
+    <p class="s15-ans">三つの事例で、最後に結果を分けたのは、技術ではありませんでした。</p>
+
+    <p class="s15-list">値付けの構造<span class="s15-sep">／</span>売り場の選択<span class="s15-sep">／</span>何を語るか</p>
+
+    <div class="rule-mid"></div>
+
+    <div class="s15-closer">
+      <div class="closer-lbl"><span>答え</span></div>
+      <div class="s15-closer-tx">
+        <p class="closer-txt">どの業種でも、毎日やっている判断です。</p>
+      </div>
+    </div>
+
+    <footer class="stamp"><span class="n">15</span><span class="sep">/</span><span class="n">17</span></footer>
+  </div>
+
+  <aside class="speaker-notes" data-n="15">
+    <div class="sn-head"><span class="sn-tag">SPEAKER NOTES</span><span class="sn-no">S15</span></div>
+    <p>ここで一度止まります。ここまで聞いて、こう思った方がいるかもしれません。ゲームの話をされても、うちの事業とは関係ない、と。</p>
+    <p>先に答えます。三つの事例で勝負が決まったのは、どれも技術ではありませんでした。値付けの構造、売り場の選択、そして何を語るか。この三つです。</p>
+    <p>どれも業種を問わず、毎日やっている判断です。ゲームだから起きたことではありません。</p>
+    <p>ここは早口にならないこと。納得していない人ほど、この一枚を見ています。</p>
+        <p>技術が要らなかったという話ではありません。Cyberpunk は技術で落ちました。ただ、落ちたあと結果を戻したのは技術ではなかった、という話です。ここを間違えると S09 と衝突します。</p>
+</aside>
+</section>
+
+  <section class="slide" data-no="16">
+  <div class="canvas">
+
+    <div class="meta">
+      <div class="meta-l"><span class="meta-no">S16</span><span class="meta-ttl">自社へ</span></div>
+      <div class="meta-r">OUR TURN</div>
+    </div>
+    <div class="rule-top"></div>
+
+    <!-- 建前 / 実感 の三度目（S11 → S12 → S16）。
+         ここでは脚注ではなく主役。この一枚はここから読み始める。 -->
+    <div class="s16-gap">
+      <div class="s16-cap"><span class="lbl">デザイン業界</span></div>
+      <div class="contrast">
+        <div class="c-line"><span class="c-key">建前</span><span class="c-val">デザインの重要性は上がった</span></div>
+        <div class="c-line"><span class="c-key">実感</span><span class="c-val is-real">工程の一部として発注される</span></div>
+      </div>
+    </div>
+
+    <p class="s16-thesis">このズレを、どう埋めるか。</p>
+
+    <div class="s16-note"><p>答えは、この場で埋めます。</p></div>
+
+    <div class="s16-form">
+      <div class="s16-row">
+        <span class="idx">01</span>
+        <div>
+          <p class="s16-q">ズレ（文化的矛盾）はどこか。</p>
+          <span class="lbl-en">CULTURAL CONTRADICTION</span>
+          <div class="s16-slot"></div>
+        </div>
+      </div>
+
+      <div class="s16-row">
+        <span class="idx">02</span>
+        <div>
+          <p class="s16-q">それを埋める物語は何か。</p>
+          <div class="s16-slot"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S11 で「結論」が入っていた位置。今日はここを埋めない。
+         結論があるはずの場所が空いていることが、この一枚の主張。 -->
+    <div class="s16-act">
+      <div class="closer-lbl"><span>明日できること</span></div>
+      <div class="s16-act-slot">
+        <span class="todo">明日できることを1つ、本人が埋める</span>
+      </div>
+    </div>
+
+    <footer class="stamp"><span class="n">16</span><span class="sep">/</span><span class="n">17</span></footer>
+  </div>
+
+  <aside class="speaker-notes" data-n="16">
+    <div class="sn-head"><span class="sn-tag">SPEAKER NOTES</span><span class="sn-no">S16</span></div>
+    <p>ここから、自分たちの話をします。</p>
+    <p>デザインの重要性は上がった、と言われます。実際そう言われる場面は増えました。それでも現場の実感は違って、いまだに工程の一部として発注されます。</p>
+    <p>これが私たちのズレです。いま上に出ている形は、さっきまで見ていたゲーム会社の話とまったく同じものです。二回目です。</p>
+    <p>下の二つは、この場で私が口で埋めます。空欄のまま置いてあるのは、答えを用意していないからではなく、ここで言うためです。</p>
+    <p>明日できることの欄は、社長がその場で承認できる粒度にすること。予算会議が要る提案は、その場で「検討します」と言われて終わります。</p>
+          <p>下の二つは、この場でこう埋めます。01 ズレ＝「デザインは経営マターだ」と言われるのに、依頼は工程の一部として来る。02 物語＝私たちが売っているのは工程ではなく、判断そのものである。<span class="todo">この二行は本番までに自分の言葉に置き換える</span></p>
+      <p>配布する PDF は空欄版と記入版を分ける。当日は空欄版を投影し、記入版を後日配る。</p>
+<p class="sn-todo"><span class="todo">明日できることを1つ、本人が埋める</span></p>
+  </aside>
+</section>
+
+  <section class="slide" data-no="17">
+  <div class="canvas">
+
+    <div class="question">
+      <div class="q-rule"></div>
+      <p class="q-line">この会社は、何を売っていたのか。</p>
+      <p class="q-line q-echo">—— そして、私たちは。</p>
+    </div>
+
+    <footer class="stamp"><span class="n">17</span><span class="sep">/</span><span class="n">17</span></footer>
+  </div>
+
+  <aside class="speaker-notes" data-n="17">
+    <div class="sn-head"><span class="sn-tag">SPEAKER NOTES</span><span class="sn-no">S17</span></div>
+    <p>最初と同じ問いです。一行だけ足しました。</p>
+    <p>答えはこちらからは言いません。さっきと同じ問いに、いま自分の中でどう答えるか。それだけです。</p>
+    <p>読み上げたら黙る。ここで終わりです。質疑は附録を使います。</p>
+  </aside>
+</section>
+
+  <section class="slide" data-appendix data-no="A1">
+  <div class="canvas">
+
+    <div class="meta">
+      <div class="meta-l"><span class="meta-no">A1</span><span class="meta-ttl">附録｜パッチとの切り分け</span></div>
+      <div class="meta-r">PATCH 1.5 vs EDGERUNNERS</div>
+    </div>
+    <div class="rule-top"></div>
+
+    <!-- 図: 目盛りを持たない模式図。基準線（以前の水準）を一本だけ引き、
+         その上に二つの山を置く。灰の山は塗らない、緑の山は塗る。
+         ＝「滞在した分の面積」だけが塗られている、という読みにする。 -->
+    <div class="chart">
+      <svg width="1088" height="330" viewBox="0 0 1088 330" fill="none"
+           aria-label="パッチ配信のあとの山は小さく短く、アニメ配信のあとの山は高く長く続いていることを、同じ基準線の上で比べた模式図">
+
+        <!-- 以前の水準 -->
+        <path d="M176 250H1072" stroke="#DFDBD0" stroke-width="1"/>
+
+        <!-- 事象1: パッチ。灰＝技術。S11 の「技術」の線と同じ色 -->
+        <path d="M312 42V268" stroke="#7A776B" stroke-width="2"/>
+        <circle cx="312" cy="59" r="4" fill="#7A776B"/>
+        <path d="M306 59H288" stroke="#7A776B" stroke-width="1.5"/>
+
+        <!-- 事象2: アニメ。緑＝物語。この図で最も太い線 -->
+        <path d="M700 30V268" stroke="#4A5D3A" stroke-width="3"/>
+        <circle cx="700" cy="51" r="5.5" fill="#4A5D3A"/>
+        <path d="M708 51H716" stroke="#4A5D3A" stroke-width="1.5"/>
+
+        <!-- 結果の線。パッチ側は山が出て、すぐ基準線に戻る。塗らない -->
+        <path d="M176 250C220 249 268 251 312 250C330 249 340 216 358 205C370 198 382 202 394 215C412 234 442 248 478 250C540 251 620 249 700 250"
+              stroke="#7A776B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+
+        <!-- アニメ側。より高く上がり、右端でもまだ基準線に戻っていない。
+             塗りの床は基準線（y=250）。塗られた面積＝上回っていた分×続いた時間。 -->
+        <path d="M700 250C716 244 730 190 748 168C760 153 774 148 790 154C830 168 860 186 900 200C950 217 1010 228 1072 234L1072 250Z"
+              fill="rgba(74,93,58,.08)"/>
+        <path d="M700 250C716 244 730 190 748 168C760 153 774 148 790 154C830 168 860 186 900 200C950 217 1010 228 1072 234"
+              stroke="#4A5D3A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+
+      <div class="ch-lbl" style="top:216px"><b>結果</b><span>同時接続数</span></div>
+
+      <div class="ch-txt" style="left:20px;top:44px;width:264px;text-align:right">
+        次世代機対応パッチ
+        <span class="ch-en">PATCH 1.5 ｜ NEXT-GEN UPDATE</span>
+      </div>
+      <div class="ch-date" style="left:20px;top:108px;width:264px;text-align:right">2022.02</div>
+
+      <div class="ch-txt" style="left:722px;top:36px;width:360px">
+        サイバーパンク エッジランナーズ
+        <span class="ch-en">CYBERPUNK: EDGERUNNERS</span>
+      </div>
+      <div class="ch-date" style="left:722px;top:100px">2022.09</div>
+
+      <div class="ch-year" style="left:172px;top:284px">2022</div>
+    </div>
+
+    <div class="figcap">
+      <span class="figcap-id">図 A1–1</span>
+      <span class="figcap-tx">模式図。目盛りなし。二つの山の形の違いだけを示す。<span class="todo" style="margin-left:16px">パッチの版・配信日と、両ピークの実数・減衰期間を確定（SteamDB）</span></span>
+    </div>
+
+    <div class="rule-mid"></div>
+
+    <div class="ax1-obs">
+      <div class="ax1-row">
+        <span class="ax1-k">観測 <span class="n">1</span></span>
+        <span class="ax1-v">パッチのときも山は出た。ただし<em>小さく、速く戻った</em>。</span>
+      </div>
+      <div class="ax1-row">
+        <span class="ax1-k">観測 <span class="n">2</span></span>
+        <span class="ax1-v">アニメの山は<em>より高く、長く続いた</em>。</span>
+      </div>
+    </div>
+
+    <div class="ax1-sum">
+      <span class="band-lbl">切り分け</span>
+      <p class="ax1-sum-txt">技術的な改善は、<em>回帰</em>をつくる。</p>
+      <p class="ax1-sum-txt">物語は、<em>滞在</em>をつくる。</p>
+    </div>
+
+    <div class="ax-flag">APPENDIX</div>
+    <footer class="stamp"><span class="n">A1</span><span class="sep">/</span><span class="n">A4</span></footer>
+  </div>
+
+  <aside class="speaker-notes" data-n="A1">
+    <div class="sn-head"><span class="sn-tag">SPEAKER NOTES</span><span class="sn-no">A1</span></div>
+    <p>もっともな質問です。2022年2月に次世代機対応のパッチが出ています。あの山はパッチの効果ではないのか、という指摘ですね。</p>
+    <p>答えは、パッチのときも山は出ました、です。ただし小さくて、すぐ元の水準に戻りました。アニメのあとの山は、高さも違いますが、それ以上に続いた長さが違います。</p>
+    <p>技術的な改善は、いちど離れた人を呼び戻します。ただ、その人は用事が済んだら帰ります。物語は居場所をつくるので、そこに留まる。塗ってある面積が、その留まった分です。</p>
+    <p>この数字がまだ取れていない場合は、このスライドは出さないでください。「そこは切り分けきれていません」と正直に言うほうが強いです。曖昧な図を出すと、ここまでの話が全部疑われます。</p>
+          <p>配信と同じ時期にパッチも出ています。ただし次世代機対応のような技術変更とは規模が違います。そこを含めて切り分けきれていない場合は、この図は出さないでください。<span class="todo">同時期のパッチの版と規模を確認</span></p>
+      <p>「同時期の値引きの効果では」と来た場合。これは正当な質問です。切り分けられていないなら、正直にそう言う。曖昧な図は出さない。<span class="todo">配信時期のセールの有無と割引率を確認</span></p>
+      <p>「PSで消えた話をして、戻ってきたのは Steam の数字ですよね」と来た場合。その通りです。両方を跨ぐ数字は公開されていません、と答える。</p>
+<p class="sn-todo"><span class="todo">両ピークの実数と減衰期間を SteamDB で確定</span></p>
+  </aside>
+</section>
+
+  <section class="slide" data-appendix data-no="A2">
+  <div class="canvas">
+
+    <div class="meta">
+      <div class="meta-l"><span class="meta-no">A2</span><span class="meta-ttl">附録｜受託・BtoB の場合</span></div>
+      <div class="meta-r">DOES IT APPLY?</div>
+    </div>
+    <div class="rule-top"></div>
+
+    <div class="ax2-ask">
+      <div class="lbl">想定される質問</div>
+      <p class="ax2-ask-q">「うちは BtoC ではない。代理店も挟まる。棚を変えろと言われても動けない。」</p>
+    </div>
+
+    <div class="ax2-defs">
+      <div class="ax2-def">
+        <div class="ax2-k">棚とは</div>
+        <div class="ax2-v">売り場のことではない。<em>誰と並べて比較されるか</em>のこと。</div>
+      </div>
+      <div class="ax2-def">
+        <div class="ax2-k">受託でも</div>
+        <div class="ax2-v">比較は必ず起きている。相見積もりに並んだ相手が、その棚。</div>
+      </div>
+      <div class="ax2-def">
+        <div class="ax2-k">変えられるのは</div>
+        <div class="ax2-v">比較表の、<em>どの行で見られるか</em>という一点。代理店が挟まるなら、その比較表を作るのは代理店。渡す資料の<em>どの行を太くするか</em>が勝負になる。</div>
+      </div>
+    </div>
+
+    <div class="rule-mid"></div>
+
+    <div class="ax2-open">
+      <span class="band-lbl">この場で埋める</span>
+      <p class="ax2-open-tx">私たちがいま実際に並べられているのは、誰の隣か。</p>
+      <div class="ax2-open-todo"><span class="todo">自社の実際の比較相手を1つ書く</span></div>
+    </div>
+
+    <div class="ax-flag">APPENDIX</div>
+    <footer class="stamp"><span class="n">A2</span><span class="sep">/</span><span class="n">A4</span></footer>
+  </div>
+
+  <aside class="speaker-notes" data-n="A2">
+    <div class="sn-head"><span class="sn-tag">SPEAKER NOTES</span><span class="sn-no">A2</span></div>
+    <p>今日の話が BtoC の話に聞こえたと思います。ただ、棚というのは売り場のことではありません。誰と並べて比較されるか、という意味で使っています。</p>
+    <p>受託でも比較は必ず起きています。相見積もりに並んだ他社が、そのまま棚です。そこは選べません。</p>
+    <p>選べるのは、比較表のどの行で見られるかです。単価の行で比べられるのか、それ以外の行で比べられるのか。そこだけが動かせます。</p>
+    <p>ここから先は、この場で一緒に埋めたいところです。うちが実際に並べられている相手を、ひとつ挙げてもらえますか。</p>
+    <p class="sn-todo"><span class="todo">自社の比較相手を事前に1社決めておく</span></p>
+  </aside>
+</section>
+
+  <section class="slide" data-appendix data-no="A3">
+  <div class="canvas">
+
+    <div class="meta">
+      <div class="meta-l"><span class="meta-no">A3</span><span class="meta-ttl">附録｜で、いくらかかるのか</span></div>
+      <div class="meta-r">COST</div>
+    </div>
+    <div class="rule-top"></div>
+
+    <p class="ax3-lead">今日の三つの事例で、追加でかかったのは何だったか。</p>
+
+    <div class="ax3-cols">
+      <div class="ax3-col">
+        <span class="idx">01</span>
+        <div class="co"><div class="co-name">任天堂</div><span class="co-en">NINTENDO</span></div>
+        <p class="ax3-item">金型と、同梱するもの</p>
+        <p class="ax3-kind">＝ 製造原価</p>
+      </div>
+
+      <div class="ax3-col">
+        <span class="idx">02</span>
+        <div class="co"><div class="co-name">Cyberpunk 2077</div><span class="co-en">CD PROJEKT RED</span></div>
+        <p class="ax3-item">アニメの制作費</p>
+        <p class="ax3-kind">＝ 外部スタジオへの投資</p>
+      </div>
+
+      <div class="ax3-col">
+        <span class="idx">03</span>
+        <div class="co"><div class="co-name">原神</div><span class="co-en">GENSHIN IMPACT</span></div>
+        <p class="ax3-item">全世界で同時に配信する体制</p>
+        <p class="ax3-kind">＝ 運用の体制</p>
+      </div>
+    </div>
+
+    <div class="rule-mid"></div>
+
+    <div class="ax3-sum">
+      <span class="band-lbl">共通点</span>
+      <p class="ax3-sum-txt">どれも、作り直しの費用ではない。</p>
+      <p class="ax3-sum-txt"><em>棚</em>と<em>物語</em>への投資だった。</p>
+      <p class="ax3-sum-txt ax3-sum-cost">安い、という話ではない。作り直しと同じ額を、そこに払っている。</p>
+    </div>
+
+    <div class="ax3-self">
+      <div class="lbl">自社の場合</div>
+      <p class="ax3-self-tx">初手にいくらかかり、どこで回収するのか。</p>
+      <div class="ax3-self-todo"><span class="todo">初手のコストと回収経路を1行で書く</span></div>
+    </div>
+
+    <div class="ax-flag">APPENDIX</div>
+    <footer class="stamp"><span class="n">A3</span><span class="sep">/</span><span class="n">A4</span></footer>
+  </div>
+
+  <aside class="speaker-notes" data-n="A3">
+    <div class="sn-head"><span class="sn-tag">SPEAKER NOTES</span><span class="sn-no">A3</span></div>
+    <p>いちばん怖い質問です。正直に言うと、うちのコスト構造でいくら、という数字は今日は持ってきていません。</p>
+    <p>持ってきたのは、三つの事例で実際に何にお金がかかったか、です。金型と同梱品、アニメの制作費、全世界で同時に配信する体制。</p>
+    <p>共通しているのは、どれも作り直しの費用ではないことです。作るものは変えずに、置き方と語り方のほうに払っています。</p>
+    <p>うちの場合は、この空欄を埋めるところから始めさせてください。初手にいくらかかって、どこで回収するのか。次までに一行で書いてきます。</p>
+    <p class="sn-todo"><span class="todo">自社の初手コストと回収経路を事前に1行にしておく</span></p>
+  </aside>
+</section>
+
+  <section class="slide" data-appendix data-no="A4">
+  <div class="canvas">
+
+    <div class="meta">
+      <div class="meta-l"><span class="meta-no">A4</span><span class="meta-ttl">附録｜原神は国策か</span></div>
+      <div class="meta-r">miHoYo — PRIVATE</div>
+    </div>
+    <div class="rule-top"></div>
+
+    <div class="ax4-body">
+      <p class="ax4-line">原神をつくった miHoYo は、民間企業。
+        <span class="ax4-en">miHoYo ｜ SHANGHAI</span>
+      </p>
+      <p class="ax4-line">上海の大学の学生 <span class="n">3</span> 人が立ち上げ、自己資本で始まっている。</p>
+      <p class="ax4-line">中国はゲームに対して認可制と、未成年の時間規制を敷いている。制度としてはむしろ抑制側。</p>
+      <p class="ax4-line">ここから先は、確認できていない。</p>
+    </div>
+
+    <div class="rule-mid"></div>
+
+    <div class="ax4-open">
+      <div class="lbl">まだ確認していない事項</div>
+      <div class="ax4-todos">
+        <span class="todo">創業の経緯（年・人数・資金）を確定</span>
+        <span class="todo">初期の資本構成を確定</span>
+        <span class="todo">従業員規模を確定</span>
+      </div>
+    </div>
+
+    <div class="ax-flag">APPENDIX</div>
+    <footer class="stamp"><span class="n">A4</span><span class="sep">/</span><span class="n">A4</span></footer>
+  </div>
+
+  <aside class="speaker-notes" data-n="A4">
+    <div class="sn-head"><span class="sn-tag">SPEAKER NOTES</span><span class="sn-no">A4</span></div>
+    <p>国の後押しがあったのでは、という質問ですね。分かっている範囲だけで答えます。</p>
+    <p>miHoYo は上海の大学の学生3人が立ち上げた民間企業です。自己資本で始まっています。</p>
+    <p>そこから先、どこまで政策の影響があったかは把握していません。確定できていないことは「そこまでは把握していません」と言ってください。曖昧に断定するより、そのほうが強いです。</p>
+          <p>後押しがあったかは把握していません。少なくとも制度としては規制が強い側です、と事実だけ言って止める。政治の議論には入らない。</p>
+<p class="sn-todo"><span class="todo">創業年と初期の資本構成を事前に確認</span></p>
+  </aside>
+</section>
+
+  <section class="slide" data-appendix data-no="A5">
+  <div class="canvas">
+
+    <div class="meta">
+      <div class="meta-l"><span class="meta-no">A5</span><span class="meta-ttl">附録｜成功例だけを選んでいないか</span></div>
+      <div class="meta-r">SURVIVORSHIP</div>
+    </div>
+    <div class="rule-top"></div>
+
+    <div class="ax5-q">
+      <span class="lbl">想定される質問</span>
+      <p class="ax5-q-tx">「三つとも成功した会社です。同じことをやって失敗した会社もあるのでは」</p>
+    </div>
+
+    <div class="ax5-defs">
+      <div class="ax5-def">
+        <div class="ax5-k">まず認める</div>
+        <div class="ax5-v">そのとおりです。今日の三つは<em>生き残った側</em>。棚を変えて失敗した会社も、物語を変えて失敗した会社もあります。</div>
+      </div>
+      <div class="ax5-def">
+        <div class="ax5-k">主張はこちら</div>
+        <div class="ax5-v">今日の話は「棚と物語を変えれば勝てる」ではありません。<em>「製品が良ければ勝てる」が、それだけでは成立しない</em>という話です。</div>
+      </div>
+      <div class="ax5-def">
+        <div class="ax5-k">反証になるもの</div>
+        <div class="ax5-v">棚も物語も変えずに、製品の質だけで一度失った市場を取り返した例。思い当たるものがあれば、教えてください。</div>
+      </div>
+    </div>
+
+    <div class="rule-mid"></div>
+
+    <div class="ax5-sum">
+      <span class="band-lbl">切り分け</span>
+      <p class="ax5-sum-tx">今日の話は、勝ち方の処方ではありません。<em>負けている理由の切り分け</em>です。</p>
+    </div>
+
+    <div class="ax-flag">APPENDIX</div>
+    <footer class="stamp"><span class="n">A5</span><span class="sep">/</span><span class="n">A5</span></footer>
+  </div>
+
+  <aside class="speaker-notes" data-n="A5">
+    <div class="sn-head"><span class="sn-tag">SPEAKER NOTES</span><span class="sn-no">A5</span></div>
+    <p>これは正当な質問なので、まず全面的に認めます。反論しない。</p>
+    <p>そのうえで、主張の強さを下げて答える。「これをやれば勝てる」とは言っていない、「製品の質だけでは説明がつかない」と言っている、という切り分けです。</p>
+    <p>最後の「反証になるもの」を聞き返すのは、議論を勝ち負けにしないため。相手が例を出してきたら、それは今日の話を壊すのではなく、精度を上げる材料になります。</p>
+  </aside>
+</section>
+
+</div><!-- /.stage -->
+
+<div class="hint" id="hint" title="発表者ノート">?</div>
+</div><!-- /.viewport -->
+
+<script>
+(function () {
+  var stage = document.getElementById('stage');
+  var all   = [].slice.call(document.querySelectorAll('.slide'));
+
+  // 本編と附録は別の並び。附録は ← → の流れには出てこない。
+  var main = all.filter(function (s) { return !s.hasAttribute('data-appendix'); });
+  var apx  = all.filter(function (s) { return  s.hasAttribute('data-appendix'); });
+
+  var deck = main;   // いま辿っている並び
+  var i    = 0;
+  var back = 0;      // 附録に入る前にいた本編の位置
+  var backSteps = 0; // そのときの開示ステップ数
+
+  // 1280x720 のステージをビューポートにフィットさせる
+  function fit() {
+    var s = Math.min(window.innerWidth / 1280, window.innerHeight / 720);
+    stage.style.transform = 'translate(-50%,-50%) scale(' + s + ')';
+  }
+
+  function steps(slide) {
+    return [].slice.call(slide.querySelectorAll('[data-step]'))
+             .sort(function (a, b) { return a.dataset.step - b.dataset.step; });
+  }
+
+  function show(slide, upTo) {   // upTo = 表示済みにするステップ数
+    steps(slide).forEach(function (el, k) { el.classList.toggle('is-shown', k < upTo); });
+  }
+
+  function go(n, openSteps) {
+    i = Math.max(0, Math.min(deck.length - 1, n));
+    all.forEach(function (s) { s.classList.remove('is-active'); });
+    var cur = deck[i];
+    cur.classList.add('is-active');
+    show(cur, openSteps === 'all' ? steps(cur).length : (+openSteps || 0));
+    if (deck === main) history.replaceState(null, '', '#s' + cur.dataset.no);
+  }
+
+  function shown(slide) {
+    return steps(slide).filter(function (el) { return el.classList.contains('is-shown'); }).length;
+  }
+
+  // 段階表示があるスライドでは、まず次のステップを出してから次の1枚へ進む
+  function next() {
+    var cur = deck[i], n = shown(cur);
+    if (n < steps(cur).length) { show(cur, n + 1); return; }
+    if (i < deck.length - 1) go(i + 1);
+  }
+  function prev() {
+    var cur = deck[i], n = shown(cur);
+    if (n > 0) { show(cur, n - 1); return; }
+    if (i > 0) go(i - 1, 'all');   // 戻るときは前の1枚を展開済みで見せる
+  }
+
+  function toggleAppendix() {
+    if (!apx.length) return;
+    if (deck === main) { back = i; backSteps = shown(deck[i]); deck = apx; go(0); }
+    else               { deck = main; go(back, backSteps); }
+    document.body.classList.toggle('appendix-on', deck === apx);
+  }
+
+  function toggleNotes() { document.body.classList.toggle('notes-on'); }
+
+  var NEXT = ['ArrowRight', 'ArrowDown', 'PageDown', ' ', 'Spacebar'];
+  var PREV = ['ArrowLeft', 'ArrowUp', 'PageUp', 'Backspace'];
+
+  window.addEventListener('keydown', function (e) {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (NEXT.indexOf(e.key) > -1)      { e.preventDefault(); next(); }
+    else if (PREV.indexOf(e.key) > -1) { e.preventDefault(); prev(); }
+    else if (e.key === 'Home')         { e.preventDefault(); go(0); }
+    else if (e.key === 'End')          { e.preventDefault(); go(deck.length - 1, 'all'); }
+    // A = 附録（質疑応答用）。もう一度 A で元の位置に戻る。
+    else if (e.key === 'a' || e.key === 'A') { e.preventDefault(); toggleAppendix(); }
+    else if (e.key === 'Escape') {
+      if (document.body.classList.contains('notes-on')) document.body.classList.remove('notes-on');
+      else if (deck === apx) toggleAppendix();
+    }
+    // JISキーボードでは / が無シフトで打てる。素の / でノートが開くと
+    // 登壇中に手が当たっただけで投影面にノートが出るので、Shift を必須にする。
+    else if (e.key === '?' || (e.key === '/' && e.shiftKey)) { e.preventDefault(); toggleNotes(); }
+    // Firefox の Quick Find に ← → を奪われないよう、素の / も握りつぶす
+    else if (e.key === '/') { e.preventDefault(); }
+  });
+
+  document.getElementById('hint').addEventListener('click', function (e) {
+    e.stopPropagation(); toggleNotes();
+  });
+
+  // クリックで前進。ノート内と、テキスト選択中は送らない。
+  window.addEventListener('click', function (e) {
+    if (e.target.closest('.speaker-notes')) return;
+    var sel = window.getSelection();
+    if (sel && String(sel).length) return;
+    next();
+  });
+
+  // 番号は data-no を唯一の出所にして埋め直す。1枚差し込んでも他を触らなくてよい。
+  // マークアップ側にも番号は書いてあるので、JS が落ちても印刷には出る。
+  function stamp(list, total) {
+    list.forEach(function (s) {
+      var f = s.querySelectorAll('.stamp .n');
+      if (f.length > 1) { f[0].textContent = s.dataset.no; f[1].textContent = total; }
+      var m = s.querySelector('.meta-no'); if (m) m.textContent = 'S' + s.dataset.no;
+      var n = s.querySelector('.sn-no');   if (n) n.textContent = 'S' + s.dataset.no;
+    });
+  }
+  stamp(main, String(main.length - 1).padStart(2, '0'));   // S00 は分母に数えない
+  stamp(apx, 'A' + apx.length);
+  apx.forEach(function (s) { var f = s.querySelector('.ax-flag'); if (f) f.textContent = 'APPENDIX'; });
+
+  window.addEventListener('resize', fit);
+  fit();
+
+  // #s11 のようなハッシュで直接開ける
+  var start = -1;
+  main.forEach(function (s, k) { if ('#s' + s.dataset.no === location.hash) start = k; });
+  go(start > -1 ? start : 0);
+})();
+</script>
+</body>
+</html>

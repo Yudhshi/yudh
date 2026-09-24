@@ -1,0 +1,641 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>この会社は、何を売っていたのか。｜社内研修（トーン確認 S01 / S11 / S14）</title>
+
+<!--
+  ==========================================================================
+  社内研修デッキ ／ トーン確認版
+  収録: S01（問い） / S11（なぜ跳ねたのか） / S14（三つを並べる）
+  ==========================================================================
+
+  ■ 構造
+    .viewport > .stage(1280x720) > section.slide > .canvas
+    残り14枚を足すときは section.slide をこの順に並べるだけ。
+    JS・CSS は触らなくてよい。data-no がインジケーターと印刷ページ番号を兼ねる。
+
+  ■ 操作
+    → ↓ Space PageDown / クリック : 次へ（段階表示があればまずそれを1つ出す）
+    ← ↑ Backspace PageUp          : 前へ
+    ?  (Shift + /)                : 発表者ノート
+    A                             : 附録（質疑応答用）へ。もう一度 A で元の位置に戻る
+    Home / End                    : 先頭 / 末尾
+    Esc                           : ノートを閉じる（開いていなければ附録から戻る）
+
+  ■ ネットワーク依存について（重要・当日までに要対応）
+    Tailwind と Noto Sans JP を CDN から読んでいる。会議室のWi-Fiが無い／
+    プロキシで塞がれている場合に備え、レイアウトに効く指定はすべて下の
+    <style> にネイティブCSSで書いてある。CDNが落ちても版面は崩れない。
+    TODO: 本番前に Tailwind をローカルにベンダリングし、Noto Sans JP も
+          同梱するか、和文フォールバック（下の --sans）で通す判断をする。
+
+  ■ 数値の扱い
+    同時接続数・売上・順位・価格は一切書いていない。
+    未確定は .todo チップで「意図的な未確定」として面に出す。
+  ==========================================================================
+-->
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  // 追加スライドを書くときに使うトークン。レイアウトの土台は <style> 側にある。
+  tailwind.config = {
+    theme: { extend: {
+      fontFamily: {
+        sans: ['"Noto Sans JP"','"Hiragino Kaku Gothic ProN"','"Yu Gothic"','Meiryo','sans-serif'],
+        mono: ['ui-monospace','SFMono-Regular','Menlo','Consolas','monospace']
+      },
+      colors: {
+        paper:'#FAF9F5', ink:'#1B1A16', ink2:'#33312A',
+        muted:'#5C5A50', sub:'#6E6B60',
+        rule:'#C9C4B8', hair:'#DFDBD0',
+        accent:'#4A5D3A', accent2:'#6E8555'
+      }
+    }}
+  }
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================== tokens */
+:root{
+  --desk:#E7E3DC;              /* ステージ外。16:10 / 4:3 の投影で版面の縁を見せる */
+  --paper:#FAF9F5;
+  --paper2:#F3F1E9;
+  --ink:#1B1A16;               /* 15.6:1 */
+  --ink2:#33312A;              /* 11.4:1 */
+  --muted:#5C5A50;             /*  6.6:1  本文の副次 */
+  --sub:#6E6B60;               /*  5.1:1  英語併記の下限。これより薄い色に文字を置かない */
+  --rule:#C9C4B8;              /* 構造罫。プロジェクタで生き残る濃さ */
+  --hair:#DFDBD0;              /* 補助罫。消えても意味が落ちないものだけ */
+  --accent:#4A5D3A;            /* hsl(93 23% 30%) 低彩度の深いオリーブ / 6.9:1 */
+  --accent2:#6E8555;
+  --wash:rgba(74,93,58,.055);
+  --sans:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:var(--desk);color:var(--ink);
+  font-family:var(--sans);font-weight:400;
+  -webkit-font-smoothing:antialiased;
+  overflow:hidden;cursor:default;
+}
+
+/* ====================================================== stage & slides */
+.viewport{position:fixed;inset:0;overflow:hidden}
+.stage{
+  position:absolute;left:50%;top:50%;
+  width:1280px;height:720px;
+  transform-origin:50% 50%;
+  background:var(--paper);
+  box-shadow:0 0 0 1px #D6D0C6;   /* 版面の縁。投影が切れているのか余白なのかを判別できる */
+  /* 和文の折り返し規則を既定任せにしない */
+  line-break:strict;
+  word-break:normal;
+  overflow-wrap:normal;
+  text-spacing-trim:trim-start;   /* 行頭の「（ 等の全角約物を詰める */
+}
+.slide{position:absolute;inset:0;display:none}
+.slide.is-active{display:block}
+.canvas{position:absolute;inset:0;overflow:hidden}
+
+/* =============================================== typography primitives */
+/* 数字・英字は和文より少し重く、少し大きく */
+.n{font-size:1.06em;font-weight:500;letter-spacing:.01em;font-variant-numeric:tabular-nums}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+/* 上部メタ行 ------------------------------------------------------------ */
+.meta{
+  position:absolute;left:96px;right:96px;top:46px;
+  display:flex;justify-content:space-between;align-items:baseline;
+}
+.meta-l{display:flex;align-items:baseline;gap:16px}
+.meta-no{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.16em;color:var(--accent)}
+.meta-ttl{font-size:14px;letter-spacing:.12em;color:var(--ink2)}
+.meta-r{font-family:var(--mono);font-size:13px;letter-spacing:.14em;color:var(--sub)}
+.rule-top{position:absolute;left:96px;right:96px;top:84px;height:1px;background:var(--rule)}
+
+/* ラベル → 内容 のペア -------------------------------------------------- */
+.lbl{font-size:15px;letter-spacing:.12em;color:var(--muted)}
+.lbl-en{display:block;font-family:var(--mono);font-size:14px;letter-spacing:.12em;color:var(--sub);margin-top:6px}
+.idx{font-family:var(--mono);font-size:13px;letter-spacing:.18em;color:var(--accent2)}
+
+/* 未確定チップ ---------------------------------------------------------- */
+.todo{
+  display:inline-flex;align-items:baseline;gap:7px;
+  font-family:var(--mono);font-size:12.5px;letter-spacing:.1em;
+  color:var(--accent);border-bottom:1px dotted var(--accent2);
+  padding-bottom:2px;white-space:nowrap;
+}
+.todo::before{content:"TODO";font-weight:600;letter-spacing:.16em;opacity:.7}
+
+/* 現在位置（各スライドが自分の番号を持つ。JS が落ちても印刷でも出る） ---- */
+.stamp{
+  position:absolute;right:96px;bottom:28px;
+  font-family:var(--mono);font-size:13px;letter-spacing:.16em;
+  color:var(--sub);font-variant-numeric:tabular-nums;user-select:none;
+}
+.stamp .sep{color:var(--rule);margin:0 .5em}
+
+/* 操作ヒント（ステージ外＝スライドの一部ではない） ---------------------- */
+.hint{
+  position:fixed;left:18px;bottom:16px;z-index:5;
+  font-family:var(--mono);font-size:11px;letter-spacing:.14em;
+  color:#8C877D;border:1px solid #D2CCC2;padding:4px 7px 5px;
+  background:rgba(255,255,255,.6);cursor:pointer;
+}
+body.notes-on .hint{color:var(--accent);border-color:var(--accent2)}
+
+/* ======================================================================
+   S01 / S17 共有コンポーネント: .question
+   S17 は .q-echo を1行足すだけ。.question は上端固定なので
+   1行目の座標は 1px も動かず、視覚的な対句が成立する。
+   罫の長さ・行頭 x・ブロックの y は S1 と S17 で絶対に変えないこと。
+   ====================================================================== */
+.question{position:absolute;left:96px;top:262px;right:96px}
+.q-rule{width:44px;height:2px;background:var(--accent);margin-bottom:54px}
+.q-line{font-size:56px;font-weight:500;line-height:1.45;letter-spacing:.012em;color:var(--ink)}
+.q-echo{font-weight:400;color:var(--muted);margin-top:10px}
+.q-aside{position:absolute;left:96px;top:606px;max-width:560px}
+.q-aside p{font-size:16px;line-height:1.9;letter-spacing:.03em;color:var(--muted)}
+
+/* ======================================================================
+   S11 ｜ なぜ跳ねたのか
+   論証の核 = 「技術（パッチ）は縦線を跨いでも何も変わらない ／
+   結果が動いたのは物語（アニメ）の後だけ」という非対称。
+   図の中の文字を最小にし、ラベルを 19px 以上で組めるところまで要素を削った。
+   ====================================================================== */
+
+/* 図版プレースホルダ。「物語」の帯の中、縦線のすぐ右に置く。
+   ＝ 写真そのものが「2022.09 にこれが届いた」というマーカーになる。
+   面上に説明文は出さない（何を入れるかは data-image-note に書く）。 */
+.plate{position:absolute;left:826px;top:66px;width:216px;height:114px}
+.plate .marks{position:absolute;inset:0}
+
+.chart{position:absolute;left:96px;top:116px;width:1088px;height:330px}
+.chart > svg{position:absolute;left:0;top:0}
+/* 図の中の文字はすべて HTML 側で組む（和文の字送りと折り返しのため） */
+.ch-lbl{position:absolute;left:0;width:130px}
+.ch-lbl b{display:block;font-size:19px;font-weight:500;letter-spacing:.08em;color:var(--ink2)}
+.ch-lbl span{display:block;font-size:14px;letter-spacing:.06em;color:var(--sub);margin-top:5px}
+.ch-txt{position:absolute;font-size:19px;font-weight:500;line-height:1.6;letter-spacing:.03em;color:var(--ink)}
+.ch-en{display:block;font-family:var(--mono);font-size:14px;font-weight:400;letter-spacing:.1em;color:var(--sub);margin-top:6px}
+.ch-date{position:absolute;font-family:var(--mono);font-size:17px;font-weight:600;letter-spacing:.08em;color:var(--accent)}
+.ch-year{position:absolute;font-family:var(--mono);font-size:15px;letter-spacing:.12em;color:var(--sub)}
+.ch-call{position:absolute;font-size:17px;line-height:1.7;letter-spacing:.03em;color:var(--ink)}
+
+.figcap{
+  position:absolute;left:96px;right:96px;top:462px;
+  display:flex;align-items:baseline;gap:18px;
+}
+.figcap-id{font-family:var(--mono);font-size:13px;letter-spacing:.16em;color:var(--ink2);white-space:nowrap}
+.figcap-tx{font-size:14px;line-height:1.8;letter-spacing:.02em;color:var(--muted)}
+
+.rule-mid{position:absolute;left:96px;right:96px;top:510px;height:1px;background:var(--rule)}
+
+.band{position:absolute;left:96px;top:534px}
+.band-lbl{display:block;font-size:14px;letter-spacing:.18em;color:var(--accent);margin-bottom:14px}
+.band-lbl::before{content:"";display:block;width:20px;height:2px;background:var(--accent);margin-bottom:12px}
+.band-txt{width:640px;font-size:34px;font-weight:500;line-height:1.45;letter-spacing:.02em;color:var(--ink)}
+.band-txt em{font-style:normal;font-weight:600;color:var(--accent)}
+
+/* 建前 / 実感 — S12・S16 でも同じ形で再登場させる視覚言語。
+   ここで最小形に確定させる: ラベル1語 + 本文1行。差はウェイトとサイズで作り、
+   色の濃淡には依存させない（淡い側が投影で消えると対比が成立しないため）。 */
+.contrast{position:absolute;left:800px;top:534px;width:384px}
+.c-line{display:flex;align-items:baseline;gap:20px;padding:11px 0}
+.c-line + .c-line{border-top:1px solid var(--hair)}
+.c-key{flex:none;width:38px;font-size:14px;letter-spacing:.14em;color:var(--muted)}
+.c-val{font-size:18px;line-height:1.6;letter-spacing:.02em;color:var(--ink2)}
+.c-val.is-real{font-weight:600;font-size:19px;color:var(--ink)}
+
+/* ======================================================================
+   S14 ｜ 三つを並べる
+   縦罫は引かない。横罫と余白だけで表を作る。
+   「変えなかったもの」の行は、地色ではなく 2px のアクセント罫＋ウェイトで
+   差をつける（薄いティントは投影で消えるため、そちらは補助にとどめる）。
+   ====================================================================== */
+.cmp{position:absolute;left:96px;right:96px;top:120px}
+.cmp-row{display:grid;grid-template-columns:176px repeat(3,1fr);column-gap:40px;align-items:start}
+.cmp-row.ruled{border-top:1px solid var(--rule);padding-top:24px;padding-bottom:26px}
+.cmp-key .idx{display:block;margin-bottom:8px}
+.cmp-key .k{display:block;font-size:15px;letter-spacing:.1em;color:var(--ink2)}
+.cmp-cell{font-size:19px;line-height:1.75;letter-spacing:.02em;color:var(--ink2)}
+.co{padding-bottom:22px}
+.co-name{font-size:22px;font-weight:600;letter-spacing:.02em;color:var(--ink)}
+.co-en{display:block;font-family:var(--mono);font-size:14px;letter-spacing:.14em;color:var(--sub);margin-top:8px}
+
+.cmp-row.same{
+  border-left:2px solid var(--accent);
+  margin-left:-18px;padding-left:16px;
+  margin-right:-18px;padding-right:18px;
+  background:var(--wash);
+}
+.cmp-row.same .cmp-cell{color:var(--accent);font-weight:600;font-size:20px}
+.cmp-row.same .k,.cmp-row.same .idx{color:var(--accent)}
+
+/* 三列を束ねて、締めの一行に落とすブレース。
+   .cmp の実高（120 + 84 + 101*3 = 507）の直下に置く。行の文字量を変えたら
+   ここも合わせて動かすこと。 */
+.brace{position:absolute;left:312px;top:519px}   /* x = 96 + 176 + 40 */
+
+.closer{position:absolute;left:96px;right:96px;top:577px;
+        display:grid;grid-template-columns:176px 1fr;column-gap:40px;align-items:start}
+.closer-lbl::before{content:"";display:block;width:20px;height:2px;background:var(--accent);margin-bottom:12px}
+.closer-lbl span{font-size:14px;letter-spacing:.16em;color:var(--accent)}
+.closer-txt{font-size:34px;font-weight:500;line-height:1.45;letter-spacing:.02em;color:var(--ink)}
+
+/* ======================================================================
+   段階表示（data-step）
+   1枚の中で順に強調したいとき、要素に data-step="1" … を振る。
+   → キーはまず未表示のステップを出し、全部出てから次のスライドへ進む。
+   消さずに沈めるのは、聴衆が「あと何項目あるか」を把握できるようにするため。
+   印刷では全ステップを表示する。
+   ====================================================================== */
+[data-step]{opacity:.26;transition:opacity .22s ease}
+[data-step].is-shown{opacity:1}
+
+/* ======================================================================
+   附録スライド（data-appendix）
+   通常の ← → の流れには出てこない。A キーで入って A / Esc で戻る。
+   質疑で聞かれたときに、キーを1つ叩けば答えのスライドが出る。
+   ====================================================================== */
+.slide[data-appendix] .stamp{color:var(--accent)}
+.ax-flag{
+  position:absolute;left:96px;bottom:28px;
+  font-family:var(--mono);font-size:13px;letter-spacing:.18em;color:var(--accent);
+}
+
+/* ================================================== 発表者ノート（画面） */
+.speaker-notes{display:none}
+/* 画面用の指定は必ず @media screen で囲う。囲わないと詳細度で印刷用を
+   打ち負かし、「表示中のスライドのノートだけ」が帯として本文に重なって刷られる。 */
+@media screen{
+  body.notes-on .slide.is-active .speaker-notes{
+    display:block;position:absolute;left:0;right:0;bottom:0;
+    max-height:340px;overflow-y:auto;      /* 面の半分以上を覆わない */
+    background:var(--paper);border-top:2px solid var(--accent);
+    padding:24px 96px 28px;
+    box-shadow:0 -30px 44px -30px rgba(27,26,22,.18);
+  }
+}
+.sn-head{display:flex;align-items:baseline;gap:16px;margin-bottom:14px}
+.sn-tag{font-family:var(--mono);font-size:11px;letter-spacing:.24em;color:var(--accent)}
+.sn-no{font-family:var(--mono);font-size:11px;letter-spacing:.18em;color:var(--sub)}
+/* 和文の可読行長は 35〜45字。15px なら 600px 前後で必ず折る */
+.speaker-notes p{font-size:15px;line-height:1.95;letter-spacing:.02em;color:var(--ink2);max-width:600px}
+.speaker-notes p + p{margin-top:10px}
+.speaker-notes .sn-todo{margin-top:14px}
+
+/* ================================================================ print */
+/*
+  1スライド = 1ページ。ページをステージと同寸（1280x720px = 338.67 x 190.5mm）に
+  固定し、scale を解除する。画面と印刷で 1px もずれない。
+  既定ではノートを刷らない（＝配布用）。? で開いた状態で刷ると、
+  各スライドの直後にノート単独ページが出る（＝発表者の手元用）。
+*/
+@media print{
+  @page{size:338.67mm 190.5mm;margin:0}
+  html,body{height:auto;overflow:visible;background:#fff}
+  body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .viewport{position:static;overflow:visible}
+  .stage{position:static;transform:none !important;width:1280px;height:auto;box-shadow:none}
+  .slide{position:static;display:block !important;width:1280px;height:auto}
+  .canvas{
+    position:relative;inset:auto;width:1280px;height:720px;overflow:hidden;
+    break-after:page;page-break-after:always;
+  }
+  body:not(.notes-on) .slide:last-of-type .canvas{break-after:auto;page-break-after:auto}
+  .hint{display:none}
+  /* 紙は投影より階調が出るので、罫は元の細さに戻してよい */
+  .rule-top,.rule-mid,.cmp-row.ruled{border-color:#DCD7CC}
+  .rule-top,.rule-mid{background:#DCD7CC}
+  /* 段階表示は紙では全部出す */
+  [data-step]{opacity:1 !important}
+
+  .speaker-notes{display:none}
+  body.notes-on .speaker-notes{
+    display:block;position:static;width:1280px;height:720px;
+    padding:112px 160px;background:#fff;border:0;box-shadow:none;
+    break-after:page;page-break-after:always;
+  }
+  body.notes-on .speaker-notes p{font-size:17px;line-height:2.1;max-width:680px}
+  body.notes-on .slide:last-of-type .speaker-notes{break-after:auto;page-break-after:auto}
+}
+</style>
+</head>
+
+<body>
+<div class="viewport">
+<div class="stage" id="stage">
+
+  <!-- ==================================================== S01 ｜ 問い -->
+  <!-- デッキ中もっとも静かな一枚。要素は 罫 / 問い / 添え の3つだけ。 -->
+  <section class="slide" data-no="01">
+    <div class="canvas">
+
+      <div class="question">
+        <div class="q-rule"></div>
+        <p class="q-line">この会社は、何を売っていたのか。</p>
+        <!-- ▼ S17 ではこの一行を足すだけ。上の行は 1px も動かない。
+        <p class="q-line q-echo">—— そして、私たちは。</p>
+        -->
+      </div>
+
+      <!-- 「この問いは最後にもう一度出てきます」の添えは削除した。
+           S17 の仕掛けを事前に明かすうえ、発表者ノートに同じ内容があるため
+           口頭で足りる。結果、この一枚の要素は「罫」と「問い」の2つだけになる。 -->
+
+      <footer class="stamp"><span class="n">01</span><span class="sep">/</span><span class="n">17</span></footer>
+    </div>
+
+    <aside class="speaker-notes" data-n="01">
+      <div class="sn-head"><span class="sn-tag">SPEAKER NOTES</span><span class="sn-no">S01</span></div>
+      <p>まず、この問いだけ置かせてください。今日は三つの会社の話をしますが、全部この問いに戻ってきます。</p>
+      <p>答えは今は言いません。最後のスライドで、まったく同じ形でもう一度出てきます。そのとき皆さんの中の答えが変わっていたら、今日の25分は成功です。</p>
+      <p>読み上げたら、五秒黙ってから次へ。ここは急がない。</p>
+    </aside>
+  </section>
+
+  <!-- ========================================== S11 ｜ なぜ跳ねたのか -->
+  <!-- デッキ全体で最も証明を要する一枚。ここだけ密度を上げてよい。
+       ただし上げるべきは図の密度であって、文字の密度ではない。 -->
+  <section class="slide" data-no="11">
+    <div class="canvas">
+
+      <div class="meta">
+        <div class="meta-l"><span class="meta-no">S11</span><span class="meta-ttl">なぜ跳ねたのか</span></div>
+        <div class="meta-r">CYBERPUNK 2077 — CD PROJEKT RED</div>
+      </div>
+      <div class="rule-top"></div>
+
+      <!-- 図: 目盛りを持たない模式図。数値軸は作らない。
+           上から 技術 → 物語 → 結果 の順に置き、視線が落ちる動きがそのまま
+           前提 → 事象 → 帰結 の順になる。
+           アクセントの縦線1本だけが三段すべてを貫き、この図で最も太い線である。 -->
+      <div class="chart">
+        <svg width="1088" height="330" viewBox="0 0 1088 330" fill="none"
+             aria-label="パッチの配信は縦線を跨いでも等間隔に続いているのに対し、結果の線はアニメ配信の縦線の直後にだけ跳ねていることを示す模式図">
+
+          <!-- 技術: 等間隔に打たれ続けたティック。縦線を無視して同じ間隔で走り抜ける -->
+          <g stroke="#7A776B" stroke-width="1.5" stroke-linecap="round">
+            <path d="M176 24V42"/><path d="M232 24V42"/><path d="M288 24V42"/><path d="M344 24V42"/>
+            <path d="M400 24V42"/><path d="M456 24V42"/><path d="M512 24V42"/><path d="M568 24V42"/>
+            <path d="M624 24V42"/><path d="M680 24V42"/><path d="M736 24V42"/><path d="M792 24V42"/>
+            <path d="M848 24V42"/><path d="M904 24V42"/><path d="M960 24V42"/><path d="M1016 24V42"/>
+            <path d="M1072 24V42"/>
+          </g>
+
+          <!-- 結果: アニメ以前。ほぼ水平・無彩色 -->
+          <path d="M154 280C240 278 320 282 400 279C480 276 560 281 640 278C700 276 750 280 798 277"
+                stroke="#7A776B" stroke-width="2" stroke-linecap="round"/>
+
+          <!-- 結果: アニメ以後。色が切り替わり、立ち上がる。
+               塗りの床は「アニメ以前の水準」（y=277）に置いてある。
+               ＝ 塗られている面積は、それまでの水準を上回っている分だけを指す。 -->
+          <path d="M798 277C818 272 836 228 858 208C868 199 878 196 890 199C930 209 980 231 1040 243L1088 247L1088 277L798 277Z"
+                fill="rgba(74,93,58,.08)"/>
+          <path d="M798 277C818 272 836 228 858 208C868 199 878 196 890 199C930 209 980 231 1040 243L1088 247"
+                stroke="#4A5D3A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+          <!-- 物語: この図で唯一の縦線。三段すべてを貫き、他のどの線より太い -->
+          <path d="M798 16V292" stroke="#4A5D3A" stroke-width="3"/>
+          <circle cx="798" cy="123" r="5.5" fill="#4A5D3A"/>
+          <path d="M806 123H826" stroke="#4A5D3A" stroke-width="1.5"/>
+        </svg>
+
+        <div class="ch-lbl" style="top:18px"><b>技術</b><span>パッチ配信</span></div>
+        <div class="ch-lbl" style="top:96px"><b>物語</b><span>アニメ配信</span></div>
+        <div class="ch-lbl" style="top:206px"><b>結果</b><span>同時接続数</span></div>
+
+        <div class="ch-txt" style="left:326px;top:76px;width:456px;text-align:right">
+          サイバーパンク エッジランナーズ
+          <span class="ch-en">CYBERPUNK: EDGERUNNERS ｜ NETFLIX / TRIGGER</span>
+        </div>
+        <div class="ch-date" style="left:582px;top:140px;width:200px;text-align:right">2022.09</div>
+
+        <!-- 図版プレースホルダ。塗りも枠も置かず、四隅のトンボだけ。
+             縦線のすぐ右、「物語」の帯の中に置いて、事象そのものにする。
+             面上に説明文は出さない（＝聴衆への情報ではないため）。 -->
+        <figure class="plate"
+                data-image-note="『サイバーパンク エッジランナーズ』本編のカットを1枚。キービジュアルやロゴではなく、主人公デイビッドが走っている／立ち尽くしている静かな場面。彩度を落として敷く。Netflix / TRIGGER の権利確認が必要。">
+          <svg class="marks" viewBox="0 0 216 114" fill="none" stroke="#A49E92" stroke-width="2" aria-hidden="true">
+            <path d="M0 14V0h14M202 0h14v14M216 100v14h-14M14 114H0v-14"/>
+          </svg>
+        </figure>
+
+        <div class="ch-year" style="left:154px;top:302px">2021</div>
+        <div class="ch-call" style="left:788px;top:300px;width:300px;text-align:right">発売直後を除けば、以後の最高</div>
+      </div>
+
+      <div class="figcap">
+        <span class="figcap-id">図 11–1</span>
+        <span class="figcap-tx">模式図。目盛りなし。形とパッチ間隔は実データではない。発売直後（2020.12）の山はこの範囲の外。<span class="todo" style="margin-left:16px">実数と出典（SteamDB）を確定</span></span>
+      </div>
+
+      <div class="rule-mid"></div>
+
+      <div class="band">
+        <span class="band-lbl">結論</span>
+        <p class="band-txt">足りなかったのは技術ではなく、<em>物語</em>だった。</p>
+      </div>
+
+      <div class="contrast">
+        <div class="c-line"><span class="c-key">建前</span><span class="c-val">頑張れば報われる</span></div>
+        <div class="c-line"><span class="c-key">実感</span><span class="c-val is-real">システムは人をすり潰す</span></div>
+      </div>
+
+      <footer class="stamp"><span class="n">11</span><span class="sep">/</span><span class="n">17</span></footer>
+    </div>
+
+    <aside class="speaker-notes" data-n="11">
+      <div class="sn-head"><span class="sn-tag">SPEAKER NOTES</span><span class="sn-no">S11</span></div>
+      <p>今日いちばん言いたいのは、ここです。</p>
+      <p>直したのは技術です。2021年からパッチはずっと当て続けていました。上の段がそれです。でも、あの跳ね方はしなかった。跳ねたのは、アニメが配信されたあとです。</p>
+      <p>ゲーム本体は一行も書き換わっていません。変わったのは、この世界がどう語られるかだけでした。</p>
+      <p>アニメが供給したのは物語です。必死に努力して駆け上がって、そして壊れる話。頑張れば報われるという建前と、システムは人をすり潰すだけだという実感、その間の話です。</p>
+      <p>この「建前と実感」の対比は、このあと二回出てきます。覚えておいてください。</p>
+      <p class="sn-todo"><span class="todo">図は模式図。数値は当日までに一次ソースで確定する</span></p>
+    </aside>
+  </section>
+
+  <!-- ========================================= S14 ｜ 三つを並べる -->
+  <!-- 絶対に削らない一枚。聴衆は自分では繋げてくれない。 -->
+  <section class="slide" data-no="14">
+    <div class="canvas">
+
+      <div class="meta">
+        <div class="meta-l"><span class="meta-no">S14</span><span class="meta-ttl">三つを並べる</span></div>
+        <div class="meta-r">SUMMARY</div>
+      </div>
+      <div class="rule-top"></div>
+
+      <div class="cmp">
+        <div class="cmp-row">
+          <div></div>
+          <div class="co"><div class="co-name">任天堂</div><span class="co-en">NINTENDO</span></div>
+          <div class="co"><div class="co-name">Cyberpunk 2077</div><span class="co-en">CD PROJEKT RED</span></div>
+          <div class="co"><div class="co-name">原神</div><span class="co-en">GENSHIN IMPACT</span></div>
+        </div>
+
+        <div class="cmp-row ruled">
+          <div class="cmp-key"><span class="idx">01</span><span class="k">問題</span></div>
+          <div class="cmp-cell">棚に置いてもらえない</div>
+          <div class="cmp-cell">物語がなかった</div>
+          <div class="cmp-cell">「日本向け」の棚しかなかった</div>
+        </div>
+
+        <div class="cmp-row ruled">
+          <div class="cmp-key"><span class="idx">02</span><span class="k">変えたもの</span></div>
+          <div class="cmp-cell">比べられる相手</div>
+          <div class="cmp-cell">語られる内容</div>
+          <div class="cmp-cell">両方</div>
+        </div>
+
+        <div class="cmp-row ruled same">
+          <div class="cmp-key"><span class="idx">03</span><span class="k">変えなかったもの</span></div>
+          <div class="cmp-cell">製品そのもの</div>
+          <div class="cmp-cell">ゲームそのもの</div>
+          <div class="cmp-cell">ゲームそのもの</div>
+        </div>
+      </div>
+
+      <!-- 三列を束ねて、左端から締めの一行に落とす -->
+      <div class="brace">
+        <svg width="872" height="44" viewBox="0 0 872 44" fill="none" aria-hidden="true">
+          <path d="M1 0v44M1 12h870M871 12V0" stroke="#4A5D3A" stroke-opacity=".55" stroke-width="1.5"/>
+        </svg>
+      </div>
+
+      <div class="closer">
+        <div class="closer-lbl"><span>結論</span></div>
+        <p class="closer-txt">どの会社も、モノは変えていない。</p>
+      </div>
+
+      <footer class="stamp"><span class="n">14</span><span class="sep">/</span><span class="n">17</span></footer>
+    </div>
+
+    <aside class="speaker-notes" data-n="14">
+      <div class="sn-head"><span class="sn-tag">SPEAKER NOTES</span><span class="sn-no">S14</span></div>
+      <p>三つ、並べます。聞いている側は自分では繋げてくれないので、こちらで明示的に並べます。</p>
+      <p>上の二行は会社ごとに違います。抱えていた問題も、手を入れた場所も違う。</p>
+      <p>でも一番下の行だけ、三つとも同じことが書いてあります。製品そのものは、どこも変えていない。作り直したのは、置かれ方と語られ方だけです。</p>
+      <p>ここで一拍おいてから次へ。急がない。</p>
+    </aside>
+  </section>
+
+</div><!-- /.stage -->
+
+<div class="hint" id="hint" title="発表者ノート">?</div>
+</div><!-- /.viewport -->
+
+<script>
+(function () {
+  var stage = document.getElementById('stage');
+  var all   = [].slice.call(document.querySelectorAll('.slide'));
+
+  // 本編と附録は別の並び。附録は ← → の流れには出てこない。
+  var main = all.filter(function (s) { return !s.hasAttribute('data-appendix'); });
+  var apx  = all.filter(function (s) { return  s.hasAttribute('data-appendix'); });
+
+  var deck = main;   // いま辿っている並び
+  var i    = 0;
+  var back = 0;      // 附録に入る前にいた本編の位置
+
+  // 1280x720 のステージをビューポートにフィットさせる
+  function fit() {
+    var s = Math.min(window.innerWidth / 1280, window.innerHeight / 720);
+    stage.style.transform = 'translate(-50%,-50%) scale(' + s + ')';
+  }
+
+  function steps(slide) {
+    return [].slice.call(slide.querySelectorAll('[data-step]'))
+             .sort(function (a, b) { return a.dataset.step - b.dataset.step; });
+  }
+
+  function show(slide, upTo) {   // upTo = 表示済みにするステップ数
+    steps(slide).forEach(function (el, k) { el.classList.toggle('is-shown', k < upTo); });
+  }
+
+  function go(n, openSteps) {
+    i = Math.max(0, Math.min(deck.length - 1, n));
+    all.forEach(function (s) { s.classList.remove('is-active'); });
+    var cur = deck[i];
+    cur.classList.add('is-active');
+    show(cur, openSteps === 'all' ? steps(cur).length : 0);
+    history.replaceState(null, '', '#s' + cur.dataset.no);
+  }
+
+  // 段階表示があるスライドでは、まず次のステップを出してから次の1枚へ進む
+  function next() {
+    var cur = deck[i], st = steps(cur);
+    var shown = st.filter(function (el) { return el.classList.contains('is-shown'); }).length;
+    if (shown < st.length) { show(cur, shown + 1); return; }
+    if (i < deck.length - 1) go(i + 1);
+  }
+  function prev() {
+    var cur = deck[i], st = steps(cur);
+    var shown = st.filter(function (el) { return el.classList.contains('is-shown'); }).length;
+    if (shown > 0) { show(cur, shown - 1); return; }
+    if (i > 0) go(i - 1, 'all');   // 戻るときは前の1枚を展開済みで見せる
+  }
+
+  function toggleAppendix() {
+    if (!apx.length) return;
+    if (deck === main) { back = i; deck = apx;  go(0); }
+    else               { deck = main; go(back, 'all'); }
+    document.body.classList.toggle('appendix-on', deck === apx);
+  }
+
+  function toggleNotes() { document.body.classList.toggle('notes-on'); }
+
+  var NEXT = ['ArrowRight', 'ArrowDown', 'PageDown', ' ', 'Spacebar'];
+  var PREV = ['ArrowLeft', 'ArrowUp', 'PageUp', 'Backspace'];
+
+  window.addEventListener('keydown', function (e) {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (NEXT.indexOf(e.key) > -1)      { e.preventDefault(); next(); }
+    else if (PREV.indexOf(e.key) > -1) { e.preventDefault(); prev(); }
+    else if (e.key === 'Home')         { e.preventDefault(); go(0); }
+    else if (e.key === 'End')          { e.preventDefault(); go(deck.length - 1, 'all'); }
+    // A = 附録（質疑応答用）。もう一度 A で元の位置に戻る。
+    else if (e.key === 'a' || e.key === 'A') { e.preventDefault(); toggleAppendix(); }
+    else if (e.key === 'Escape') {
+      if (document.body.classList.contains('notes-on')) document.body.classList.remove('notes-on');
+      else if (deck === apx) toggleAppendix();
+    }
+    // JISキーボードでは / が無シフトで打てる。素の / でノートが開くと
+    // 登壇中に手が当たっただけで投影面にノートが出るので、Shift を必須にする。
+    else if (e.key === '?' || (e.key === '/' && e.shiftKey)) { e.preventDefault(); toggleNotes(); }
+  });
+
+  document.getElementById('hint').addEventListener('click', function (e) {
+    e.stopPropagation(); toggleNotes();
+  });
+
+  // クリックで前進。ノート内と、テキスト選択中は送らない。
+  window.addEventListener('click', function (e) {
+    if (e.target.closest('.speaker-notes')) return;
+    var sel = window.getSelection();
+    if (sel && String(sel).length) return;
+    next();
+  });
+
+  window.addEventListener('resize', fit);
+  fit();
+
+  // #s11 のようなハッシュで直接開ける
+  var start = -1;
+  main.forEach(function (s, k) { if ('#s' + s.dataset.no === location.hash) start = k; });
+  go(start > -1 ? start : 0);
+})();
+</script>
+</body>
+</html>
