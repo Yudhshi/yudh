@@ -599,3 +599,105 @@
   font-weight: 700;
   color: var(--sf-blue);
 }
+
+
+/* v2.8: keywords, Tencent palette, app icons */
+
+/* 話に集中してもらうため、ページ番号と脚注は出さない */
+#page-counter,
+.foot-note {
+  display: none;
+}
+
+/* ---------------------------------------------------------------------------
+   Part 4（テンセントの話）はテンセントの企業カラーに切り替える
+   トークンを上書きするだけなので、部品側の変更はいらない
+   --------------------------------------------------------------------------- */
+
+.slide-inner.is-tencent {
+  --sf-blue: #0052D9;
+  --light-blue: #BBD3FB;
+}
+
+.slide[data-bg="blue"] > .slide-inner.is-tencent {
+  background: #0052D9;
+}
+
+/* ---------------------------------------------------------------------------
+   アプリアイコン（QQ・WeChat）
+   --------------------------------------------------------------------------- */
+
+.app-icon {
+  display: inline-block;
+  width: 1.1em;
+  height: 1.1em;
+  margin-right: 0.3em;
+  vertical-align: -0.18em;
+  border-radius: 22%;
+}
+
+.app-icon.is-lg {
+  display: block;
+  width: 120px;
+  height: 120px;
+  margin: 0 0 var(--space-xs);
+}
+
+.app-icon.is-xl {
+  display: block;
+  width: 160px;
+  height: 160px;
+  margin: 0 auto var(--space-sm);
+}
+
+.cal .cal-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---------------------------------------------------------------------------
+   推しバッジ、続きが気になる一行
+   --------------------------------------------------------------------------- */
+
+.badge {
+  display: inline-block;
+  margin-left: 12px;
+  padding: 2px 16px;
+  border-radius: 999px;
+  background: var(--red);
+  color: var(--white);
+  font-size: 26px;
+  font-weight: 700;
+  vertical-align: 6px;
+}
+
+.tease {
+  margin: var(--space-md) auto 0;
+  font-family: var(--ff-ja);
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--red);
+  text-align: center;
+}
+
+.tease.is-left,
+.src.is-left {
+  margin-left: 0;
+  text-align: left;
+}
+
+.media-text .tease {
+  margin-top: var(--space-sm);
+}
+
+.media-text .media-body.is-big {
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.media-text .src.is-left {
+  margin-top: var(--space-xs);
+  font-size: 26px;
+}
