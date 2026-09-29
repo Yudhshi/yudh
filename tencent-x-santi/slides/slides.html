@@ -5,15 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>黒暗森林と競馬場 — 2010年11月にテンセントが選んだ道</title>
 
-<!-- Google Fonts -->
+<!-- Google Fonts（オフラインでは Mac のヒラギノ明朝・ヒラギノ角ゴに置き換わる） -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=M+PLUS+1p:wght@400;500;700&family=Montserrat:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;700;800&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 
-<!-- slide-builder CSS（スタイル未定のため goodpatch プリセット）+ このデッキ専用 -->
-<link rel="stylesheet" href="styles/goodpatch.css">
-<link rel="stylesheet" href="styles/components.css">
-<link rel="stylesheet" href="styles/deck.css">
+<!-- このデッキ専用のスタイル（v4.0 でテンプレートから独立） -->
+<link rel="stylesheet" href="styles/santi.css">
 
 </head>
 <body>
@@ -22,58 +20,50 @@
   <div id="slides">
 
     <!-- ============================================================
-         SLIDE 01 / Cover (Pattern I)
+         SLIDE 01 / 表紙
     ============================================================ -->
     <div class="slide active" data-variant="cover" data-bg="blue">
-      <div class="slide-inner cover-inner is-thanks">
-        <h1 class="anim t-cover-title cover-title">黒暗森林と<em>競馬場</em></h1>
+      <div class="slide-inner is-night cover-inner">
+        <svg class="anim mark" viewBox="0 0 132 44" aria-hidden="true"><circle cx="16" cy="26" r="12" fill="#F5B544"/><circle cx="60" cy="16" r="9" fill="#FF9F5A"/><circle cx="106" cy="24" r="16" fill="#FFCB6B"/></svg>
+        <h1 class="anim cover-title">黒暗森林と<span class="hl-b">競馬場</span></h1>
         <p class="anim cover-name">YUDI SHI</p>
       </div>
     </div>
 
     <!-- ============================================================
-         SLIDE 02 / Chapter Part 1 (Pattern H)
+         SLIDE 02 / 章扉 Part 1
     ============================================================ -->
     <div class="slide" data-variant="chapter" data-bg="blue">
-      <div class="slide-inner chapter-inner">
-        <div class="chapter-number" aria-hidden="true">01</div>
+      <div class="slide-inner is-forest chapter-inner">
+        <div class="anim chapter-rule"></div>
         <div class="anim chapter-label">PART 01</div>
-        <div class="anim chapter-rule"></div>
-        <h2 class="anim t-chapter-title chapter-title">今日の話</h2>
+        <h2 class="anim chapter-title">今日の話</h2>
       </div>
     </div>
 
     <!-- ============================================================
-         SLIDE 03 / キングダムと三体 (Pattern C)
+         SLIDE 03 / キングダムと三体
     ============================================================ -->
-    <div class="slide" data-variant="content" data-bg="white">
+    <div class="slide" data-variant="content" data-bg="blue">
       <div class="slide-header-bar">
         <div class="hb-left">PART 01<span class="sep">/</span>今日の話</div>
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
-      <div class="slide-inner">
-        <header class="topic-header">
-          <div class="anim t-section-head">はじめに</div>
-          <h2 class="anim t-topic-title">三体は中国のキングダム</h2>
-        </header>
-        <div class="topic-body is-low">
-          <div class="anim compare-grid is-large">
-            <div class="compare-side">
-              <div class="compare-label">JAPAN</div>
-              <h3 class="compare-headline">『キングダム』</h3>
-              <ul class="compare-list">
-                <li>戦略</li>
-                <li>リーダーシップ</li>
-              </ul>
+      <div class="slide-inner is-forest">
+        <div class="anim kicker"><span class="k-part">01</span>はじめに</div>
+        <h2 class="anim title">三体は中国のキングダム</h2>
+        <div class="main">
+          <div class="anim compare">
+            <div class="cmp-col">
+              <div class="cmp-label">JAPAN</div>
+              <h3 class="cmp-head">『キングダム』</h3>
+              <ul class="cmp-list"><li>戦略</li><li>リーダーシップ</li></ul>
             </div>
-            <div class="compare-eq">≒</div>
-            <div class="compare-side dark">
-              <div class="compare-label">CHINA</div>
-              <h3 class="compare-headline">『三体』</h3>
-              <ul class="compare-list">
-                <li>競争</li>
-                <li>生き残り</li>
-              </ul>
+            <div class="cmp-op">≒</div>
+            <div class="cmp-col is-accent">
+              <div class="cmp-label">CHINA</div>
+              <h3 class="cmp-head">『三体』</h3>
+              <ul class="cmp-list"><li>競争</li><li>生き残り</li></ul>
             </div>
           </div>
         </div>
@@ -81,118 +71,97 @@
     </div>
 
     <!-- ============================================================
-         SLIDE 04 / 結論 (Pattern A)
+         SLIDE 04 / 結論
     ============================================================ -->
-    <div class="slide" data-variant="content" data-bg="white">
+    <div class="slide" data-variant="content" data-bg="blue">
       <div class="slide-header-bar">
         <div class="hb-left">PART 01<span class="sep">/</span>今日の話</div>
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
-      <div class="slide-inner">
-        <header class="topic-header">
-          <div class="anim t-section-head">結論</div>
-        </header>
-        <div class="topic-body a-emphasis-wrap">
-          <p class="anim t-emphasis">外で撃つより<span class="t-blue">中で競う</span></p>
+      <div class="slide-inner is-forest">
+        <div class="anim kicker"><span class="k-part">01</span>結論</div>
+        <div class="main">
+          <p class="anim statement">外で撃つより<span class="hl-b">中で競う</span></p>
         </div>
       </div>
     </div>
 
     <!-- ============================================================
-         SLIDE 05 / Chapter Part 2 (Pattern H)
+         SLIDE 05 / 章扉 Part 2
     ============================================================ -->
     <div class="slide" data-variant="chapter" data-bg="blue">
-      <div class="slide-inner chapter-inner">
-        <div class="chapter-number" aria-hidden="true">02</div>
-        <div class="anim chapter-label">PART 02</div>
+      <div class="slide-inner is-forest chapter-inner">
         <div class="anim chapter-rule"></div>
-        <h2 class="anim t-chapter-title chapter-title">紹介する本</h2>
+        <div class="anim chapter-label">PART 02</div>
+        <h2 class="anim chapter-title">紹介する本</h2>
       </div>
     </div>
 
     <!-- ============================================================
-         SLIDE 06 / 『三体』 (Pattern K)
+         SLIDE 06 / 『三体』
     ============================================================ -->
-    <div class="slide" data-variant="content" data-bg="white">
+    <div class="slide" data-variant="content" data-bg="blue">
       <div class="slide-header-bar">
         <div class="hb-left">PART 02<span class="sep">/</span>紹介する本</div>
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
-      <div class="slide-inner">
-        <header class="topic-header">
-          <div class="anim t-section-head">1冊目</div>
-        </header>
-        <div class="topic-body">
-          <div class="anim media-wrap">
-            <div class="media-text">
-              <h3 class="media-title">『三体』</h3>
-              <p class="media-body">日本で100万部超え</p>
-            </div>
-            <div class="media-image">
-              <img src="assets/photo-santi.svg" alt="『三体』三部作の実物の写真">
-            </div>
-          </div>
+      <div class="slide-inner is-forest is-split">
+        <div class="anim kicker"><span class="k-part">02</span>1冊目</div>
+        <div class="main">
+          <h3 class="anim media-title">『三体』</h3>
+          <p class="anim media-body">日本で100万部超え</p>
         </div>
+        <div class="bleed" role="img" aria-label="『三体』三部作の実物の写真" style="background-image:url('assets/photo-santi.jpg'), url('assets/photo-santi.svg')"></div>
       </div>
     </div>
 
     <!-- ============================================================
-         SLIDE 07 / どんな話？ (Pattern A)
+         SLIDE 07 / どんな話？
     ============================================================ -->
-    <div class="slide" data-variant="content" data-bg="white">
+    <div class="slide" data-variant="content" data-bg="blue">
       <div class="slide-header-bar">
         <div class="hb-left">PART 02<span class="sep">/</span>紹介する本</div>
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
-      <div class="slide-inner">
-        <header class="topic-header">
-          <div class="anim t-section-head">どんな話？</div>
-        </header>
-        <div class="topic-body a-emphasis-wrap">
+      <div class="slide-inner is-forest">
+        <div class="anim kicker"><span class="k-part">02</span>どんな話？</div>
+        <div class="main">
           <svg class="anim three-suns" viewBox="0 0 640 200" aria-hidden="true">
-            <path d="M40 120 C 140 20, 220 190, 320 100 S 480 20, 600 110" fill="none" stroke="var(--light-blue)" stroke-width="3" stroke-dasharray="8 10"/>
-            <circle cx="170" cy="70" r="34" fill="#FFB547"/>
-            <circle cx="330" cy="140" r="26" fill="#FF8A3D"/>
+            <path d="M40 120 C 140 20, 220 190, 320 100 S 480 20, 600 110" fill="none" stroke="#2A3340" stroke-width="3" stroke-dasharray="8 10"/>
+            <circle cx="170" cy="70" r="34" fill="#F5B544"/>
+            <circle cx="330" cy="140" r="26" fill="#FF9F5A"/>
             <circle cx="470" cy="60" r="40" fill="#FFCB6B"/>
-            <circle cx="600" cy="110" r="9" fill="var(--sf-blue)"/>
+            <circle cx="600" cy="110" r="10" fill="#7AA2FF"/>
           </svg>
-          <p class="anim t-emphasis">太陽が3つある星が<br><span class="t-blue">地球を見つけた</span></p>
+          <p class="anim statement is-l">太陽が3つある星が<br><span class="hl">地球を見つけた</span></p>
           <p class="anim sub">タイトルは物理の難問「三体問題」から</p>
         </div>
       </div>
     </div>
 
     <!-- ============================================================
-         SLIDE 08 / 2つのドラマ (Pattern C)
+         SLIDE 08 / 2つのドラマ
     ============================================================ -->
-    <div class="slide" data-variant="content" data-bg="white">
+    <div class="slide" data-variant="content" data-bg="blue">
       <div class="slide-header-bar">
         <div class="hb-left">PART 02<span class="sep">/</span>紹介する本</div>
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
-      <div class="slide-inner">
-        <header class="topic-header">
-          <div class="anim t-section-head">ドラマ</div>
-          <h2 class="anim t-topic-title">ドラマは2つ</h2>
-        </header>
-        <div class="topic-body is-low">
-          <div class="anim compare-grid is-large">
-            <div class="compare-side">
-              <div class="compare-label">NETFLIX</div>
-              <h3 class="compare-headline">Netflix版</h3>
-              <ul class="compare-list">
-                <li>8話で駆け足</li>
-                <li>ほぼ別物</li>
-              </ul>
+      <div class="slide-inner is-forest">
+        <div class="anim kicker"><span class="k-part">02</span>ドラマ</div>
+        <h2 class="anim title">ドラマは2つ</h2>
+        <div class="main">
+          <div class="anim compare">
+            <div class="cmp-col">
+              <div class="cmp-label">NETFLIX</div>
+              <h3 class="cmp-head">Netflix版</h3>
+              <ul class="cmp-list"><li>8話で駆け足</li><li>ほぼ別物</li></ul>
             </div>
-            <div class="compare-eq">vs</div>
-            <div class="compare-side dark">
-              <div class="compare-label">CHINA · U-NEXT</div>
-              <h3 class="compare-headline">中国版 <span class="badge">推し</span></h3>
-              <ul class="compare-list">
-                <li>原作に忠実</li>
-                <li>全30話</li>
-              </ul>
+            <div class="cmp-op">vs</div>
+            <div class="cmp-col is-accent">
+              <div class="cmp-label">CHINA · U-NEXT</div>
+              <h3 class="cmp-head">中国版 <span class="badge">推し</span></h3>
+              <ul class="cmp-list"><li>原作に忠実</li><li>全30話</li></ul>
             </div>
           </div>
         </div>
@@ -200,76 +169,70 @@
     </div>
 
     <!-- ============================================================
-         SLIDE 09 / ドラマの裏側 (Pattern A)
+         SLIDE 09 / ドラマの裏側
     ============================================================ -->
-    <div class="slide" data-variant="content" data-bg="gray">
+    <div class="slide" data-variant="content" data-bg="blue">
       <div class="slide-header-bar">
         <div class="hb-left">PART 02<span class="sep">/</span>紹介する本</div>
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
-      <div class="slide-inner">
-        <header class="topic-header">
-          <div class="anim t-section-head">ドラマの裏側</div>
-        </header>
-        <div class="topic-body a-emphasis-wrap">
-          <p class="anim t-emphasis">版権会社のCEOが<span class="t-red">親会社の創業者を毒殺</span></p>
+      <div class="slide-inner is-forest">
+        <div class="anim kicker"><span class="k-part">02</span>ドラマの裏側</div>
+        <div class="main">
+          <p class="anim statement is-l">版権会社のCEOが<br><span class="hl-r">親会社の創業者を毒殺</span></p>
           <p class="anim sub">2020年</p>
         </div>
       </div>
     </div>
 
     <!-- ============================================================
-         SLIDE 10 / 著者 (facts)
+         SLIDE 10 / 著者
     ============================================================ -->
-    <div class="slide" data-variant="content" data-bg="white">
+    <div class="slide" data-variant="content" data-bg="blue">
       <div class="slide-header-bar">
         <div class="hb-left">PART 02<span class="sep">/</span>紹介する本</div>
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
-      <div class="slide-inner">
-        <header class="topic-header">
-          <div class="anim t-section-head">著者</div>
-          <h2 class="anim t-topic-title">劉慈欣（リウ・ツーシン）</h2>
-        </header>
-        <div class="topic-body is-low">
+      <div class="slide-inner is-forest">
+        <div class="anim kicker"><span class="k-part">02</span>著者</div>
+        <h2 class="anim title">劉慈欣（リウ・ツーシン）</h2>
+        <div class="main">
           <div class="anim facts">
-            <div class="fact"><span class="fact-big">エンジニア</span><span class="fact-cap">発電所で働きながら執筆</span></div>
-            <div class="fact"><span class="fact-big">2006</span><span class="fact-cap">雑誌で連載開始</span></div>
-            <div class="fact"><span class="fact-big">2015</span><span class="fact-cap">アジア初のヒューゴー賞</span></div>
+            <div class="fact"><div class="fact-big">エンジニア</div><p class="fact-cap">発電所で働きながら執筆</p></div>
+            <div class="fact"><div class="fact-big">2006</div><p class="fact-cap">雑誌で連載開始</p></div>
+            <div class="fact"><div class="fact-big">2015</div><p class="fact-cap">アジア初のヒューゴー賞</p></div>
           </div>
         </div>
       </div>
     </div>
 
     <!-- ============================================================
-         SLIDE 11 / 着想のもと (Pattern B)
+         SLIDE 11 / 着想のもと
     ============================================================ -->
-    <div class="slide" data-variant="content" data-bg="gray">
+    <div class="slide" data-variant="content" data-bg="blue">
       <div class="slide-header-bar">
         <div class="hb-left">PART 02<span class="sep">/</span>紹介する本</div>
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
-      <div class="slide-inner">
-        <header class="topic-header">
-          <div class="anim t-section-head">著者の原点</div>
-          <h2 class="anim t-topic-title">着想のもと</h2>
-        </header>
-        <div class="topic-body is-low">
-          <div class="anim reasons">
-            <div class="reason">
-              <div class="reason-num">物理の難問</div>
-              <h3 class="reason-title">三体問題</h3>
-              <p class="reason-body">3つの星の動きは解けない</p>
+      <div class="slide-inner is-forest">
+        <div class="anim kicker"><span class="k-part">02</span>著者の原点</div>
+        <h2 class="anim title">着想のもと</h2>
+        <div class="main">
+          <div class="anim cols">
+            <div class="col">
+              <div class="col-num">物理の難問</div>
+              <h3 class="col-title">三体問題</h3>
+              <p class="col-body">3つの星の動きは解けない</p>
             </div>
-            <div class="reason">
-              <div class="reason-num">日本のSF</div>
-              <h3 class="reason-title">『日本沈没』</h3>
-              <p class="reason-body">「中国版を書きたかった」</p>
+            <div class="col">
+              <div class="col-num">日本のSF</div>
+              <h3 class="col-title">『日本沈没』</h3>
+              <p class="col-body">「中国版を書きたかった」</p>
             </div>
-            <div class="reason">
-              <div class="reason-num">SFの古典</div>
-              <h3 class="reason-title">『2001年宇宙の旅』</h3>
-              <p class="reason-body">「全作品がこれの下手な模倣」</p>
+            <div class="col">
+              <div class="col-num">SFの古典</div>
+              <h3 class="col-title">『2001年宇宙の旅』</h3>
+              <p class="col-body">「全作品がこれの下手な模倣」</p>
             </div>
           </div>
         </div>
@@ -277,19 +240,17 @@
     </div>
 
     <!-- ============================================================
-         SLIDE 12 / 読んだ人 (readers)
+         SLIDE 12 / 読んだ人たち
     ============================================================ -->
-    <div class="slide" data-variant="content" data-bg="white">
+    <div class="slide" data-variant="content" data-bg="blue">
       <div class="slide-header-bar">
         <div class="hb-left">PART 02<span class="sep">/</span>紹介する本</div>
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
-      <div class="slide-inner">
-        <header class="topic-header">
-          <div class="anim t-section-head">ちなみに</div>
-          <h2 class="anim t-topic-title">この本を読んだ人たち</h2>
-        </header>
-        <div class="topic-body is-low">
+      <div class="slide-inner is-forest">
+        <div class="anim kicker"><span class="k-part">02</span>ちなみに</div>
+        <h2 class="anim title">この本を読んだ人たち</h2>
+        <div class="main">
           <div class="anim readers">
             <div class="reader is-xl">
               <span class="reader-name">オバマ</span>
@@ -312,7 +273,7 @@
               <span class="reader-say">奇跡の超トンデモSF</span>
             </div>
             <div class="reader is-l">
-              <span class="reader-name">ジョージ・R・R・マーティン</span>
+              <span class="reader-name">G・R・R・マーティン</span>
               <span class="reader-role">『ゲーム・オブ・スローンズ』作者</span>
               <span class="reader-say">画期的な1冊</span>
             </div>
@@ -334,25 +295,23 @@
     </div>
 
     <!-- ============================================================
-         SLIDE 13 / 私と三体 (Pattern A)
+         SLIDE 13 / 私と三体
     ============================================================ -->
-    <div class="slide" data-variant="content" data-bg="gray">
+    <div class="slide" data-variant="content" data-bg="blue">
       <div class="slide-header-bar">
         <div class="hb-left">PART 02<span class="sep">/</span>紹介する本</div>
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
-      <div class="slide-inner">
-        <header class="topic-header">
-          <div class="anim t-section-head">私と三体</div>
-        </header>
-        <div class="topic-body a-emphasis-wrap">
-          <p class="anim t-emphasis">小学校の<span class="t-blue">国語の先生</span>のすすめ</p>
+      <div class="slide-inner is-forest">
+        <div class="anim kicker"><span class="k-part">02</span>私と三体</div>
+        <div class="main">
+          <p class="anim statement">小学校の<span class="hl">国語の先生</span>のすすめ</p>
         </div>
       </div>
     </div>
 
     <!-- ============================================================
-         SLIDE 14 / 宇宙人 (night)
+         SLIDE 14 / 宇宙人（夜）
     ============================================================ -->
     <div class="slide" data-variant="content" data-bg="blue">
       <div class="slide-header-bar">
@@ -360,17 +319,15 @@
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
       <div class="slide-inner is-night">
-        <header class="topic-header">
-          <div class="anim t-section-head">質問</div>
-        </header>
-        <div class="topic-body a-emphasis-wrap">
-          <p class="anim t-emphasis">宇宙人は<span class="t-blue">いる？</span></p>
+        <div class="anim kicker"><span class="k-part">02</span>質問</div>
+        <div class="main">
+          <p class="anim statement">宇宙人は<span class="hl">いる？</span></p>
         </div>
       </div>
     </div>
 
     <!-- ============================================================
-         SLIDE 15 / なぜ静か (night)
+         SLIDE 15 / なぜ静か（夜）
     ============================================================ -->
     <div class="slide" data-variant="content" data-bg="blue">
       <div class="slide-header-bar">
@@ -378,17 +335,15 @@
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
       <div class="slide-inner is-night">
-        <header class="topic-header">
-          <div class="anim t-section-head">質問</div>
-        </header>
-        <div class="topic-body a-emphasis-wrap">
-          <p class="anim t-emphasis">なぜ宇宙はこんなに静か？</p>
+        <div class="anim kicker"><span class="k-part">02</span>質問</div>
+        <div class="main">
+          <p class="anim statement">なぜ宇宙はこんなに静か？</p>
         </div>
       </div>
     </div>
 
     <!-- ============================================================
-         SLIDE 16 / 黒暗森林 (night)
+         SLIDE 16 / 黒暗森林（夜）
     ============================================================ -->
     <div class="slide" data-variant="content" data-bg="blue">
       <div class="slide-header-bar">
@@ -396,11 +351,9 @@
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
       <div class="slide-inner is-night">
-        <header class="topic-header">
-          <div class="anim t-section-head">三体の答え：黒暗森林</div>
-        </header>
-        <div class="topic-body a-emphasis-wrap">
-          <p class="anim t-emphasis">見つけたら<span class="t-red">撃つ</span><br>だからみんな隠れる</p>
+        <div class="anim kicker"><span class="k-part">02</span>三体の答え：黒暗森林</div>
+        <div class="main">
+          <p class="anim statement">見つけたら<span class="hl-r">撃つ</span><br>だからみんな隠れる</p>
           <div class="anim defs">
             <div class="def"><span class="def-term">猜疑連鎖</span>本心が見えない</div>
             <div class="def"><span class="def-term">技術爆発</span>急に強くなる</div>
@@ -410,66 +363,55 @@
     </div>
 
     <!-- ============================================================
-         SLIDE 17 / Chapter Part 3 (Pattern H)
+         SLIDE 17 / 章扉 Part 3
     ============================================================ -->
     <div class="slide" data-variant="chapter" data-bg="blue">
-      <div class="slide-inner chapter-inner">
-        <div class="chapter-number" aria-hidden="true">03</div>
-        <div class="anim chapter-label">PART 03</div>
+      <div class="slide-inner is-forest chapter-inner">
         <div class="anim chapter-rule"></div>
-        <h2 class="anim t-chapter-title chapter-title">本を読んで</h2>
+        <div class="anim chapter-label">PART 03</div>
+        <h2 class="anim chapter-title">本を読んで</h2>
       </div>
     </div>
 
     <!-- ============================================================
-         SLIDE 18 / 問い (Pattern A)
+         SLIDE 18 / 問い
     ============================================================ -->
-    <div class="slide" data-variant="content" data-bg="white">
+    <div class="slide" data-variant="content" data-bg="blue">
       <div class="slide-header-bar">
         <div class="hb-left">PART 03<span class="sep">/</span>本を読んで</div>
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
-      <div class="slide-inner">
-        <header class="topic-header">
-          <div class="anim t-section-head">問い</div>
-        </header>
-        <div class="topic-body a-emphasis-wrap">
-          <p class="anim t-emphasis">森のルールは<span class="t-blue">会社で使える？</span></p>
+      <div class="slide-inner is-forest">
+        <div class="anim kicker"><span class="k-part">03</span>問い</div>
+        <div class="main">
+          <p class="anim statement">森のルールは<br><span class="hl">会社で使える？</span></p>
         </div>
       </div>
     </div>
 
     <!-- ============================================================
-         SLIDE 19 / 答え (Pattern C)
+         SLIDE 19 / 答え
     ============================================================ -->
-    <div class="slide" data-variant="content" data-bg="white">
+    <div class="slide" data-variant="content" data-bg="blue">
       <div class="slide-header-bar">
         <div class="hb-left">PART 03<span class="sep">/</span>本を読んで</div>
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
-      <div class="slide-inner">
-        <header class="topic-header">
-          <div class="anim t-section-head">答え</div>
-          <h2 class="anim t-topic-title">そのままでは使えない</h2>
-        </header>
-        <div class="topic-body is-low">
-          <div class="anim compare-grid is-large">
-            <div class="compare-side">
-              <div class="compare-label">DARK FOREST</div>
-              <h3 class="compare-headline">黒暗森林</h3>
-              <ul class="compare-list">
-                <li>一回きり</li>
-                <li>隠れる</li>
-              </ul>
+      <div class="slide-inner is-forest">
+        <div class="anim kicker"><span class="k-part">03</span>答え</div>
+        <h2 class="anim title">そのままでは使えない</h2>
+        <div class="main">
+          <div class="anim compare">
+            <div class="cmp-col">
+              <div class="cmp-label">DARK FOREST</div>
+              <h3 class="cmp-head">黒暗森林</h3>
+              <ul class="cmp-list"><li>一回きり</li><li>隠れる</li></ul>
             </div>
-            <div class="compare-eq">vs</div>
-            <div class="compare-side dark">
-              <div class="compare-label">BUSINESS</div>
-              <h3 class="compare-headline">商売</h3>
-              <ul class="compare-list">
-                <li>何度も</li>
-                <li>見られている</li>
-              </ul>
+            <div class="cmp-op">vs</div>
+            <div class="cmp-col is-accent">
+              <div class="cmp-label">BUSINESS</div>
+              <h3 class="cmp-head">商売</h3>
+              <ul class="cmp-list"><li>何度も</li><li>見られている</li></ul>
             </div>
           </div>
         </div>
@@ -477,77 +419,68 @@
     </div>
 
     <!-- ============================================================
-         SLIDE 20 / 面壁計画 (Pattern A)
+         SLIDE 20 / 面壁計画
     ============================================================ -->
-    <div class="slide" data-variant="content" data-bg="gray">
+    <div class="slide" data-variant="content" data-bg="blue">
       <div class="slide-header-bar">
         <div class="hb-left">PART 03<span class="sep">/</span>本を読んで</div>
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
-      <div class="slide-inner">
-        <header class="topic-header">
-          <div class="anim t-section-head">三体Ⅱ：面壁計画</div>
-        </header>
-        <div class="topic-body a-emphasis-wrap">
-          <p class="anim t-emphasis">1つの作戦に<span class="t-blue">賭けない</span></p>
-          <div class="anim plans">
-            <span>作戦A</span><span>作戦B</span><span>作戦C</span><span>作戦D</span>
-          </div>
+      <div class="slide-inner is-forest">
+        <div class="anim kicker"><span class="k-part">03</span>三体Ⅱ：面壁計画</div>
+        <div class="main">
+          <p class="anim statement">1つの作戦に<span class="hl">賭けない</span></p>
+          <div class="anim plans"><span>作戦A</span><span>作戦B</span><span>作戦C</span><span>作戦D</span></div>
           <p class="anim tease">誰が勝つかは本の中で</p>
         </div>
       </div>
     </div>
 
     <!-- ============================================================
-         SLIDE 21 / 新しいメガネ (Pattern A)
+         SLIDE 21 / 新しいメガネ
     ============================================================ -->
-    <div class="slide" data-variant="content" data-bg="white">
+    <div class="slide" data-variant="content" data-bg="blue">
       <div class="slide-header-bar">
         <div class="hb-left">PART 03<span class="sep">/</span>本を読んで</div>
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
-      <div class="slide-inner">
-        <header class="topic-header">
-          <div class="anim t-section-head">新しいメガネ</div>
-        </header>
-        <div class="topic-body a-emphasis-wrap">
-          <p class="anim t-emphasis">重複は<span class="t-blue">保険</span>になる</p>
+      <div class="slide-inner is-forest">
+        <div class="anim kicker"><span class="k-part">03</span>新しいメガネ</div>
+        <div class="main">
+          <p class="anim statement">重複は<span class="hl">保険</span>になる</p>
           <p class="anim sub">中国では「競馬」と呼ぶ</p>
         </div>
       </div>
     </div>
 
     <!-- ============================================================
-         SLIDE 22 / Chapter Part 4 (Pattern H, Tencent)
+         SLIDE 22 / 章扉 Part 4
     ============================================================ -->
     <div class="slide" data-variant="chapter" data-bg="blue">
-      <div class="slide-inner chapter-inner is-tencent">
-        <div class="chapter-number" aria-hidden="true">04</div>
-        <div class="anim chapter-label">PART 04</div>
+      <div class="slide-inner is-blue chapter-inner">
         <div class="anim chapter-rule"></div>
-        <h2 class="anim t-chapter-title chapter-title">2010年11月</h2>
-        <p class="anim t-chapter-sub chapter-sub">26卒の多くは小学1年生<br>Goodpatch創業の10か月前</p>
+        <div class="anim chapter-label">PART 04</div>
+        <h2 class="anim chapter-title">2010年11月</h2>
+        <p class="anim chapter-sub">26卒の多くは小学1年生<br>Goodpatch創業の10か月前</p>
       </div>
     </div>
 
     <!-- ============================================================
-         SLIDE 23 / テンセントとは (facts, Tencent)
+         SLIDE 23 / テンセントとは
     ============================================================ -->
     <div class="slide" data-variant="content" data-bg="white">
       <div class="slide-header-bar">
         <div class="hb-left">PART 04<span class="sep">/</span>2010年11月</div>
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
-      <div class="slide-inner is-tencent">
-        <header class="topic-header">
-          <div class="anim t-section-head">今日の主役</div>
-          <h2 class="anim t-topic-title">テンセントってどんな会社？</h2>
-        </header>
-        <div class="topic-body is-low">
-          <div class="anim facts is-icons">
-            <div class="fact"><span class="fact-big"><img class="app-icon" src="assets/icon-qq.svg" alt="QQ">QQ</span><span class="fact-cap">パソコン時代のチャット</span></div>
-            <div class="fact"><span class="fact-big"><img class="app-icon" src="assets/icon-wechat.svg" alt="WeChat">WeChat</span><span class="fact-cap">連絡も支払いもこれ1つ</span></div>
-            <div class="fact"><span class="fact-big"><img class="app-icon" src="assets/icon-game.svg" alt="ゲーム">ゲーム</span><span class="fact-cap">世界最大級のゲーム会社</span></div>
+      <div class="slide-inner is-track">
+        <div class="anim kicker"><span class="k-part">04</span>今日の主役</div>
+        <h2 class="anim title">テンセントってどんな会社？</h2>
+        <div class="main">
+          <div class="anim facts">
+            <div class="fact"><div class="fact-big"><img class="app-icon" src="assets/icon-qq.svg" alt="QQ">QQ</div><p class="fact-cap">パソコン時代のチャット</p></div>
+            <div class="fact"><div class="fact-big"><img class="app-icon" src="assets/icon-wechat.svg" alt="WeChat">WeChat</div><p class="fact-cap">連絡も支払いもこれ1つ</p></div>
+            <div class="fact"><div class="fact-big"><img class="app-icon" src="assets/icon-game.svg" alt="ゲーム">ゲーム</div><p class="fact-cap">世界最大級のゲーム会社</p></div>
           </div>
           <p class="anim sub">1998年に深圳で創業</p>
         </div>
@@ -555,57 +488,53 @@
     </div>
 
     <!-- ============================================================
-         SLIDE 24 / 時価総額 (bars, Tencent)
+         SLIDE 24 / 時価総額
     ============================================================ -->
     <div class="slide" data-variant="content" data-bg="white">
       <div class="slide-header-bar">
         <div class="hb-left">PART 04<span class="sep">/</span>2010年11月</div>
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
-      <div class="slide-inner is-tencent">
-        <header class="topic-header">
-          <div class="anim t-section-head">会社の大きさ</div>
-          <h2 class="anim t-topic-title">トヨタとソニーを足しても届かない</h2>
-        </header>
-        <div class="topic-body is-low">
-          <div class="anim mcap">
-            <div class="mcap-row"><div class="mcap-seg is-tencent" style="width:100%"><b>テンセント</b><span>約80兆円</span></div></div>
-            <div class="mcap-row"><div class="mcap-seg" style="width:56.25%"><b>トヨタ</b><span>約45兆円</span></div><div class="mcap-seg is-light" style="width:27.5%"><b>ソニー</b><span>約22兆円</span></div></div>
+      <div class="slide-inner is-track">
+        <div class="anim kicker"><span class="k-part">04</span>会社の大きさ</div>
+        <h2 class="anim title">トヨタとソニーを足しても届かない</h2>
+        <div class="main">
+          <div class="anim bars">
+            <div class="bar-row"><div class="bar-seg" style="width:100%"><div class="bar-label"><b>テンセント</b><span>約80兆円</span></div><div class="bar is-tencent"></div></div></div>
+            <div class="bar-row"><div class="bar-seg" style="width:56.1%"><div class="bar-label"><b>トヨタ</b><span>約45兆円</span></div><div class="bar is-toyota"></div></div><div class="bar-seg" style="width:27.4%"><div class="bar-label"><b>ソニー</b><span>約22兆円</span></div><div class="bar is-sony"></div></div><div class="bar-seg bar-gap" style="width:16.25%"><div class="bar-label"><span>約13兆円 足りない</span></div><div class="bar"></div></div></div>
           </div>
-          <p class="anim sub">2026年9月の時価総額</p>
+          <p class="anim sub">2026年9月の時価総額（概算）</p>
         </div>
       </div>
     </div>
 
     <!-- ============================================================
-         SLIDE 25 / 3Q大戦 (Pattern B)
+         SLIDE 25 / 3Q大戦
     ============================================================ -->
-    <div class="slide" data-variant="content" data-bg="gray">
+    <div class="slide" data-variant="content" data-bg="white">
       <div class="slide-header-bar">
         <div class="hb-left">PART 04<span class="sep">/</span>2010年11月</div>
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
-      <div class="slide-inner is-tencent">
-        <header class="topic-header">
-          <div class="anim t-section-head">まず全体像</div>
-          <h2 class="anim t-topic-title">3Q大戦</h2>
-        </header>
-        <div class="topic-body is-low">
-          <div class="anim reasons">
-            <div class="reason">
-              <div class="reason-num">01</div>
-              <h3 class="reason-title">ケンカ</h3>
-              <p class="reason-body"><img class="app-icon" src="assets/icon-qq.svg" alt="QQ">QQ対<img class="app-icon" src="assets/icon-360.svg" alt="360">360</p>
+      <div class="slide-inner is-track">
+        <div class="anim kicker"><span class="k-part">04</span>まず全体像</div>
+        <h2 class="anim title">3Q大戦</h2>
+        <div class="main">
+          <div class="anim cols">
+            <div class="col">
+              <div class="col-num">01</div>
+              <h3 class="col-title">ケンカ</h3>
+              <p class="col-body"><img class="app-icon" src="assets/icon-qq.svg" alt="QQ">QQ対<img class="app-icon" src="assets/icon-360.svg" alt="360">360</p>
             </div>
-            <div class="reason">
-              <div class="reason-num">02</div>
-              <h3 class="reason-title">二択</h3>
-              <p class="reason-body">QQか360かを選ばせた</p>
+            <div class="col">
+              <div class="col-num">02</div>
+              <h3 class="col-title">二択</h3>
+              <p class="col-body">QQか360かを選ばせた</p>
             </div>
-            <div class="reason">
-              <div class="reason-num">03</div>
-              <h3 class="reason-title"><img class="app-icon" src="assets/icon-wechat.svg" alt="WeChat">同じ月</h3>
-              <p class="reason-body">社内でWeChatが始まる</p>
+            <div class="col">
+              <div class="col-num">03</div>
+              <h3 class="col-title"><img class="app-icon" src="assets/icon-wechat.svg" alt="WeChat">同じ月</h3>
+              <p class="col-body">社内でWeChatが始まる</p>
             </div>
           </div>
         </div>
@@ -613,178 +542,144 @@
     </div>
 
     <!-- ============================================================
-         SLIDE 26 / QQの画面 (Pattern K)
+         SLIDE 26 / QQの画面
     ============================================================ -->
     <div class="slide" data-variant="content" data-bg="white">
       <div class="slide-header-bar">
         <div class="hb-left">PART 04<span class="sep">/</span>2010年11月</div>
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
-      <div class="slide-inner is-tencent">
-        <header class="topic-header">
-          <div class="anim t-section-head">2010年11月3日のQQ</div>
-        </header>
-        <div class="topic-body">
-          <div class="anim media-wrap">
-            <div class="media-text">
-              <div class="icon-row"><img class="app-icon is-lg" src="assets/icon-qq.svg" alt="QQ"><img class="app-icon is-lg" src="assets/icon-360.svg" alt="360"></div>
-              <h3 class="media-title">「苦渋の決断」</h3>
-              <p class="media-body">360が入ったPCではQQを止める</p>
-              <p class="fill-tag is-left">小学生の私も見た</p>
+      <div class="slide-inner is-track is-split">
+        <div class="anim kicker"><span class="k-part">04</span>2010年11月3日のQQ</div>
+        <div class="main">
+          <div class="anim icon-row"><img class="app-icon" src="assets/icon-qq.svg" alt="QQ"><img class="app-icon" src="assets/icon-360.svg" alt="360"></div>
+          <h3 class="anim media-title">「苦渋の決断」</h3>
+          <p class="anim media-body">360が入ったPCではQQを止める</p>
+          <p class="anim pill">小学生の私も見た</p>
+        </div>
+        <div class="panel"><img src="assets/qq-popup-2010.svg" alt="2010年11月3日にQQに表示されたお知らせ（再現）"></div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         SLIDE 27 / 全景
+    ============================================================ -->
+    <div class="slide" data-variant="content" data-bg="white">
+      <div class="slide-header-bar">
+        <div class="hb-left">PART 04<span class="sep">/</span>2010年11月</div>
+        <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
+      </div>
+      <div class="slide-inner is-track">
+        <div class="anim kicker"><span class="k-part">04</span>2010年11月</div>
+        <h2 class="anim title">1か月に5つの日付</h2>
+        <div class="main">
+          <div class="anim timeline">
+            <div class="tl-node is-on"><span class="tl-date">11/3</span><span class="tl-mark"><span class="tl-dot"></span></span><span class="tl-label"><img class="app-icon" src="assets/icon-qq.svg" alt="QQ">QQか360か</span></div>
+            <div class="tl-node is-on"><span class="tl-date">11/4</span><span class="tl-mark"><span class="tl-dot"></span></span><span class="tl-label">政府が介入</span></div>
+            <div class="tl-node is-on"><span class="tl-date">11/11</span><span class="tl-mark"><span class="tl-dot"></span></span><span class="tl-label">全社への手紙</span></div>
+            <div class="tl-node is-on"><span class="tl-date">11/20</span><span class="tl-mark"><span class="tl-dot"></span></span><span class="tl-label"><img class="app-icon" src="assets/icon-wechat.svg" alt="WeChat">WeChat始動</span></div>
+            <div class="tl-node is-on"><span class="tl-date">11/21</span><span class="tl-mark"><span class="tl-dot"></span></span><span class="tl-label">批判と謝罪</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         SLIDE 28 / 11/3・11/4
+    ============================================================ -->
+    <div class="slide" data-variant="content" data-bg="white">
+      <div class="slide-header-bar">
+        <div class="hb-left">PART 04<span class="sep">/</span>2010年11月</div>
+        <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
+      </div>
+      <div class="slide-inner is-track">
+        <div class="anim kicker"><span class="k-part">04</span>11/3・11/4</div>
+        <h2 class="anim title"><img class="app-icon" src="assets/icon-qq.svg" alt="QQ">QQか<img class="app-icon" src="assets/icon-360.svg" alt="360">360か</h2>
+        <div class="main">
+          <div class="anim timeline">
+            <div class="tl-node is-fight"><span class="tl-date">11/3</span><span class="tl-mark"><span class="tl-dot"></span></span><span class="tl-label"><img class="app-icon" src="assets/icon-qq.svg" alt="QQ">QQか360か</span></div>
+            <div class="tl-node is-fight"><span class="tl-date">11/4</span><span class="tl-mark"><span class="tl-dot"></span></span><span class="tl-label">政府が介入</span></div>
+            <div class="tl-node"><span class="tl-date">11/11</span><span class="tl-mark"><span class="tl-dot"></span></span><span class="tl-label">全社への手紙</span></div>
+            <div class="tl-node"><span class="tl-date">11/20</span><span class="tl-mark"><span class="tl-dot"></span></span><span class="tl-label"><img class="app-icon" src="assets/icon-wechat.svg" alt="WeChat">WeChat始動</span></div>
+            <div class="tl-node"><span class="tl-date">11/21</span><span class="tl-mark"><span class="tl-dot"></span></span><span class="tl-label">批判と謝罪</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         SLIDE 29 / 11/11
+    ============================================================ -->
+    <div class="slide" data-variant="content" data-bg="white">
+      <div class="slide-header-bar">
+        <div class="hb-left">PART 04<span class="sep">/</span>2010年11月</div>
+        <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
+      </div>
+      <div class="slide-inner is-track">
+        <div class="anim kicker"><span class="k-part">04</span>11/11</div>
+        <h2 class="anim title">最強より尊敬される会社へ</h2>
+        <div class="main">
+          <div class="anim timeline">
+            <div class="tl-node"><span class="tl-date">11/3</span><span class="tl-mark"><span class="tl-dot"></span></span><span class="tl-label"><img class="app-icon" src="assets/icon-qq.svg" alt="QQ">QQか360か</span></div>
+            <div class="tl-node"><span class="tl-date">11/4</span><span class="tl-mark"><span class="tl-dot"></span></span><span class="tl-label">政府が介入</span></div>
+            <div class="tl-node is-answer"><span class="tl-date">11/11</span><span class="tl-mark"><span class="tl-dot"></span></span><span class="tl-label">全社への手紙</span></div>
+            <div class="tl-node"><span class="tl-date">11/20</span><span class="tl-mark"><span class="tl-dot"></span></span><span class="tl-label"><img class="app-icon" src="assets/icon-wechat.svg" alt="WeChat">WeChat始動</span></div>
+            <div class="tl-node"><span class="tl-date">11/21</span><span class="tl-mark"><span class="tl-dot"></span></span><span class="tl-label">批判と謝罪</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         SLIDE 30 / 11/20
+    ============================================================ -->
+    <div class="slide" data-variant="content" data-bg="white">
+      <div class="slide-header-bar">
+        <div class="hb-left">PART 04<span class="sep">/</span>2010年11月</div>
+        <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
+      </div>
+      <div class="slide-inner is-track">
+        <div class="anim kicker"><span class="k-part">04</span>11/20</div>
+        <h2 class="anim title">叱られた頃にWeChatが始まった</h2>
+        <div class="main">
+          <div class="anim timeline">
+            <div class="tl-node"><span class="tl-date">11/3</span><span class="tl-mark"><span class="tl-dot"></span></span><span class="tl-label"><img class="app-icon" src="assets/icon-qq.svg" alt="QQ">QQか360か</span></div>
+            <div class="tl-node"><span class="tl-date">11/4</span><span class="tl-mark"><span class="tl-dot"></span></span><span class="tl-label">政府が介入</span></div>
+            <div class="tl-node"><span class="tl-date">11/11</span><span class="tl-mark"><span class="tl-dot"></span></span><span class="tl-label">全社への手紙</span></div>
+            <div class="tl-node is-inside"><span class="tl-date">11/20</span><span class="tl-mark"><span class="tl-dot"></span></span><span class="tl-label"><img class="app-icon" src="assets/icon-wechat.svg" alt="WeChat">WeChat始動</span></div>
+            <div class="tl-node is-fight"><span class="tl-date">11/21</span><span class="tl-mark"><span class="tl-dot"></span></span><span class="tl-label">批判と謝罪</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         SLIDE 31 / 3チーム
+    ============================================================ -->
+    <div class="slide" data-variant="content" data-bg="white">
+      <div class="slide-header-bar">
+        <div class="hb-left">PART 04<span class="sep">/</span>2010年11月</div>
+        <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
+      </div>
+      <div class="slide-inner is-track">
+        <div class="anim kicker"><span class="k-part">04</span>実はこのとき</div>
+        <h2 class="anim title">同じものを3チームで作っていた</h2>
+        <div class="main">
+          <div class="anim cols">
+            <div class="col is-win">
+              <div class="col-num">01</div>
+              <h3 class="col-title"><img class="app-icon" src="assets/icon-wechat.svg" alt="WeChat">張小龍のチーム</h3>
+              <p class="col-body">勝ち残ってWeChatに</p>
             </div>
-            <div class="media-image">
-              <img src="assets/qq-popup-2010.svg" alt="2010年11月3日にQQに表示されたお知らせ（再現）">
+            <div class="col">
+              <div class="col-num">02</div>
+              <h3 class="col-title">スマホ版QQのチーム</h3>
+              <p class="col-body">QQの延長で作る</p>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ============================================================
-         SLIDE 27 / 全景 (Pattern D)
-    ============================================================ -->
-    <div class="slide" data-variant="content" data-bg="white">
-      <div class="slide-header-bar">
-        <div class="hb-left">PART 04<span class="sep">/</span>2010年11月</div>
-        <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
-      </div>
-      <div class="slide-inner is-tencent">
-        <header class="topic-header">
-          <div class="anim t-section-head">2010年11月</div>
-          <h2 class="anim t-topic-title">1か月に5つの日付</h2>
-        </header>
-        <div class="topic-body is-low">
-          <div class="anim flow cal">
-            <div class="flow-step is-neutral"><div class="flow-pill"><span class="cal-date">11/3</span><span class="cal-label"><img class="app-icon" src="assets/icon-qq.svg" alt="QQ">QQか360か</span></div><span class="flow-caption">&nbsp;</span></div>
-            <div class="flow-arrow" aria-hidden="true"><svg viewBox="0 0 60 24" fill="none"><path d="M0 12 H48 M40 4 L56 12 L40 20" stroke="currentColor" stroke-width="3" stroke-linecap="square"/></svg></div>
-            <div class="flow-step is-neutral"><div class="flow-pill"><span class="cal-date">11/4</span><span class="cal-label">政府が介入</span></div><span class="flow-caption">&nbsp;</span></div>
-            <div class="flow-arrow" aria-hidden="true"><svg viewBox="0 0 60 24" fill="none"><path d="M0 12 H48 M40 4 L56 12 L40 20" stroke="currentColor" stroke-width="3" stroke-linecap="square"/></svg></div>
-            <div class="flow-step is-neutral"><div class="flow-pill"><span class="cal-date">11/11</span><span class="cal-label">全社への手紙</span></div><span class="flow-caption">&nbsp;</span></div>
-            <div class="flow-arrow" aria-hidden="true"><svg viewBox="0 0 60 24" fill="none"><path d="M0 12 H48 M40 4 L56 12 L40 20" stroke="currentColor" stroke-width="3" stroke-linecap="square"/></svg></div>
-            <div class="flow-step is-neutral"><div class="flow-pill"><span class="cal-date">11/20</span><span class="cal-label"><img class="app-icon" src="assets/icon-wechat.svg" alt="WeChat">WeChat始動</span></div><span class="flow-caption">&nbsp;</span></div>
-            <div class="flow-arrow" aria-hidden="true"><svg viewBox="0 0 60 24" fill="none"><path d="M0 12 H48 M40 4 L56 12 L40 20" stroke="currentColor" stroke-width="3" stroke-linecap="square"/></svg></div>
-            <div class="flow-step is-neutral"><div class="flow-pill"><span class="cal-date">11/21</span><span class="cal-label">批判と謝罪</span></div><span class="flow-caption">&nbsp;</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ============================================================
-         SLIDE 28 / 11/3・11/4 (Pattern D)
-    ============================================================ -->
-    <div class="slide" data-variant="content" data-bg="white">
-      <div class="slide-header-bar">
-        <div class="hb-left">PART 04<span class="sep">/</span>2010年11月</div>
-        <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
-      </div>
-      <div class="slide-inner is-tencent">
-        <header class="topic-header">
-          <div class="anim t-section-head">11/3・11/4</div>
-          <h2 class="anim t-topic-title"><img class="app-icon" src="assets/icon-qq.svg" alt="QQ">QQか<img class="app-icon" src="assets/icon-360.svg" alt="360">360か</h2>
-        </header>
-        <div class="topic-body is-low">
-          <div class="anim flow cal">
-            <div class="flow-step is-fight"><div class="flow-pill"><span class="cal-date">11/3</span><span class="cal-label"><img class="app-icon" src="assets/icon-qq.svg" alt="QQ">QQか360か</span></div><span class="flow-caption">&nbsp;</span></div>
-            <div class="flow-arrow" aria-hidden="true"><svg viewBox="0 0 60 24" fill="none"><path d="M0 12 H48 M40 4 L56 12 L40 20" stroke="currentColor" stroke-width="3" stroke-linecap="square"/></svg></div>
-            <div class="flow-step is-fight"><div class="flow-pill"><span class="cal-date">11/4</span><span class="cal-label">政府が介入</span></div><span class="flow-caption">&nbsp;</span></div>
-            <div class="flow-arrow" aria-hidden="true"><svg viewBox="0 0 60 24" fill="none"><path d="M0 12 H48 M40 4 L56 12 L40 20" stroke="currentColor" stroke-width="3" stroke-linecap="square"/></svg></div>
-            <div class="flow-step"><div class="flow-pill"><span class="cal-date">11/11</span><span class="cal-label">全社への手紙</span></div><span class="flow-caption">&nbsp;</span></div>
-            <div class="flow-arrow" aria-hidden="true"><svg viewBox="0 0 60 24" fill="none"><path d="M0 12 H48 M40 4 L56 12 L40 20" stroke="currentColor" stroke-width="3" stroke-linecap="square"/></svg></div>
-            <div class="flow-step"><div class="flow-pill"><span class="cal-date">11/20</span><span class="cal-label"><img class="app-icon" src="assets/icon-wechat.svg" alt="WeChat">WeChat始動</span></div><span class="flow-caption">&nbsp;</span></div>
-            <div class="flow-arrow" aria-hidden="true"><svg viewBox="0 0 60 24" fill="none"><path d="M0 12 H48 M40 4 L56 12 L40 20" stroke="currentColor" stroke-width="3" stroke-linecap="square"/></svg></div>
-            <div class="flow-step"><div class="flow-pill"><span class="cal-date">11/21</span><span class="cal-label">批判と謝罪</span></div><span class="flow-caption">&nbsp;</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ============================================================
-         SLIDE 29 / 11/11 (Pattern D)
-    ============================================================ -->
-    <div class="slide" data-variant="content" data-bg="white">
-      <div class="slide-header-bar">
-        <div class="hb-left">PART 04<span class="sep">/</span>2010年11月</div>
-        <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
-      </div>
-      <div class="slide-inner is-tencent">
-        <header class="topic-header">
-          <div class="anim t-section-head">11/11</div>
-          <h2 class="anim t-topic-title">最強より尊敬される会社へ</h2>
-        </header>
-        <div class="topic-body is-low">
-          <div class="anim flow cal">
-            <div class="flow-step"><div class="flow-pill"><span class="cal-date">11/3</span><span class="cal-label"><img class="app-icon" src="assets/icon-qq.svg" alt="QQ">QQか360か</span></div><span class="flow-caption">&nbsp;</span></div>
-            <div class="flow-arrow" aria-hidden="true"><svg viewBox="0 0 60 24" fill="none"><path d="M0 12 H48 M40 4 L56 12 L40 20" stroke="currentColor" stroke-width="3" stroke-linecap="square"/></svg></div>
-            <div class="flow-step"><div class="flow-pill"><span class="cal-date">11/4</span><span class="cal-label">政府が介入</span></div><span class="flow-caption">&nbsp;</span></div>
-            <div class="flow-arrow" aria-hidden="true"><svg viewBox="0 0 60 24" fill="none"><path d="M0 12 H48 M40 4 L56 12 L40 20" stroke="currentColor" stroke-width="3" stroke-linecap="square"/></svg></div>
-            <div class="flow-step is-answer"><div class="flow-pill"><span class="cal-date">11/11</span><span class="cal-label">全社への手紙</span></div><span class="flow-caption">&nbsp;</span></div>
-            <div class="flow-arrow" aria-hidden="true"><svg viewBox="0 0 60 24" fill="none"><path d="M0 12 H48 M40 4 L56 12 L40 20" stroke="currentColor" stroke-width="3" stroke-linecap="square"/></svg></div>
-            <div class="flow-step"><div class="flow-pill"><span class="cal-date">11/20</span><span class="cal-label"><img class="app-icon" src="assets/icon-wechat.svg" alt="WeChat">WeChat始動</span></div><span class="flow-caption">&nbsp;</span></div>
-            <div class="flow-arrow" aria-hidden="true"><svg viewBox="0 0 60 24" fill="none"><path d="M0 12 H48 M40 4 L56 12 L40 20" stroke="currentColor" stroke-width="3" stroke-linecap="square"/></svg></div>
-            <div class="flow-step"><div class="flow-pill"><span class="cal-date">11/21</span><span class="cal-label">批判と謝罪</span></div><span class="flow-caption">&nbsp;</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ============================================================
-         SLIDE 30 / 11/20 (Pattern D)
-    ============================================================ -->
-    <div class="slide" data-variant="content" data-bg="white">
-      <div class="slide-header-bar">
-        <div class="hb-left">PART 04<span class="sep">/</span>2010年11月</div>
-        <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
-      </div>
-      <div class="slide-inner is-tencent">
-        <header class="topic-header">
-          <div class="anim t-section-head">11/20</div>
-          <h2 class="anim t-topic-title">叱られた頃にWeChatが始まった</h2>
-        </header>
-        <div class="topic-body is-low">
-          <div class="anim flow cal">
-            <div class="flow-step"><div class="flow-pill"><span class="cal-date">11/3</span><span class="cal-label"><img class="app-icon" src="assets/icon-qq.svg" alt="QQ">QQか360か</span></div><span class="flow-caption">&nbsp;</span></div>
-            <div class="flow-arrow" aria-hidden="true"><svg viewBox="0 0 60 24" fill="none"><path d="M0 12 H48 M40 4 L56 12 L40 20" stroke="currentColor" stroke-width="3" stroke-linecap="square"/></svg></div>
-            <div class="flow-step"><div class="flow-pill"><span class="cal-date">11/4</span><span class="cal-label">政府が介入</span></div><span class="flow-caption">&nbsp;</span></div>
-            <div class="flow-arrow" aria-hidden="true"><svg viewBox="0 0 60 24" fill="none"><path d="M0 12 H48 M40 4 L56 12 L40 20" stroke="currentColor" stroke-width="3" stroke-linecap="square"/></svg></div>
-            <div class="flow-step"><div class="flow-pill"><span class="cal-date">11/11</span><span class="cal-label">全社への手紙</span></div><span class="flow-caption">&nbsp;</span></div>
-            <div class="flow-arrow" aria-hidden="true"><svg viewBox="0 0 60 24" fill="none"><path d="M0 12 H48 M40 4 L56 12 L40 20" stroke="currentColor" stroke-width="3" stroke-linecap="square"/></svg></div>
-            <div class="flow-step is-inside"><div class="flow-pill"><span class="cal-date">11/20</span><span class="cal-label"><img class="app-icon" src="assets/icon-wechat.svg" alt="WeChat">WeChat始動</span></div><span class="flow-caption">&nbsp;</span></div>
-            <div class="flow-arrow" aria-hidden="true"><svg viewBox="0 0 60 24" fill="none"><path d="M0 12 H48 M40 4 L56 12 L40 20" stroke="currentColor" stroke-width="3" stroke-linecap="square"/></svg></div>
-            <div class="flow-step is-fight"><div class="flow-pill"><span class="cal-date">11/21</span><span class="cal-label">批判と謝罪</span></div><span class="flow-caption">&nbsp;</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ============================================================
-         SLIDE 31 / 3チーム (Pattern B)
-    ============================================================ -->
-    <div class="slide" data-variant="content" data-bg="white">
-      <div class="slide-header-bar">
-        <div class="hb-left">PART 04<span class="sep">/</span>2010年11月</div>
-        <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
-      </div>
-      <div class="slide-inner is-tencent">
-        <header class="topic-header">
-          <div class="anim t-section-head">実はこのとき</div>
-          <h2 class="anim t-topic-title">同じものを3チームで作っていた</h2>
-        </header>
-        <div class="topic-body is-low">
-          <div class="anim reasons">
-            <div class="reason is-win">
-              <div class="reason-num">01</div>
-              <h3 class="reason-title"><img class="app-icon" src="assets/icon-wechat.svg" alt="WeChat">張小龍のチーム</h3>
-              <p class="reason-body">勝ち残ってWeChatに</p>
-            </div>
-            <div class="reason">
-              <div class="reason-num">02</div>
-              <h3 class="reason-title">スマホ版QQのチーム</h3>
-              <p class="reason-body">QQの延長で作る</p>
-            </div>
-            <div class="reason">
-              <div class="reason-num">03</div>
-              <h3 class="reason-title">QQ連絡帳のチーム</h3>
-              <p class="reason-body">アドレス帳から作る</p>
+            <div class="col">
+              <div class="col-num">03</div>
+              <h3 class="col-title">QQ連絡帳のチーム</h3>
+              <p class="col-body">アドレス帳から作る</p>
             </div>
           </div>
           <p class="anim sub">馬化騰が2年後に明かした</p>
@@ -793,77 +688,63 @@
     </div>
 
     <!-- ============================================================
-         SLIDE 32 / 10人で2か月 (hero)
-    ============================================================ -->
-    <div class="slide" data-variant="content" data-bg="gray">
-      <div class="slide-header-bar">
-        <div class="hb-left">PART 04<span class="sep">/</span>2010年11月</div>
-        <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
-      </div>
-      <div class="slide-inner is-tencent">
-        <header class="topic-header">
-          <div class="anim t-section-head">勝ったチーム</div>
-        </header>
-        <div class="topic-body a-emphasis-wrap">
-          <img class="anim app-icon is-xl" src="assets/icon-wechat.svg" alt="WeChat">
-          <p class="anim t-hero">10人で2か月</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- ============================================================
-         SLIDE 33 / 11/21 (Pattern D)
+         SLIDE 32 / 10人で2か月
     ============================================================ -->
     <div class="slide" data-variant="content" data-bg="white">
       <div class="slide-header-bar">
         <div class="hb-left">PART 04<span class="sep">/</span>2010年11月</div>
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
-      <div class="slide-inner is-tencent">
-        <header class="topic-header">
-          <div class="anim t-section-head">11/21</div>
-          <h2 class="anim t-topic-title"><span class="t-blue">「うちか他社か」と迫ったら？</span></h2>
-        </header>
-        <div class="topic-body is-low">
-          <div class="anim flow cal">
-            <div class="flow-step"><div class="flow-pill"><span class="cal-date">11/3</span><span class="cal-label"><img class="app-icon" src="assets/icon-qq.svg" alt="QQ">QQか360か</span></div><span class="flow-caption">&nbsp;</span></div>
-            <div class="flow-arrow" aria-hidden="true"><svg viewBox="0 0 60 24" fill="none"><path d="M0 12 H48 M40 4 L56 12 L40 20" stroke="currentColor" stroke-width="3" stroke-linecap="square"/></svg></div>
-            <div class="flow-step"><div class="flow-pill"><span class="cal-date">11/4</span><span class="cal-label">政府が介入</span></div><span class="flow-caption">&nbsp;</span></div>
-            <div class="flow-arrow" aria-hidden="true"><svg viewBox="0 0 60 24" fill="none"><path d="M0 12 H48 M40 4 L56 12 L40 20" stroke="currentColor" stroke-width="3" stroke-linecap="square"/></svg></div>
-            <div class="flow-step"><div class="flow-pill"><span class="cal-date">11/11</span><span class="cal-label">全社への手紙</span></div><span class="flow-caption">&nbsp;</span></div>
-            <div class="flow-arrow" aria-hidden="true"><svg viewBox="0 0 60 24" fill="none"><path d="M0 12 H48 M40 4 L56 12 L40 20" stroke="currentColor" stroke-width="3" stroke-linecap="square"/></svg></div>
-            <div class="flow-step"><div class="flow-pill"><span class="cal-date">11/20</span><span class="cal-label"><img class="app-icon" src="assets/icon-wechat.svg" alt="WeChat">WeChat始動</span></div><span class="flow-caption">&nbsp;</span></div>
-            <div class="flow-arrow" aria-hidden="true"><svg viewBox="0 0 60 24" fill="none"><path d="M0 12 H48 M40 4 L56 12 L40 20" stroke="currentColor" stroke-width="3" stroke-linecap="square"/></svg></div>
-            <div class="flow-step is-fight"><div class="flow-pill"><span class="cal-date">11/21</span><span class="cal-label">批判と謝罪</span></div><span class="flow-caption">&nbsp;</span></div>
+      <div class="slide-inner is-track">
+        <div class="anim kicker"><span class="k-part">04</span>勝ったチーム</div>
+        <div class="main">
+          <img class="anim hero-icon" src="assets/icon-wechat.svg" alt="WeChat">
+          <p class="anim hero">10人で2か月</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         SLIDE 33 / 11/21
+    ============================================================ -->
+    <div class="slide" data-variant="content" data-bg="white">
+      <div class="slide-header-bar">
+        <div class="hb-left">PART 04<span class="sep">/</span>2010年11月</div>
+        <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
+      </div>
+      <div class="slide-inner is-track">
+        <div class="anim kicker"><span class="k-part">04</span>11/21</div>
+        <h2 class="anim title">「うちか他社か」と迫ったら？</h2>
+        <div class="main">
+          <div class="anim timeline">
+            <div class="tl-node"><span class="tl-date">11/3</span><span class="tl-mark"><span class="tl-dot"></span></span><span class="tl-label"><img class="app-icon" src="assets/icon-qq.svg" alt="QQ">QQか360か</span></div>
+            <div class="tl-node"><span class="tl-date">11/4</span><span class="tl-mark"><span class="tl-dot"></span></span><span class="tl-label">政府が介入</span></div>
+            <div class="tl-node"><span class="tl-date">11/11</span><span class="tl-mark"><span class="tl-dot"></span></span><span class="tl-label">全社への手紙</span></div>
+            <div class="tl-node"><span class="tl-date">11/20</span><span class="tl-mark"><span class="tl-dot"></span></span><span class="tl-label"><img class="app-icon" src="assets/icon-wechat.svg" alt="WeChat">WeChat始動</span></div>
+            <div class="tl-node is-fight"><span class="tl-date">11/21</span><span class="tl-mark"><span class="tl-dot"></span></span><span class="tl-label">批判と謝罪</span></div>
           </div>
         </div>
       </div>
     </div>
 
     <!-- ============================================================
-         SLIDE 34 / 全部点灯 (Pattern D)
+         SLIDE 34 / 全部
     ============================================================ -->
     <div class="slide" data-variant="content" data-bg="white">
       <div class="slide-header-bar">
         <div class="hb-left">PART 04<span class="sep">/</span>2010年11月</div>
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
-      <div class="slide-inner is-tencent">
-        <header class="topic-header">
-          <div class="anim t-section-head">2010年11月</div>
-          <h2 class="anim t-topic-title">森を出て競馬場へ</h2>
-        </header>
-        <div class="topic-body is-low">
-          <div class="anim flow cal">
-            <div class="flow-step is-fight"><div class="flow-pill"><span class="cal-date">11/3</span><span class="cal-label"><img class="app-icon" src="assets/icon-qq.svg" alt="QQ">QQか360か</span></div><span class="flow-caption">&nbsp;</span></div>
-            <div class="flow-arrow" aria-hidden="true"><svg viewBox="0 0 60 24" fill="none"><path d="M0 12 H48 M40 4 L56 12 L40 20" stroke="currentColor" stroke-width="3" stroke-linecap="square"/></svg></div>
-            <div class="flow-step is-fight"><div class="flow-pill"><span class="cal-date">11/4</span><span class="cal-label">政府が介入</span></div><span class="flow-caption">&nbsp;</span></div>
-            <div class="flow-arrow" aria-hidden="true"><svg viewBox="0 0 60 24" fill="none"><path d="M0 12 H48 M40 4 L56 12 L40 20" stroke="currentColor" stroke-width="3" stroke-linecap="square"/></svg></div>
-            <div class="flow-step is-answer"><div class="flow-pill"><span class="cal-date">11/11</span><span class="cal-label">全社への手紙</span></div><span class="flow-caption">&nbsp;</span></div>
-            <div class="flow-arrow" aria-hidden="true"><svg viewBox="0 0 60 24" fill="none"><path d="M0 12 H48 M40 4 L56 12 L40 20" stroke="currentColor" stroke-width="3" stroke-linecap="square"/></svg></div>
-            <div class="flow-step is-inside"><div class="flow-pill"><span class="cal-date">11/20</span><span class="cal-label"><img class="app-icon" src="assets/icon-wechat.svg" alt="WeChat">WeChat始動</span></div><span class="flow-caption">&nbsp;</span></div>
-            <div class="flow-arrow" aria-hidden="true"><svg viewBox="0 0 60 24" fill="none"><path d="M0 12 H48 M40 4 L56 12 L40 20" stroke="currentColor" stroke-width="3" stroke-linecap="square"/></svg></div>
-            <div class="flow-step is-fight"><div class="flow-pill"><span class="cal-date">11/21</span><span class="cal-label">批判と謝罪</span></div><span class="flow-caption">&nbsp;</span></div>
+      <div class="slide-inner is-track">
+        <div class="anim kicker"><span class="k-part">04</span>2010年11月</div>
+        <h2 class="anim title">森を出て競馬場へ</h2>
+        <div class="main">
+          <div class="anim timeline">
+            <div class="tl-node is-fight"><span class="tl-date">11/3</span><span class="tl-mark"><span class="tl-dot"></span></span><span class="tl-label"><img class="app-icon" src="assets/icon-qq.svg" alt="QQ">QQか360か</span></div>
+            <div class="tl-node is-fight"><span class="tl-date">11/4</span><span class="tl-mark"><span class="tl-dot"></span></span><span class="tl-label">政府が介入</span></div>
+            <div class="tl-node is-answer"><span class="tl-date">11/11</span><span class="tl-mark"><span class="tl-dot"></span></span><span class="tl-label">全社への手紙</span></div>
+            <div class="tl-node is-inside"><span class="tl-date">11/20</span><span class="tl-mark"><span class="tl-dot"></span></span><span class="tl-label"><img class="app-icon" src="assets/icon-wechat.svg" alt="WeChat">WeChat始動</span></div>
+            <div class="tl-node is-fight"><span class="tl-date">11/21</span><span class="tl-mark"><span class="tl-dot"></span></span><span class="tl-label">批判と謝罪</span></div>
           </div>
           <div class="anim legend">
             <span class="is-fight">撃ち合い</span>
@@ -875,100 +756,80 @@
     </div>
 
     <!-- ============================================================
-         SLIDE 35 / 14億人の日常 (Pattern K)
+         SLIDE 35 / 14億人の日常
     ============================================================ -->
     <div class="slide" data-variant="content" data-bg="white">
       <div class="slide-header-bar">
         <div class="hb-left">PART 04<span class="sep">/</span>2010年11月</div>
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
-      <div class="slide-inner is-tencent">
-        <header class="topic-header">
-          <div class="anim t-section-head">いま</div>
-        </header>
-        <div class="topic-body">
-          <div class="anim media-wrap">
-            <div class="media-text">
-              <img class="app-icon is-lg" src="assets/icon-wechat.svg" alt="WeChat">
-              <h3 class="media-title">14億人の日常</h3>
-              <p class="media-body">私の日常でもある</p>
-            </div>
-            <div class="media-image">
-              <img src="assets/photo-wechat.svg" alt="講演者のWeChat画面のスクリーンショット（個人情報はぼかす）">
-            </div>
-          </div>
+      <div class="slide-inner is-track is-split">
+        <div class="anim kicker"><span class="k-part">04</span>いま</div>
+        <div class="main">
+          <div class="anim icon-row"><img class="app-icon" src="assets/icon-wechat.svg" alt="WeChat"></div>
+          <h3 class="anim media-title">14億人の日常</h3>
+          <p class="anim media-body">私の日常でもある</p>
         </div>
+        <div class="phone" role="img" aria-label="講演者のWeChat画面のスクリーンショット（個人情報はぼかす）" style="background-image:url('assets/photo-wechat.jpg'), url('assets/photo-wechat.svg')"></div>
       </div>
     </div>
 
     <!-- ============================================================
-         SLIDE 36 / 創業者の言葉 (Pattern A, Tencent)
+         SLIDE 36 / 創業者の言葉
     ============================================================ -->
     <div class="slide" data-variant="content" data-bg="blue">
       <div class="slide-header-bar">
         <div class="hb-left">PART 04<span class="sep">/</span>2010年11月</div>
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
-      <div class="slide-inner is-tencent">
-        <header class="topic-header">
-          <div class="anim t-section-head">馬化騰（テンセント創業者）2013年</div>
-        </header>
-        <div class="topic-body a-emphasis-wrap">
-          <p class="anim t-emphasis t-quote">「WeChatを他社が作っていたら<br>止められなかった」</p>
+      <div class="slide-inner is-blue">
+        <div class="anim kicker"><span class="k-part">04</span>馬化騰（テンセント創業者）2013年</div>
+        <div class="main">
+          <p class="anim quote">「WeChatを他社が作っていたら<br>止められなかった」</p>
           <p class="anim sub">敵より先に自分で作る</p>
         </div>
       </div>
     </div>
 
     <!-- ============================================================
-         SLIDE 37 / 営業のタブー (Pattern A)
+         SLIDE 37 / 営業のタブー
     ============================================================ -->
     <div class="slide" data-variant="content" data-bg="white">
       <div class="slide-header-bar">
         <div class="hb-left">PART 04<span class="sep">/</span>2010年11月</div>
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
-      <div class="slide-inner is-tencent">
-        <header class="topic-header">
-          <div class="anim t-section-head">営業のタブーを開発で</div>
-        </header>
-        <div class="topic-body a-emphasis-wrap">
-          <p class="anim t-emphasis">同じ客を<span class="t-blue">あえて3人で追う</span></p>
+      <div class="slide-inner is-track">
+        <div class="anim kicker"><span class="k-part">04</span>営業のタブーを開発で</div>
+        <div class="main">
+          <p class="anim statement">同じ客を<br><span class="hl-b">あえて3人で追う</span></p>
         </div>
       </div>
     </div>
 
     <!-- ============================================================
-         SLIDE 38 / 決めるのは誰 (Pattern C)
+         SLIDE 38 / 決めるのは誰
     ============================================================ -->
     <div class="slide" data-variant="content" data-bg="white">
       <div class="slide-header-bar">
         <div class="hb-left">PART 04<span class="sep">/</span>2010年11月</div>
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
-      <div class="slide-inner is-tencent">
-        <header class="topic-header">
-          <div class="anim t-section-head">社内コンテストと比べると</div>
-          <h2 class="anim t-topic-title">決めるのは誰？</h2>
-        </header>
-        <div class="topic-body is-low">
-          <div class="anim compare-grid is-large">
-            <div class="compare-side">
-              <div class="compare-label">CONTEST</div>
-              <h3 class="compare-headline">よくある社内コンテスト</h3>
-              <ul class="compare-list">
-                <li>審査員が決める</li>
-                <li>1案に絞る</li>
-              </ul>
+      <div class="slide-inner is-track">
+        <div class="anim kicker"><span class="k-part">04</span>社内コンテストと比べると</div>
+        <h2 class="anim title">決めるのは誰？</h2>
+        <div class="main">
+          <div class="anim compare">
+            <div class="cmp-col">
+              <div class="cmp-label">CONTEST</div>
+              <h3 class="cmp-head">よくある社内コンテスト</h3>
+              <ul class="cmp-list"><li>審査員が決める</li><li>1案に絞る</li></ul>
             </div>
-            <div class="compare-eq">vs</div>
-            <div class="compare-side dark">
-              <div class="compare-label">TENCENT</div>
-              <h3 class="compare-headline">テンセント</h3>
-              <ul class="compare-list">
-                <li>ユーザーが決める</li>
-                <li>競わせる</li>
-              </ul>
+            <div class="cmp-op">vs</div>
+            <div class="cmp-col is-accent">
+              <div class="cmp-label">TENCENT</div>
+              <h3 class="cmp-head">テンセント</h3>
+              <ul class="cmp-list"><li>ユーザーが決める</li><li>競わせる</li></ul>
             </div>
           </div>
         </div>
@@ -976,90 +837,82 @@
     </div>
 
     <!-- ============================================================
-         SLIDE 39 / その後 (Pattern A)
+         SLIDE 39 / 正直に言うと
     ============================================================ -->
-    <div class="slide" data-variant="content" data-bg="gray">
+    <div class="slide" data-variant="content" data-bg="white">
       <div class="slide-header-bar">
         <div class="hb-left">PART 04<span class="sep">/</span>2010年11月</div>
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
-      <div class="slide-inner is-tencent">
-        <header class="topic-header">
-          <div class="anim t-section-head">正直に言うと</div>
-        </header>
-        <div class="topic-body a-emphasis-wrap">
-          <p class="anim t-emphasis">ケンカはまだ続いた</p>
+      <div class="slide-inner is-track">
+        <div class="anim kicker"><span class="k-part">04</span>正直に言うと</div>
+        <div class="main">
+          <p class="anim statement">ケンカはまだ続いた</p>
           <p class="anim sub">リンク封鎖は2021年まで</p>
         </div>
       </div>
     </div>
 
     <!-- ============================================================
-         SLIDE 40 / 競馬の限界 (Pattern A)
+         SLIDE 40 / 競馬の限界
     ============================================================ -->
-    <div class="slide" data-variant="content" data-bg="gray">
+    <div class="slide" data-variant="content" data-bg="white">
       <div class="slide-header-bar">
         <div class="hb-left">PART 04<span class="sep">/</span>2010年11月</div>
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
-      <div class="slide-inner is-tencent">
-        <header class="topic-header">
-          <div class="anim t-section-head">競馬の限界</div>
-        </header>
-        <div class="topic-body a-emphasis-wrap">
-          <p class="anim t-emphasis">競技が変われば<span class="t-red">勝てない</span></p>
+      <div class="slide-inner is-track">
+        <div class="anim kicker"><span class="k-part">04</span>競馬の限界</div>
+        <div class="main">
+          <p class="anim statement">競技が変われば<span class="hl-r">勝てない</span></p>
           <p class="anim sub">抖音＝テンセントが出会った技術爆発</p>
         </div>
       </div>
     </div>
 
     <!-- ============================================================
-         SLIDE 41 / 今日の一言 (Pattern A, blue)
+         SLIDE 41 / 今日の一言
     ============================================================ -->
     <div class="slide" data-variant="content" data-bg="blue">
       <div class="slide-header-bar">
         <div class="hb-left">PART 05<span class="sep">/</span>最後に</div>
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
-      <div class="slide-inner">
-        <header class="topic-header">
-          <div class="anim t-section-head">今日の一言</div>
-        </header>
-        <div class="topic-body a-emphasis-wrap">
-          <p class="anim t-emphasis">外で撃つより中で競う</p>
+      <div class="slide-inner is-forest">
+        <div class="anim kicker"><span class="k-part">05</span>今日の一言</div>
+        <div class="main">
+          <p class="anim statement">外で撃つより<span class="hl-b">中で競う</span></p>
         </div>
       </div>
     </div>
 
     <!-- ============================================================
-         SLIDE 42 / おすすめポイント (Pattern B)
+         SLIDE 42 / おすすめポイント
     ============================================================ -->
-    <div class="slide" data-variant="content" data-bg="white">
+    <div class="slide" data-variant="content" data-bg="blue">
       <div class="slide-header-bar">
         <div class="hb-left">PART 05<span class="sep">/</span>最後に</div>
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
-      <div class="slide-inner">
-        <header class="topic-header">
-          <div class="anim t-section-head">最後に</div>
-          <h2 class="anim t-topic-title">『三体』のおすすめポイント</h2>
-        </header>
-        <div class="topic-body is-low">
-          <div class="anim reasons">
-            <div class="reason">
-              <div class="reason-num">01</div>
-              <h3 class="reason-title">スケール</h3>
-              <p class="reason-body">400年先の敵に今から備える</p>
+      <div class="slide-inner is-forest">
+        <div class="anim kicker"><span class="k-part">05</span>最後に</div>
+        <h2 class="anim title">『三体』のおすすめポイント</h2>
+        <div class="main">
+          <div class="anim cols">
+            <div class="col">
+              <div class="col-num">01</div>
+              <h3 class="col-title">スケール</h3>
+              <p class="col-body">400年先の敵に今から備える</p>
             </div>
-            <div class="reason">
-              <div class="reason-num">02</div>
-              <h3 class="reason-title">頭脳戦</h3>
-              <p class="reason-body">作戦は頭の中だけ</p>
+            <div class="col">
+              <div class="col-num">02</div>
+              <h3 class="col-title">頭脳戦</h3>
+              <p class="col-body">作戦は頭の中だけ</p>
             </div>
-            <div class="reason">
-              <div class="reason-num">03</div>
-              <h3 class="reason-title">中国</h3>
-              <p class="reason-body">中国の競争のルールがわかる</p>
+            <div class="col">
+              <div class="col-num">03</div>
+              <h3 class="col-title">中国</h3>
+              <p class="col-body">中国の競争のルールがわかる</p>
             </div>
           </div>
         </div>
@@ -1067,38 +920,30 @@
     </div>
 
     <!-- ============================================================
-         SLIDE 43 / 人類は勝てるのか (Pattern K)
+         SLIDE 43 / 人類は勝てるのか
     ============================================================ -->
-    <div class="slide" data-variant="content" data-bg="white">
+    <div class="slide" data-variant="content" data-bg="blue">
       <div class="slide-header-bar">
         <div class="hb-left">PART 05<span class="sep">/</span>最後に</div>
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
-      <div class="slide-inner">
-        <header class="topic-header">
-          <div class="anim t-section-head">最後の問い</div>
-        </header>
-        <div class="topic-body">
-          <div class="anim media-wrap">
-            <div class="media-text">
-              <h3 class="media-title">人類は勝てるのか</h3>
-              
-              <p class="tease is-left">答えは第2部『黒暗森林』に</p>
-            </div>
-            <div class="media-image">
-              <img src="assets/photo-santi-2.svg" alt="『三体』の実物の写真">
-            </div>
-          </div>
+      <div class="slide-inner is-forest is-split">
+        <div class="anim kicker"><span class="k-part">05</span>最後の問い</div>
+        <div class="main">
+          <h3 class="anim media-title is-l">人類は勝てるのか</h3>
+          <p class="anim tease">答えは第2部『黒暗森林』に</p>
         </div>
+        <div class="bleed" role="img" aria-label="『三体』の実物の写真" style="background-image:url('assets/photo-santi-2.jpg'), url('assets/photo-santi-2.svg')"></div>
       </div>
     </div>
 
     <!-- ============================================================
-         SLIDE 44 / ご清聴ありがとうございました (Pattern I)
+         SLIDE 44 / ご清聴ありがとうございました
     ============================================================ -->
     <div class="slide" data-variant="cover" data-bg="blue">
-      <div class="slide-inner cover-inner is-thanks">
-        <h1 class="anim t-cover-title cover-title">ご清聴ありがとうございました</h1>
+      <div class="slide-inner is-night cover-inner">
+        <svg class="anim mark" viewBox="0 0 132 44" aria-hidden="true"><circle cx="16" cy="26" r="12" fill="#F5B544"/><circle cx="60" cy="16" r="9" fill="#FF9F5A"/><circle cx="106" cy="24" r="16" fill="#FFCB6B"/></svg>
+        <h1 class="anim cover-title is-thanks">ご清聴ありがとうございました</h1>
       </div>
     </div>
 

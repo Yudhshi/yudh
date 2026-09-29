@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1200" viewBox="0 0 1600 1200">
-  <rect width="1600" height="1200" fill="#F5F7F9"/>
-  <rect x="40" y="40" width="1520" height="1120" rx="16" fill="none" stroke="#96A0A6" stroke-width="6" stroke-dasharray="28 20"/>
-  <text x="800" y="560" text-anchor="middle" font-family="'M PLUS 1p','Noto Sans JP','IPAGothic',sans-serif" font-size="64" font-weight="700" fill="#3A3E40">スクショ：自分のWeChat画面</text>
-  <text x="800" y="660" text-anchor="middle" font-family="'M PLUS 1p','Noto Sans JP','IPAGothic',sans-serif" font-size="40" fill="#96A0A6">個人情報をぼかして差し替える（photo-wechat.svg）</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1950" viewBox="0 0 900 1950">
+  <!-- 仮置き。assets/photo-wechat.jpg（自分のWeChat画面、個人情報はぼかす）を置くと自動で差し替わる -->
+  <rect width="900" height="1950" fill="#E4E4DE"/>
+  <text x="450" y="940" text-anchor="middle" font-family="'Noto Sans JP','Hiragino Sans',sans-serif" font-size="56" font-weight="700" fill="#5A6371">WeChatのスクショ</text>
+  <text x="450" y="1020" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="34" fill="#5A6371">assets/photo-wechat.jpg</text>
 </svg>

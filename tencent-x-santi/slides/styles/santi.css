@@ -1,0 +1,745 @@
+/* ============================================================================
+   黒暗森林と競馬場 — デッキ専用スタイル（v4.0〜）
+   goodpatch テンプレートから離れて、このテーマのために作ったもの
+
+   コンセプト：話の流れと同じ順に「暗 → 明 → 暗」
+   - 森（Part 1–3・最後）：宇宙のような暗い背景。アクセントは三体の3つの太陽の琥珀色
+   - 競馬場（Part 4 テンセント）：昼の明るい紙色。アクセントはテンセントの企業カラー
+   - 夜（黒暗森林の3枚）：さらに暗く、星を散らす
+
+   文字：大きな一文は明朝（小説の手ざわり）、説明はゴシック、日付と数字は等幅（三体の「カウントダウン」）
+   サイズは7段階だけ：136 / 96 / 72 / 56 / 40 / 32 / 24（px, 1920×1080 基準）
+   ============================================================================ */
+
+:root {
+  --ff-display: "Shippori Mincho B1", "Hiragino Mincho ProN", "Yu Mincho", serif;
+  --ff-sans: "Noto Sans JP", "Hiragino Sans", "Yu Gothic", sans-serif;
+  --ff-mono: "JetBrains Mono", "Noto Sans JP", ui-monospace, monospace;
+
+  --fs-hero: 136px;
+  --fs-xl: 96px;
+  --fs-l: 72px;
+  --fs-m: 56px;
+  --fs-s: 40px;
+  --fs-body: 32px;
+  --fs-min: 24px;
+
+  /* 森（暗） */
+  --forest-bg: #0A0D12;
+  --forest-fg: #EEF1F5;
+  --forest-muted: #9AA6B6;
+  --forest-line: #2A3340;
+  --sun: #F5B544;
+  --forest-blue: #7AA2FF;
+  --forest-red: #FF6A5E;
+  --forest-green: #3FD68A;
+
+  /* 競馬場（明） */
+  --paper: #F5F5F1;
+  --ink: #15181D;
+  --ink-muted: #5A6371;
+  --ink-faint: #7D8590;
+  --paper-line: #D6D6CF;
+  --tencent: #0052D9;
+  --paper-red: #D0382C;
+  --paper-green: #007A3D;
+  --wechat: #07C160;
+}
+
+/* ---------------------------------------------------------------------------
+   土台：1920×1080 のステージを画面に合わせて拡大縮小（JS が transform を書く）
+   --------------------------------------------------------------------------- */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #05070A;
+  font-family: var(--ff-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+#stage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1920px;
+  height: 1080px;
+  transform: translate(-50%, -50%);
+  transform-origin: center center;
+  overflow: hidden;
+}
+
+#slides { position: relative; width: 100%; height: 100%; }
+
+.slide { position: absolute; inset: 0; display: none; }
+.slide.active { display: block; }
+
+/* テンプレート由来の部品は画面に出さない（ページ番号・ヘッダー） */
+.slide-header-bar,
+#page-counter { display: none; }
+
+/* 出てくる動き：下から少しだけ */
+.slide.active .anim { animation: rise 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.slide.active .anim:nth-child(2) { animation-delay: 0.08s; }
+.slide.active .anim:nth-child(3) { animation-delay: 0.16s; }
+.slide.active .anim:nth-child(4) { animation-delay: 0.24s; }
+.slide.active .anim:nth-child(5) { animation-delay: 0.32s; }
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ---------------------------------------------------------------------------
+   3つのテーマ。部品は --bg / --fg / --muted / --line / --hl だけを見る
+   --------------------------------------------------------------------------- */
+
+.slide-inner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 112px 160px;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--ff-sans);
+}
+
+.is-forest, .is-night {
+  --bg: var(--forest-bg);
+  --fg: var(--forest-fg);
+  --muted: var(--forest-muted);
+  --faint: #6B7788;
+  --line: var(--forest-line);
+  --hl: var(--sun);
+  --blue: var(--forest-blue);
+  --red: var(--forest-red);
+  --green: var(--forest-green);
+}
+
+/* 夜：もう一段暗く、星を散らす */
+.is-night {
+  --bg: #06080C;
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(1.6px 1.6px at 8% 18%, rgba(238, 241, 245, 0.75), transparent 60%),
+    radial-gradient(1.2px 1.2px at 22% 72%, rgba(238, 241, 245, 0.55), transparent 60%),
+    radial-gradient(2px 2px at 35% 30%, rgba(245, 181, 68, 0.7), transparent 60%),
+    radial-gradient(1.2px 1.2px at 48% 86%, rgba(238, 241, 245, 0.5), transparent 60%),
+    radial-gradient(1.6px 1.6px at 61% 12%, rgba(238, 241, 245, 0.7), transparent 60%),
+    radial-gradient(1.2px 1.2px at 73% 64%, rgba(238, 241, 245, 0.5), transparent 60%),
+    radial-gradient(1.8px 1.8px at 84% 26%, rgba(238, 241, 245, 0.65), transparent 60%),
+    radial-gradient(1.2px 1.2px at 92% 80%, rgba(238, 241, 245, 0.5), transparent 60%),
+    radial-gradient(1px 1px at 15% 45%, rgba(238, 241, 245, 0.45), transparent 60%),
+    radial-gradient(1px 1px at 55% 50%, rgba(238, 241, 245, 0.35), transparent 60%),
+    radial-gradient(1px 1px at 78% 44%, rgba(238, 241, 245, 0.45), transparent 60%),
+    radial-gradient(1px 1px at 30% 92%, rgba(238, 241, 245, 0.4), transparent 60%);
+}
+
+.is-track {
+  --bg: var(--paper);
+  --fg: var(--ink);
+  --muted: var(--ink-muted);
+  --faint: var(--ink-faint);
+  --line: var(--paper-line);
+  --hl: var(--tencent);
+  --blue: var(--tencent);
+  --red: var(--paper-red);
+  --green: var(--paper-green);
+}
+
+.is-blue {
+  --bg: var(--tencent);
+  --fg: #FFFFFF;
+  --muted: rgba(255, 255, 255, 0.82);
+  --faint: rgba(255, 255, 255, 0.7);
+  --line: rgba(255, 255, 255, 0.35);
+  --hl: #FFFFFF;
+  --blue: #FFFFFF;
+  --red: #FFD1CC;
+  --green: #B9F5D3;
+}
+
+.hl    { color: var(--hl); }
+.hl-b  { color: var(--blue); }
+.hl-r  { color: var(--red); }
+.hl-g  { color: var(--green); }
+
+/* ---------------------------------------------------------------------------
+   左上の小見出し（等幅）。テンプレートの下線つき見出しの代わり
+   --------------------------------------------------------------------------- */
+
+.kicker {
+  display: flex;
+  align-items: baseline;
+  gap: 20px;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-min);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.kicker .k-part { color: var(--hl); font-weight: 700; }
+
+.title {
+  margin-top: 28px;
+  font-family: var(--ff-display);
+  font-size: var(--fs-m);
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: 0.01em;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 0;
+}
+
+.main.is-low { justify-content: center; padding-top: 24px; }
+
+/* ---------------------------------------------------------------------------
+   大きな一文
+   --------------------------------------------------------------------------- */
+
+.statement {
+  font-family: var(--ff-display);
+  font-size: var(--fs-xl);
+  font-weight: 800;
+  line-height: 1.4;
+  letter-spacing: 0.01em;
+  max-width: 1600px;
+}
+
+.statement.is-l { font-size: var(--fs-l); line-height: 1.45; }
+
+.hero {
+  font-family: var(--ff-display);
+  font-size: var(--fs-hero);
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.sub {
+  margin-top: 48px;
+  font-size: var(--fs-body);
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.tease {
+  margin-top: 40px;
+  font-size: var(--fs-body);
+  font-weight: 700;
+  color: var(--hl);
+}
+
+/* 夜の3枚は真ん中に置いて「場面」にする */
+.is-night .main { align-items: center; text-align: center; }
+.is-night .statement { max-width: none; }
+
+/* ---------------------------------------------------------------------------
+   表紙と最後の1枚（同じ形）
+   --------------------------------------------------------------------------- */
+
+.cover-inner {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.mark { width: 132px; height: auto; margin-bottom: 56px; }
+
+.cover-title {
+  font-family: var(--ff-display);
+  font-size: var(--fs-hero);
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+}
+
+.cover-title.is-thanks { font-size: var(--fs-xl); }
+
+.cover-name {
+  margin-top: 56px;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-min);
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  color: var(--muted);
+}
+
+/* ---------------------------------------------------------------------------
+   章扉：左下に大きく
+   --------------------------------------------------------------------------- */
+
+.chapter-inner { justify-content: flex-end; padding-bottom: 160px; }
+
+.chapter-label {
+  font-family: var(--ff-mono);
+  font-size: var(--fs-min);
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  color: var(--hl);
+}
+
+.chapter-title {
+  margin-top: 24px;
+  font-family: var(--ff-display);
+  font-size: var(--fs-hero);
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.chapter-sub {
+  margin-top: 40px;
+  font-size: var(--fs-body);
+  line-height: 1.7;
+  color: var(--muted);
+}
+
+.chapter-rule {
+  width: 100%;
+  height: 1px;
+  margin-bottom: 48px;
+  background: var(--line);
+}
+
+/* ---------------------------------------------------------------------------
+   比べる（2列）。箱は使わず、細い線と余白で分ける
+   --------------------------------------------------------------------------- */
+
+.compare {
+  display: grid;
+  grid-template-columns: 1fr 200px 1fr;
+  align-items: start;
+  width: 100%;
+}
+
+.cmp-col { border-top: 2px solid var(--line); padding-top: 36px; }
+.cmp-col.is-accent { border-top: 6px solid var(--hl); padding-top: 32px; }
+
+.cmp-label {
+  font-family: var(--ff-mono);
+  font-size: var(--fs-min);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+}
+
+.cmp-head {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-top: 16px;
+  font-family: var(--ff-display);
+  font-size: var(--fs-m);
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.cmp-col.is-accent .cmp-head { color: var(--hl); }
+
+.cmp-list { margin-top: 24px; list-style: none; }
+
+.cmp-list li {
+  padding: 20px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: var(--fs-body);
+  line-height: 1.5;
+}
+
+.cmp-op {
+  align-self: center;
+  text-align: center;
+  font-family: var(--ff-display);
+  font-size: var(--fs-xl);
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 18px;
+  border-radius: 999px;
+  background: var(--hl);
+  color: var(--bg);
+  font-family: var(--ff-sans);
+  font-size: var(--fs-min);
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+/* ---------------------------------------------------------------------------
+   3つ並べる（カードの代わりに列）
+   --------------------------------------------------------------------------- */
+
+.cols {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 64px;
+  width: 100%;
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 32px;
+  border-top: 2px solid var(--line);
+}
+
+.col-num {
+  font-family: var(--ff-mono);
+  font-size: var(--fs-min);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+
+.col-title {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-family: var(--ff-display);
+  font-size: var(--fs-s);
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.col-body {
+  margin-top: 8px;
+  font-size: var(--fs-body);
+  line-height: 1.55;
+}
+
+.col.is-win { border-top: 6px solid var(--green); padding-top: 28px; }
+.col.is-win .col-title,
+.col.is-win .col-body { color: var(--green); font-weight: 700; }
+
+/* ---------------------------------------------------------------------------
+   事実を3つ（大きな値＋一行）
+   --------------------------------------------------------------------------- */
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 64px;
+  width: 100%;
+}
+
+.fact { padding-top: 32px; border-top: 2px solid var(--line); }
+
+.fact-big {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  font-family: var(--ff-display);
+  font-size: var(--fs-l);
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.fact-cap {
+  margin-top: 20px;
+  font-size: var(--fs-body);
+  line-height: 1.55;
+}
+
+.facts + .sub { margin-top: 64px; }
+
+/* ---------------------------------------------------------------------------
+   アプリアイコン
+   --------------------------------------------------------------------------- */
+
+.app-icon {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  border-radius: 22%;
+  vertical-align: -0.12em;
+  margin-right: 0.25em;
+}
+
+.fact-big .app-icon,
+.col-title .app-icon,
+.cmp-head .app-icon { margin-right: 0; }
+
+.icon-row { display: flex; gap: 24px; margin-bottom: 40px; }
+.icon-row .app-icon { width: 120px; height: 120px; margin: 0; }
+
+.hero-icon { width: 144px; height: 144px; border-radius: 22%; margin-bottom: 48px; }
+
+/* ---------------------------------------------------------------------------
+   この本を読んだ人たち：有名な人ほど大きく
+   --------------------------------------------------------------------------- */
+
+.readers {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr 1fr;
+  column-gap: 64px;
+  row-gap: 48px;
+  width: 100%;
+}
+
+.reader { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+
+.reader-name {
+  font-family: var(--ff-display);
+  font-weight: 800;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+.reader-role { font-size: var(--fs-min); line-height: 1.5; color: var(--muted); white-space: nowrap; }
+.reader-say  { font-size: var(--fs-body); line-height: 1.5; white-space: nowrap; }
+
+.reader.is-xl {
+  grid-row: 1 / span 3;
+  justify-content: center;
+  padding-right: 64px;
+  border-right: 1px solid var(--line);
+}
+
+.reader.is-xl .reader-name { font-size: var(--fs-hero); }
+.reader.is-xl .reader-role { font-size: var(--fs-body); }
+.reader.is-xl .reader-say  { margin-top: 32px; font-family: var(--ff-display); font-size: var(--fs-s); font-weight: 700; color: var(--hl); }
+
+.reader.is-l .reader-name { font-size: var(--fs-s); }
+
+.readers-small {
+  grid-column: 2 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
+  padding-top: 32px;
+  border-top: 1px solid var(--line);
+}
+
+.reader.is-s .reader-name { font-size: var(--fs-body); }
+.reader.is-s .reader-say  { font-size: var(--fs-min); color: var(--muted); }
+
+/* ---------------------------------------------------------------------------
+   2010年11月のタイムライン
+   色は点が持つ。文字は本文の色のまま（凡例と文字で区別できる）
+   --------------------------------------------------------------------------- */
+
+.timeline {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  width: 100%;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 107px;
+  height: 2px;
+  background: var(--line);
+}
+
+.tl-node { position: relative; display: flex; flex-direction: column; color: var(--faint); }
+
+.tl-date {
+  height: 88px;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-m);
+  font-weight: 700;
+  line-height: 88px;
+}
+
+.tl-mark { display: flex; align-items: center; height: 40px; }
+
+.tl-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--faint);
+  box-shadow: 0 0 0 6px var(--bg);
+}
+
+.tl-label {
+  margin-top: 28px;
+  font-size: var(--fs-body);
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.tl-node.is-on { color: var(--fg); }
+.tl-node.is-on .tl-dot { background: var(--fg); }
+
+.tl-node.is-fight,
+.tl-node.is-answer,
+.tl-node.is-inside { color: var(--fg); }
+
+.tl-node.is-fight .tl-dot,
+.tl-node.is-answer .tl-dot,
+.tl-node.is-inside .tl-dot { width: 36px; height: 36px; }
+
+.tl-node.is-fight .tl-dot  { background: var(--red); }
+.tl-node.is-answer .tl-dot { background: var(--blue); }
+.tl-node.is-inside .tl-dot { background: var(--green); }
+
+.legend {
+  display: flex;
+  gap: 56px;
+  margin-top: 72px;
+  font-size: var(--fs-min);
+  color: var(--muted);
+}
+
+.legend span { display: inline-flex; align-items: center; gap: 14px; }
+.legend span::before { content: ''; width: 20px; height: 20px; border-radius: 50%; }
+.legend .is-fight::before  { background: var(--red); }
+.legend .is-answer::before { background: var(--blue); }
+.legend .is-inside::before { background: var(--green); }
+
+/* ---------------------------------------------------------------------------
+   時価総額（横棒）
+   ラベルは棒の上に本文の色で。棒同士は 2px のすき間、端は 4px の角丸
+   --------------------------------------------------------------------------- */
+
+.bars { display: flex; flex-direction: column; gap: 56px; width: 100%; }
+
+.bar-row { display: flex; gap: 2px; align-items: flex-end; }
+
+.bar-seg { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+
+.bar-label { display: flex; align-items: baseline; gap: 16px; white-space: nowrap; }
+.bar-label b { font-size: var(--fs-body); font-weight: 700; color: var(--fg); }
+.bar-label span { font-family: var(--ff-mono); font-size: var(--fs-body); color: var(--muted); }
+
+.bar { height: 88px; border-radius: 4px; background: var(--ink); }
+.bar.is-tencent { background: var(--tencent); }
+.bar.is-toyota  { background: #2B313A; }
+.bar.is-sony    { background: var(--ink-faint); }
+
+/* トヨタ＋ソニーがテンセントに届かない分（ラベルは右端にそろえる） */
+.bar-gap .bar-label { justify-content: flex-end; }
+.bar-gap .bar {
+  background: repeating-linear-gradient(135deg, transparent 0 10px, rgba(21, 24, 29, 0.14) 10px 12px);
+  border: 2px dashed var(--faint);
+}
+
+.bars + .sub { margin-top: 56px; font-size: var(--fs-min); }
+
+/* ---------------------------------------------------------------------------
+   写真・画像の入るスライド
+   写真は右半分いっぱいに（同じ名前の .jpg を置くと .svg の仮置きより上に出る）
+   --------------------------------------------------------------------------- */
+
+.is-split { padding-right: calc(46% + 96px); }
+
+.bleed {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 46%;
+  background-size: cover;
+  background-position: center;
+}
+
+.panel {
+  position: absolute;
+  top: 50%;
+  right: 128px;
+  width: 820px;
+  transform: translateY(-50%);
+}
+
+.panel img { display: block; width: 100%; height: auto; border-radius: 12px; box-shadow: 0 24px 64px rgba(21, 24, 29, 0.18); }
+
+.phone {
+  position: absolute;
+  top: 50%;
+  right: 240px;
+  width: 420px;
+  height: 900px;
+  transform: translateY(-50%);
+  border: 14px solid #1C2027;
+  border-radius: 64px;
+  background-size: cover;
+  background-position: top center;
+  box-shadow: 0 32px 80px rgba(21, 24, 29, 0.25);
+}
+
+.media-title {
+  font-family: var(--ff-display);
+  font-size: var(--fs-xl);
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.media-title.is-l { font-size: var(--fs-l); }
+
+.media-body {
+  margin-top: 32px;
+  font-size: var(--fs-body);
+  line-height: 1.6;
+}
+
+.pill {
+  display: inline-block;
+  align-self: flex-start;
+  margin-top: 40px;
+  padding: 8px 24px;
+  border: 2px solid var(--fg);
+  border-radius: 999px;
+  font-size: var(--fs-min);
+  font-weight: 700;
+}
+
+/* ---------------------------------------------------------------------------
+   どんな話？：3つの太陽
+   --------------------------------------------------------------------------- */
+
+.three-suns { display: block; width: 640px; height: auto; margin-bottom: 56px; }
+
+/* ---------------------------------------------------------------------------
+   黒暗森林の2語、面壁計画の4つの作戦
+   --------------------------------------------------------------------------- */
+
+.defs {
+  display: grid;
+  grid-template-columns: repeat(2, 480px);
+  gap: 64px;
+  margin-top: 72px;
+  text-align: left;
+}
+
+.def { padding-top: 24px; border-top: 2px solid var(--red); font-size: var(--fs-body); line-height: 1.5; }
+.def-term { display: block; margin-bottom: 8px; font-weight: 700; color: var(--red); }
+
+.plans { display: flex; gap: 24px; margin-top: 56px; }
+
+.plans span {
+  padding: 16px 36px;
+  border: 2px solid var(--hl);
+  border-radius: 4px;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-body);
+  font-weight: 700;
+  color: var(--hl);
+}
+
+/* ---------------------------------------------------------------------------
+   創業者の言葉
+   --------------------------------------------------------------------------- */
+
+.quote {
+  font-family: var(--ff-display);
+  font-size: var(--fs-l);
+  font-weight: 800;
+  line-height: 1.5;
+  text-indent: -0.5em;
+}
