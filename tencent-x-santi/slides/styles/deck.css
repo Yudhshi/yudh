@@ -484,3 +484,118 @@
 .sub, .src, .def, .reason-body, .media-body, .compare-list li, .bubble {
   word-break: auto-phrase;
 }
+
+
+/* v2.6: Apple-like minimal */
+
+/* ---------------------------------------------------------------------------
+   見た目を最小限に。ヘッダーバーは隠し、左上の小見出しで「いまどこか」を示す
+   視線：左上の小見出し → 中央の大きな一文 → （必要なら）下の短い一行 → 最下部の出典
+   --------------------------------------------------------------------------- */
+
+.slide-header-bar {
+  display: none;
+}
+
+.t-hero {
+  font-family: var(--ff-ja);
+  font-size: 136px;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: var(--black);
+  text-align: center;
+}
+
+.foot-note {
+  font-size: 22px;
+}
+
+
+/* ---------------------------------------------------------------------------
+   夜のスライド（黒暗森林の3枚）。森に入ると暗くなり、テンセントの話で明るく戻る
+   --------------------------------------------------------------------------- */
+
+.slide-inner.is-night {
+  background: #0E1116;
+}
+
+.slide-inner.is-night .t-emphasis {
+  color: var(--white);
+}
+
+.slide-inner.is-night .t-blue {
+  color: var(--light-blue);
+}
+
+.slide-inner.is-night .t-section-head {
+  color: var(--light-blue);
+  border-bottom-color: var(--light-blue);
+}
+
+.slide-inner.is-night .def {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--white);
+}
+
+.slide-inner.is-night .def-term {
+  color: var(--light-red);
+}
+
+
+/* ---------------------------------------------------------------------------
+   著者について（3つの事実を左から右へ）
+   --------------------------------------------------------------------------- */
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-sm);
+  width: 100%;
+}
+
+.fact {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  padding: var(--space-sm) 0 0;
+  border-top: 6px solid var(--sf-blue);
+}
+
+.fact-big {
+  font-family: var(--ff-ja);
+  font-size: 64px;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--sf-blue);
+}
+
+.fact-cap {
+  font-family: var(--ff-ja);
+  font-size: 30px;
+  line-height: 1.5;
+  color: var(--black);
+}
+
+
+/* ---------------------------------------------------------------------------
+   面壁計画（4つの作戦を横に並べる）
+   --------------------------------------------------------------------------- */
+
+.plans {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-xs);
+  margin-top: var(--space-md);
+}
+
+.plans span {
+  padding: 20px 40px;
+  border: 3px solid var(--sf-blue);
+  border-radius: var(--radius-md);
+  background: var(--white);
+  font-family: var(--ff-ja);
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--sf-blue);
+}
