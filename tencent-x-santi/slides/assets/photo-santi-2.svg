@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1200" viewBox="0 0 1600 1200">
+  <rect width="1600" height="1200" fill="#F5F7F9"/>
+  <rect x="40" y="40" width="1520" height="1120" rx="16" fill="none" stroke="#96A0A6" stroke-width="6" stroke-dasharray="28 20"/>
+  <text x="800" y="560" text-anchor="middle" font-family="'M PLUS 1p','Noto Sans JP','IPAGothic',sans-serif" font-size="64" font-weight="700" fill="#3A3E40">写真：『三体』の実物（2枚目）</text>
+  <text x="800" y="660" text-anchor="middle" font-family="'M PLUS 1p','Noto Sans JP','IPAGothic',sans-serif" font-size="40" fill="#96A0A6">講演者が撮影した写真に差し替える（photo-santi-2.svg）</text>
+</svg>

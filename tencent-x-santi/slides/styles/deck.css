@@ -428,3 +428,59 @@
 .slide[data-bg="gray"] .bubble:not(.is-empty)::after {
   border-color: var(--white) transparent transparent;
 }
+
+
+/* ---------------------------------------------------------------------------
+   黒暗森林の2つの理由（s11）
+   --------------------------------------------------------------------------- */
+
+.defs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-sm);
+  width: 100%;
+  max-width: 1600px;
+  margin-top: var(--space-md);
+}
+
+.def {
+  padding: var(--space-sm);
+  border-top: 6px solid var(--red);
+  border-radius: var(--radius-sm);
+  background: var(--light-gray);
+  font-family: var(--ff-ja);
+  font-size: 34px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--black);
+  text-align: left;
+}
+
+.def-term {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--red);
+}
+
+
+/* ---------------------------------------------------------------------------
+   3カラムカード（B）を大きめに。本文が短いので読みやすさを優先する
+   --------------------------------------------------------------------------- */
+
+.reasons .reason-body {
+  font-size: 30px;
+  line-height: 1.6;
+  color: var(--black);
+}
+
+
+/* ---------------------------------------------------------------------------
+   日本語の改行を文節で。対応していないブラウザでは通常の改行になる
+   --------------------------------------------------------------------------- */
+
+.sub, .src, .def, .reason-body, .media-body, .compare-list li, .bubble {
+  word-break: auto-phrase;
+}
