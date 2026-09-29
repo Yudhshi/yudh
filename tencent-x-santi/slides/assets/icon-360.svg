@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- 360（簡略版）。公式アイコンに差し替え可 -->
+  <rect width="128" height="128" rx="28" fill="#1DB14B"/>
+  <circle cx="64" cy="64" r="44" fill="none" stroke="#FFFFFF" stroke-width="6" opacity="0.35"/>
+  <text x="64" y="80" text-anchor="middle" font-family="Montserrat, Arial Black, Helvetica, Arial, sans-serif" font-size="46" font-weight="900" fill="#FFFFFF" letter-spacing="-1">360</text>
+</svg>

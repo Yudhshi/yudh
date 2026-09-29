@@ -1,0 +1,1004 @@
+/* ============================================================================
+   deck.css — 「黒暗森林と競馬場」専用のコンポーネント
+   ============================================================================
+   goodpatch.css / components.css の上に重ねる。色・余白はトークン経由のみ。
+   スタイルプリセットを差し替えても、このファイルはそのまま使える。
+   ============================================================================ */
+
+
+/* ---------------------------------------------------------------------------
+   本文の補足行（主メッセージの下に置く1〜2行）
+   --------------------------------------------------------------------------- */
+
+.sub {
+  font-family: var(--ff-ja);
+  font-size: 34px;
+  font-weight: 500;
+  line-height: 1.6;
+  color: var(--black);
+  text-align: center;
+  max-width: 1440px;
+  margin: var(--space-md) auto 0;
+}
+
+.sub + .sub {
+  margin-top: var(--space-xs);
+}
+
+.sub.is-sales {
+  color: var(--sf-blue);
+  font-weight: 700;
+}
+
+/* 出典・注記。読み上げない情報 */
+.src {
+  font-family: var(--ff-ja);
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--gray);
+  text-align: center;
+  max-width: 1440px;
+  margin: var(--space-xs) auto 0;
+}
+
+.foot-note {
+  position: absolute;
+  left: 160px;
+  right: 160px;
+  bottom: 72px;
+  margin: 0;
+}
+
+
+/* ---------------------------------------------------------------------------
+   2010年11月のカレンダー（Pattern D の拡張）
+   is-dim: その他 / is-neutral: 全景 / is-fight: 撃ち合い / is-answer: 答え
+   --------------------------------------------------------------------------- */
+
+.topic-body.is-low {
+  margin-top: 150px;
+}
+
+.cal .flow-step {
+  gap: 14px;
+}
+
+.cal .flow-pill {
+  min-height: 196px;
+  padding: 24px 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-size: 32px;
+  line-height: 1.35;
+  background: var(--white);
+  border: 2px solid rgba(150, 160, 166, 0.4);
+  color: var(--gray);
+}
+
+.cal .cal-date {
+  display: block;
+  font-family: var(--ff-en);
+  font-size: 42px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  margin-bottom: 8px;
+}
+
+.cal .flow-caption {
+  font-family: var(--ff-ja);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  visibility: hidden;
+}
+
+.cal .flow-arrow {
+  flex: 0 0 44px;
+  color: var(--gray);
+  opacity: 0.5;
+}
+
+.cal .flow-arrow svg {
+  width: 36px;
+}
+
+.cal .flow-step.is-neutral .flow-pill {
+  color: var(--black);
+  border-color: var(--gray);
+}
+
+.cal .flow-step.is-fight .flow-pill {
+  background: var(--light-red);
+  border: 4px solid var(--red);
+  color: var(--black);
+}
+
+.cal .flow-step.is-answer .flow-pill {
+  background: var(--light-blue);
+  border: 4px solid var(--sf-blue);
+  color: var(--black);
+}
+
+.cal .flow-step.is-fight .flow-caption,
+.cal .flow-step.is-answer .flow-caption {
+  visibility: visible;
+}
+
+.cal .flow-step.is-fight .flow-caption  { color: var(--red); }
+.cal .flow-step.is-answer .flow-caption { color: var(--sf-blue); }
+
+.legend {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-xs);
+  font-family: var(--ff-ja);
+  font-size: 24px;
+  color: var(--black);
+}
+
+.legend span::before {
+  content: '';
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  margin-right: 12px;
+  vertical-align: -3px;
+  border-radius: var(--radius-sm);
+}
+
+.legend .is-fight::before  { background: var(--light-red);  border: 3px solid var(--red); }
+.legend .is-answer::before { background: var(--light-blue); border: 3px solid var(--sf-blue); }
+
+
+/* ---------------------------------------------------------------------------
+   キーワードのチップ（s08）
+   --------------------------------------------------------------------------- */
+
+.chips {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-xs);
+  margin-top: var(--space-md);
+  font-family: var(--ff-ja);
+  font-size: 30px;
+  color: var(--black);
+}
+
+.chips .chip {
+  padding: 10px 28px;
+  border: 2px solid var(--sf-blue);
+  border-radius: 999px;
+  color: var(--sf-blue);
+  font-weight: 700;
+}
+
+
+/* ---------------------------------------------------------------------------
+   講演者が埋めるページの枠（s06, s12）。本番前に必ず差し替える
+   --------------------------------------------------------------------------- */
+
+.ph {
+  margin: var(--space-md) auto 0;
+  max-width: 1300px;
+  padding: var(--space-sm) var(--space-md);
+  border: 3px dashed var(--gray);
+  border-radius: var(--radius-md);
+  font-family: var(--ff-ja);
+  font-size: 30px;
+  line-height: 1.7;
+  color: var(--gray);
+  text-align: center;
+}
+
+.ph strong {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--red);
+  font-size: 22px;
+  letter-spacing: 0.2em;
+}
+
+
+/* ---------------------------------------------------------------------------
+   青ベタの content スライド（s21 の引用）
+   --------------------------------------------------------------------------- */
+
+.slide[data-variant="content"][data-bg="blue"] .slide-header-bar {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.slide[data-variant="content"][data-bg="blue"] .slide-header-bar .hb-left {
+  color: var(--white);
+}
+
+.slide[data-variant="content"][data-bg="blue"] .slide-header-bar::after {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.slide[data-variant="content"][data-bg="blue"] .t-section-head {
+  color: var(--white);
+  border-bottom-color: var(--white);
+}
+
+.slide[data-variant="content"][data-bg="blue"] .t-emphasis {
+  color: var(--white);
+}
+
+.slide[data-variant="content"][data-bg="blue"] .src {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 30px;
+}
+
+
+/* ---------------------------------------------------------------------------
+   表（s29）。社長がその場で読むので、プリセットより大きくする
+   --------------------------------------------------------------------------- */
+
+.e-table.is-large thead th {
+  font-size: 24px;
+}
+
+.e-table.is-large tbody td {
+  font-size: 30px;
+  padding: 22px 32px;
+}
+
+.e-table.is-large tbody td:first-child {
+  width: 150px;
+  font-weight: 700;
+  color: var(--sf-blue);
+  white-space: nowrap;
+}
+
+
+/* ---------------------------------------------------------------------------
+   比較（C）の補足行と、画像+テキスト（K）の補足
+   --------------------------------------------------------------------------- */
+
+.compare-grid + .sub,
+.compare-grid + .src {
+  margin-top: var(--space-sm);
+}
+
+.media-text .src {
+  text-align: left;
+  margin: var(--space-sm) 0 0;
+}
+
+
+/* ---------------------------------------------------------------------------
+   比較（C）を大きめに。項目が短いので、社長席からも読める大きさにする
+   --------------------------------------------------------------------------- */
+
+.compare-grid.is-large .compare-side {
+  padding: var(--space-md);
+}
+
+.compare-grid.is-large .compare-headline {
+  font-size: 48px;
+}
+
+.compare-grid.is-large .compare-list li {
+  font-size: 38px;
+  padding-left: 36px;
+}
+
+.compare-grid.is-large .compare-list li::before {
+  top: 30px;
+  width: 18px;
+}
+
+
+/* ---------------------------------------------------------------------------
+   講演者が埋める所の目印（赤い小ラベル）と、埋める前の問い
+   --------------------------------------------------------------------------- */
+
+.fill-tag {
+  display: inline-block;
+  margin: var(--space-sm) auto 0;
+  padding: 6px 20px;
+  border: 2px solid var(--red);
+  border-radius: 999px;
+  font-family: var(--ff-ja);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--red);
+}
+
+.fill-tag.is-left {
+  margin-left: 0;
+}
+
+.compare-grid.is-large .compare-list li.is-prompt {
+  font-size: 32px;
+  color: var(--gray);
+}
+
+.compare-side.dark .compare-list li.is-prompt {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+
+/* ---------------------------------------------------------------------------
+   選書の動機（s08）：左から右へ、2つの考えをつなぐ
+   --------------------------------------------------------------------------- */
+
+.motive {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+}
+
+.motive-pill {
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  background: var(--sf-blue);
+  color: var(--white);
+  font-family: var(--ff-ja);
+  font-size: 44px;
+  font-weight: 700;
+  line-height: 1.45;
+  text-align: center;
+}
+
+.motive-pill.is-accent {
+  background: var(--light-red);
+  color: var(--black);
+}
+
+.motive-arrow {
+  color: var(--gray);
+  width: 60px;
+  flex: 0 0 60px;
+}
+
+
+/* ---------------------------------------------------------------------------
+   聞いてみた（s13）：吹き出しの対話
+   --------------------------------------------------------------------------- */
+
+.chat {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-lg);
+  width: 100%;
+  align-items: start;
+}
+
+.chat-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.bubble {
+  position: relative;
+  width: 100%;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: 28px;
+  background: var(--light-gray);
+  font-family: var(--ff-ja);
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--sf-blue);
+  text-align: center;
+}
+
+.bubble::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -22px;
+  margin-left: -22px;
+  border-width: 22px 22px 0;
+  border-style: solid;
+  border-color: var(--light-gray) transparent transparent;
+}
+
+.bubble.is-empty {
+  background: var(--white);
+  border: 3px dashed var(--gray);
+  color: var(--gray);
+  font-weight: 500;
+}
+
+.bubble.is-empty::after {
+  border-color: var(--gray) transparent transparent;
+}
+
+.chat .who {
+  margin-top: 40px;
+  font-family: var(--ff-ja);
+  font-size: 28px;
+  font-weight: 500;
+  color: var(--black);
+}
+
+.slide[data-bg="gray"] .bubble:not(.is-empty) {
+  background: var(--white);
+}
+
+.slide[data-bg="gray"] .bubble:not(.is-empty)::after {
+  border-color: var(--white) transparent transparent;
+}
+
+
+/* ---------------------------------------------------------------------------
+   黒暗森林の2つの理由（s11）
+   --------------------------------------------------------------------------- */
+
+.defs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-sm);
+  width: 100%;
+  max-width: 1600px;
+  margin-top: var(--space-md);
+}
+
+.def {
+  padding: var(--space-sm);
+  border-top: 6px solid var(--red);
+  border-radius: var(--radius-sm);
+  background: var(--light-gray);
+  font-family: var(--ff-ja);
+  font-size: 34px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--black);
+  text-align: left;
+}
+
+.def-term {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--red);
+}
+
+
+/* ---------------------------------------------------------------------------
+   3カラムカード（B）を大きめに。本文が短いので読みやすさを優先する
+   --------------------------------------------------------------------------- */
+
+.reasons .reason-body {
+  font-size: 30px;
+  line-height: 1.6;
+  color: var(--black);
+}
+
+
+/* ---------------------------------------------------------------------------
+   日本語の改行を文節で。対応していないブラウザでは通常の改行になる
+   --------------------------------------------------------------------------- */
+
+.sub, .src, .def, .reason-body, .media-body, .compare-list li, .bubble {
+  word-break: auto-phrase;
+}
+
+
+/* v2.6: Apple-like minimal */
+
+/* ---------------------------------------------------------------------------
+   見た目を最小限に。ヘッダーバーは隠し、左上の小見出しで「いまどこか」を示す
+   視線：左上の小見出し → 中央の大きな一文 → （必要なら）下の短い一行 → 最下部の出典
+   --------------------------------------------------------------------------- */
+
+.slide-header-bar {
+  display: none;
+}
+
+.t-hero {
+  font-family: var(--ff-ja);
+  font-size: 136px;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: var(--black);
+  text-align: center;
+}
+
+.foot-note {
+  font-size: 22px;
+}
+
+
+/* ---------------------------------------------------------------------------
+   夜のスライド（黒暗森林の3枚）。森に入ると暗くなり、テンセントの話で明るく戻る
+   --------------------------------------------------------------------------- */
+
+.slide-inner.is-night {
+  background: #0E1116;
+}
+
+.slide-inner.is-night .t-emphasis {
+  color: var(--white);
+}
+
+.slide-inner.is-night .t-blue {
+  color: var(--light-blue);
+}
+
+.slide-inner.is-night .t-section-head {
+  color: var(--light-blue);
+  border-bottom-color: var(--light-blue);
+}
+
+.slide-inner.is-night .def {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--white);
+}
+
+.slide-inner.is-night .def-term {
+  color: var(--light-red);
+}
+
+
+/* ---------------------------------------------------------------------------
+   著者について（3つの事実を左から右へ）
+   --------------------------------------------------------------------------- */
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-sm);
+  width: 100%;
+}
+
+.fact {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  padding: var(--space-sm) 0 0;
+  border-top: 6px solid var(--sf-blue);
+}
+
+.fact-big {
+  font-family: var(--ff-ja);
+  font-size: 64px;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--sf-blue);
+}
+
+.fact-cap {
+  font-family: var(--ff-ja);
+  font-size: 30px;
+  line-height: 1.5;
+  color: var(--black);
+}
+
+
+/* ---------------------------------------------------------------------------
+   面壁計画（4つの作戦を横に並べる）
+   --------------------------------------------------------------------------- */
+
+.plans {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-xs);
+  margin-top: var(--space-md);
+}
+
+.plans span {
+  padding: 20px 40px;
+  border: 3px solid var(--sf-blue);
+  border-radius: var(--radius-md);
+  background: var(--white);
+  font-family: var(--ff-ja);
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--sf-blue);
+}
+
+
+/* v2.8: keywords, Tencent palette, app icons */
+
+/* 話に集中してもらうため、ページ番号と脚注は出さない */
+#page-counter,
+.foot-note {
+  display: none;
+}
+
+/* ---------------------------------------------------------------------------
+   Part 4（テンセントの話）はテンセントの企業カラーに切り替える
+   トークンを上書きするだけなので、部品側の変更はいらない
+   --------------------------------------------------------------------------- */
+
+.slide-inner.is-tencent {
+  --sf-blue: #0052D9;
+  --light-blue: #BBD3FB;
+}
+
+.slide[data-bg="blue"] > .slide-inner.is-tencent {
+  background: #0052D9;
+}
+
+/* ---------------------------------------------------------------------------
+   アプリアイコン（QQ・WeChat）
+   --------------------------------------------------------------------------- */
+
+.app-icon {
+  display: inline-block;
+  width: 1.1em;
+  height: 1.1em;
+  margin-right: 0.3em;
+  vertical-align: -0.18em;
+  border-radius: 22%;
+}
+
+.app-icon.is-lg {
+  display: block;
+  width: 120px;
+  height: 120px;
+  margin: 0 0 var(--space-xs);
+}
+
+.app-icon.is-xl {
+  display: block;
+  width: 160px;
+  height: 160px;
+  margin: 0 auto var(--space-sm);
+}
+
+.cal .cal-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---------------------------------------------------------------------------
+   推しバッジ、続きが気になる一行
+   --------------------------------------------------------------------------- */
+
+.badge {
+  display: inline-block;
+  margin-left: 12px;
+  padding: 2px 16px;
+  border-radius: 999px;
+  background: var(--red);
+  color: var(--white);
+  font-size: 26px;
+  font-weight: 700;
+  vertical-align: 6px;
+}
+
+.tease {
+  margin: var(--space-md) auto 0;
+  font-family: var(--ff-ja);
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--red);
+  text-align: center;
+}
+
+.tease.is-left,
+.src.is-left {
+  margin-left: 0;
+  text-align: left;
+}
+
+.media-text .tease {
+  margin-top: var(--space-sm);
+}
+
+.media-text .media-body.is-big {
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.media-text .src.is-left {
+  margin-top: var(--space-xs);
+  font-size: 26px;
+}
+
+
+/* v2.9: no punctuation, fewer captions */
+
+/* カレンダーの下の小さなラベルは出さない（色と最後の凡例で伝える） */
+.cal .flow-step.is-fight .flow-caption,
+.cal .flow-step.is-answer .flow-caption {
+  visibility: hidden;
+}
+
+/* 2人だけの「読んだ人」 */
+.facts.is-two {
+  grid-template-columns: repeat(2, 1fr);
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* 最後の1枚は「ご清聴ありがとうございました」だけ */
+.cover-inner.is-thanks {
+  align-items: center;
+  text-align: center;
+}
+
+.cover-inner.is-thanks .cover-title {
+  margin: 0;
+  font-size: 96px;
+}
+
+
+/* v3.0: sentences, Tencent intro, readers, closing points */
+
+/* ---------------------------------------------------------------------------
+   この本を読んだ人（4人を横に並べる）
+   --------------------------------------------------------------------------- */
+
+.people {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-sm);
+  width: 100%;
+}
+
+.person {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: var(--space-sm);
+  border-top: 6px solid var(--sf-blue);
+  font-family: var(--ff-ja);
+}
+
+.person-name {
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--sf-blue);
+}
+
+.person-role {
+  font-size: 22px;
+  line-height: 1.5;
+  color: var(--gray);
+}
+
+.person-say {
+  margin-top: var(--space-xs);
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--black);
+}
+
+/* ---------------------------------------------------------------------------
+   テンセントってどんな会社？（アイコンつきの3つの事実）
+   --------------------------------------------------------------------------- */
+
+.facts.is-icons .fact-big {
+  display: flex;
+  align-items: center;
+  font-size: 56px;
+}
+
+.facts.is-icons .app-icon {
+  margin-right: 20px;
+  vertical-align: 0;
+}
+
+/* ---------------------------------------------------------------------------
+   時価総額の比較（横棒。テンセント＝100%）
+   --------------------------------------------------------------------------- */
+
+.mcap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  width: 100%;
+  max-width: 1500px;
+  margin: 0 auto;
+}
+
+.mcap-row {
+  display: flex;
+  gap: 6px;
+}
+
+.mcap-seg {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 150px;
+  padding: 0 32px;
+  border-radius: var(--radius-md);
+  background: var(--black);
+  font-family: var(--ff-ja);
+  color: var(--white);
+  white-space: nowrap;
+}
+
+.mcap-seg b {
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.mcap-seg span {
+  font-size: 30px;
+  line-height: 1.4;
+  opacity: 0.85;
+}
+
+.mcap-seg.is-tencent {
+  background: var(--sf-blue);
+}
+
+.mcap-seg.is-light {
+  background: var(--gray);
+}
+
+.mcap + .sub {
+  margin-top: var(--space-sm);
+}
+
+/* ---------------------------------------------------------------------------
+   QQと360のアイコンを並べる
+   --------------------------------------------------------------------------- */
+
+.icon-row {
+  display: flex;
+  gap: var(--space-xs);
+}
+
+.icon-row .app-icon.is-lg {
+  margin: 0 0 var(--space-xs);
+}
+
+/* 青い背景の下の一行は白っぽく */
+.slide[data-variant="content"][data-bg="blue"] .sub {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* 創業者の言葉は2行。少し小さくして1行ずつ収める */
+.t-emphasis.t-quote {
+  font-size: 80px;
+  line-height: 1.4;
+}
+
+
+/* v3.1: centered cover, ten readers */
+
+/* 表紙は最後の1枚と同じ形。タイトルと名前だけ */
+.cover-inner.is-thanks .cover-name {
+  margin-top: var(--space-md);
+  font-family: var(--ff-en);
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* ---------------------------------------------------------------------------
+   この本を読んだ人たち（有名な人ほど大きく）
+   左に一番大きい1人、右に4人、下に5人
+   --------------------------------------------------------------------------- */
+
+.readers {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr 1fr;
+  grid-template-rows: auto auto auto;
+  gap: var(--space-sm) var(--space-md);
+  width: 100%;
+}
+
+.reader {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  padding-left: 28px;
+  border-left: 6px solid var(--sf-blue);
+  font-family: var(--ff-ja);
+}
+
+.reader-name {
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--sf-blue);
+  white-space: nowrap;
+}
+
+.reader-role {
+  line-height: 1.5;
+  color: var(--gray);
+  white-space: nowrap;
+}
+
+.reader-say {
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--black);
+  white-space: nowrap;
+}
+
+.reader.is-xl {
+  grid-row: 1 / span 2;
+  padding: var(--space-sm);
+  border-left-width: 10px;
+  background: var(--light-gray);
+}
+
+.reader.is-xl .reader-name { font-size: 104px; }
+.reader.is-xl .reader-role { font-size: 28px; }
+.reader.is-xl .reader-say  { margin-top: var(--space-xs); font-size: 44px; }
+
+.reader.is-l .reader-name { font-size: 40px; }
+.reader.is-l .reader-role { font-size: 20px; }
+.reader.is-l .reader-say  { font-size: 28px; }
+
+.readers-small {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--space-sm);
+}
+
+.reader.is-s {
+  gap: 2px;
+  padding-left: 18px;
+  border-left: 3px solid var(--light-blue);
+}
+
+.reader.is-s .reader-name { font-size: 24px; color: var(--black); }
+.reader.is-s .reader-role { font-size: 17px; }
+.reader.is-s .reader-say  { font-size: 20px; font-weight: 500; }
+
+
+/* v3.2: seven readers, same-month state, winning team */
+
+/* 読んだ人は7人。左にオバマ（3段ぶち抜き）、右に4人、その下に2人 */
+.reader.is-xl {
+  grid-row: 1 / span 3;
+}
+
+.readers-small {
+  grid-column: 2 / -1;
+  grid-template-columns: subgrid;
+}
+
+.reader.is-s .reader-name { font-size: 28px; }
+.reader.is-s .reader-role { font-size: 20px; }
+.reader.is-s .reader-say  { font-size: 24px; }
+
+/* 同じ月に社内で起きたこと（WeChat）。因果ではないので「答え」とは別の色 */
+.cal .flow-step.is-inside .flow-pill {
+  background: #D7F5E4;
+  border: 4px solid #07C160;
+  color: var(--black);
+}
+
+.legend .is-inside::before { background: #D7F5E4; border: 3px solid #07C160; }
+
+/* 3チームのうち勝ち残ったチーム */
+.reasons .reason.is-win {
+  border-top-color: #07C160;
+  box-shadow: 0 0 0 4px #07C160 inset;
+}
+
+.reasons .reason.is-win .reason-body {
+  font-weight: 700;
+  color: #07A052;
+}
+
+
+/* v3.2: three suns */
+
+/* どんな話？：3つの太陽と1つの惑星（三体星の空のイメージ） */
+.three-suns {
+  display: block;
+  width: 560px;
+  height: auto;
+  margin: 0 auto var(--space-sm);
+}
