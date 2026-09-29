@@ -1,0 +1,293 @@
+/* ============================================================================
+   deck.css — 「黒暗森林と競馬場」専用のコンポーネント
+   ============================================================================
+   goodpatch.css / components.css の上に重ねる。色・余白はトークン経由のみ。
+   スタイルプリセットを差し替えても、このファイルはそのまま使える。
+   ============================================================================ */
+
+
+/* ---------------------------------------------------------------------------
+   本文の補足行（主メッセージの下に置く1〜2行）
+   --------------------------------------------------------------------------- */
+
+.sub {
+  font-family: var(--ff-ja);
+  font-size: 34px;
+  font-weight: 500;
+  line-height: 1.6;
+  color: var(--black);
+  text-align: center;
+  max-width: 1440px;
+  margin: var(--space-md) auto 0;
+}
+
+.sub + .sub {
+  margin-top: var(--space-xs);
+}
+
+.sub.is-sales {
+  color: var(--sf-blue);
+  font-weight: 700;
+}
+
+/* 出典・注記。読み上げない情報 */
+.src {
+  font-family: var(--ff-ja);
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--gray);
+  text-align: center;
+  max-width: 1440px;
+  margin: var(--space-xs) auto 0;
+}
+
+.foot-note {
+  position: absolute;
+  left: 160px;
+  right: 160px;
+  bottom: 72px;
+  margin: 0;
+}
+
+
+/* ---------------------------------------------------------------------------
+   2010年11月のカレンダー（Pattern D の拡張）
+   is-dim: その他 / is-neutral: 全景 / is-fight: 撃ち合い / is-answer: 答え
+   --------------------------------------------------------------------------- */
+
+.topic-body.is-low {
+  margin-top: 150px;
+}
+
+.cal .flow-step {
+  gap: 14px;
+}
+
+.cal .flow-pill {
+  min-height: 196px;
+  padding: 24px 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-size: 32px;
+  line-height: 1.35;
+  background: var(--white);
+  border: 2px solid rgba(150, 160, 166, 0.4);
+  color: var(--gray);
+}
+
+.cal .cal-date {
+  display: block;
+  font-family: var(--ff-en);
+  font-size: 42px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  margin-bottom: 8px;
+}
+
+.cal .flow-caption {
+  font-family: var(--ff-ja);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  visibility: hidden;
+}
+
+.cal .flow-arrow {
+  flex: 0 0 44px;
+  color: var(--gray);
+  opacity: 0.5;
+}
+
+.cal .flow-arrow svg {
+  width: 36px;
+}
+
+.cal .flow-step.is-neutral .flow-pill {
+  color: var(--black);
+  border-color: var(--gray);
+}
+
+.cal .flow-step.is-fight .flow-pill {
+  background: var(--light-red);
+  border: 4px solid var(--red);
+  color: var(--black);
+}
+
+.cal .flow-step.is-answer .flow-pill {
+  background: var(--light-blue);
+  border: 4px solid var(--sf-blue);
+  color: var(--black);
+}
+
+.cal .flow-step.is-fight .flow-caption,
+.cal .flow-step.is-answer .flow-caption {
+  visibility: visible;
+}
+
+.cal .flow-step.is-fight .flow-caption  { color: var(--red); }
+.cal .flow-step.is-answer .flow-caption { color: var(--sf-blue); }
+
+.legend {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-xs);
+  font-family: var(--ff-ja);
+  font-size: 24px;
+  color: var(--black);
+}
+
+.legend span::before {
+  content: '';
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  margin-right: 12px;
+  vertical-align: -3px;
+  border-radius: var(--radius-sm);
+}
+
+.legend .is-fight::before  { background: var(--light-red);  border: 3px solid var(--red); }
+.legend .is-answer::before { background: var(--light-blue); border: 3px solid var(--sf-blue); }
+
+
+/* ---------------------------------------------------------------------------
+   キーワードのチップ（s08）
+   --------------------------------------------------------------------------- */
+
+.chips {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-xs);
+  margin-top: var(--space-md);
+  font-family: var(--ff-ja);
+  font-size: 30px;
+  color: var(--black);
+}
+
+.chips .chip {
+  padding: 10px 28px;
+  border: 2px solid var(--sf-blue);
+  border-radius: 999px;
+  color: var(--sf-blue);
+  font-weight: 700;
+}
+
+
+/* ---------------------------------------------------------------------------
+   講演者が埋めるページの枠（s06, s12）。本番前に必ず差し替える
+   --------------------------------------------------------------------------- */
+
+.ph {
+  margin: var(--space-md) auto 0;
+  max-width: 1300px;
+  padding: var(--space-sm) var(--space-md);
+  border: 3px dashed var(--gray);
+  border-radius: var(--radius-md);
+  font-family: var(--ff-ja);
+  font-size: 30px;
+  line-height: 1.7;
+  color: var(--gray);
+  text-align: center;
+}
+
+.ph strong {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--red);
+  font-size: 22px;
+  letter-spacing: 0.2em;
+}
+
+
+/* ---------------------------------------------------------------------------
+   青ベタの content スライド（s21 の引用）
+   --------------------------------------------------------------------------- */
+
+.slide[data-variant="content"][data-bg="blue"] .slide-header-bar {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.slide[data-variant="content"][data-bg="blue"] .slide-header-bar .hb-left {
+  color: var(--white);
+}
+
+.slide[data-variant="content"][data-bg="blue"] .slide-header-bar::after {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.slide[data-variant="content"][data-bg="blue"] .t-section-head {
+  color: var(--white);
+  border-bottom-color: var(--white);
+}
+
+.slide[data-variant="content"][data-bg="blue"] .t-emphasis {
+  color: var(--white);
+}
+
+.slide[data-variant="content"][data-bg="blue"] .src {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 30px;
+}
+
+
+/* ---------------------------------------------------------------------------
+   表（s29）。社長がその場で読むので、プリセットより大きくする
+   --------------------------------------------------------------------------- */
+
+.e-table.is-large thead th {
+  font-size: 24px;
+}
+
+.e-table.is-large tbody td {
+  font-size: 30px;
+  padding: 22px 32px;
+}
+
+.e-table.is-large tbody td:first-child {
+  width: 150px;
+  font-weight: 700;
+  color: var(--sf-blue);
+  white-space: nowrap;
+}
+
+
+/* ---------------------------------------------------------------------------
+   比較（C）の補足行と、画像+テキスト（K）の補足
+   --------------------------------------------------------------------------- */
+
+.compare-grid + .sub,
+.compare-grid + .src {
+  margin-top: var(--space-sm);
+}
+
+.media-text .src {
+  text-align: left;
+  margin: var(--space-sm) 0 0;
+}
+
+
+/* ---------------------------------------------------------------------------
+   比較（C）を大きめに。項目が短いので、社長席からも読める大きさにする
+   --------------------------------------------------------------------------- */
+
+.compare-grid.is-large .compare-side {
+  padding: var(--space-md);
+}
+
+.compare-grid.is-large .compare-headline {
+  font-size: 48px;
+}
+
+.compare-grid.is-large .compare-list li {
+  font-size: 38px;
+  padding-left: 36px;
+}
+
+.compare-grid.is-large .compare-list li::before {
+  top: 30px;
+  width: 18px;
+}

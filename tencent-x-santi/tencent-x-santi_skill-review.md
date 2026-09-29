@@ -3,7 +3,7 @@
 > 2026-09-29｜对象：`tencent-x-santi_talk-structure.md`（v2.2）和 `slides/outline.md`
 > 用到的 skill：slide-builder（Step 1 骨子）、tsuchiya-thinking（壁打ち＋公開前メタ認知チェック）、tsuchiya-simulator（レビューモード）
 > 没用到的：gda-entry-goodpatch 是 Good Design Award 报奖用的，与本场无关。tsuchiya-simulator 引用的 `goodpatch-tone-of-voice` skill 不在压缩包里，品牌语气这一项跳过。
-> 这里的建议都**还没有**写进 v2.2。按 tsuchiya-thinking 的规则，先由讲者判断有没有违和感，再改。
+> 页码按 v2.2。讲者 2026-09-29 确认后，第 5 节的各项已写进 v2.3（`tencent-x-santi_talk-structure.md` 第 8 节），并生成了 `slides/slides.html`。
 
 ---
 
