@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- ゲーム（汎用アイコン） -->
+  <rect width="128" height="128" rx="28" fill="#1F2329"/>
+  <path d="M38 44 H90 C104 44 112 56 112 72 C112 86 106 94 98 94 C91 94 87 88 82 82 H46 C41 88 37 94 30 94 C22 94 16 86 16 72 C16 56 24 44 38 44 Z" fill="#FFFFFF"/>
+  <rect x="32" y="62" width="22" height="7" rx="2" fill="#1F2329"/>
+  <rect x="39.5" y="54.5" width="7" height="22" rx="2" fill="#1F2329"/>
+  <circle cx="84" cy="60" r="5" fill="#0052D9"/>
+  <circle cx="95" cy="70" r="5" fill="#0052D9"/>
+</svg>
