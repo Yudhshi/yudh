@@ -9,9 +9,21 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;700;800&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@700&text=%E4%B8%80%E4%B8%89%E4%B8%8D%E4%B8%AA%E4%B8%AD%E4%BB%AC%E4%BD%8F%E4%BD%93%E5%85%AC%E5%8F%A6%E5%8F%AF%E5%8F%B8%E5%9B%BD%E5%9C%A8%E5%A4%96%E5%B0%B1%E6%88%91%E6%8C%A1%E6%96%87%E6%98%AF%E6%9C%AC%E6%A0%B9%E7%8E%B0%E8%83%BD%E8%AF%AD%E8%B0%A2%E8%B5%9B%E9%A9%AC&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&text=%E4%B8%89%E4%BD%93%E5%BC%80%E6%9A%97%E6%9E%97%E6%A3%AE%E7%AF%87%E8%B5%9B%E9%A9%AC%E9%BB%91&display=swap" rel="stylesheet">
 
-<!-- このデッキ専用のスタイル（v4.0 でテンプレートから独立） -->
+<!-- このデッキ専用のスタイル（v4.0 でテンプレートから独立、v4.1 で中国の要素と図を追加） -->
 <link rel="stylesheet" href="styles/santi.css">
+
+<!-- 章扉の筆文字と中国語の字は、そのページを開く前に読み込んでおく（切り替え時のちらつき防止） -->
+<script>
+window.addEventListener('load', function () {
+  if (!document.fonts) return;
+  var zh = '一三不个中们住体公另可司国在外就我挡文是本根现能语谢赛马', brush = '三体开暗林森篇赛马黑';
+  document.fonts.load('300px "Ma Shan Zheng"', brush);
+  document.fonts.load('700 40px "Noto Serif SC"', zh);
+});
+</script>
 
 </head>
 <body>
@@ -24,9 +36,17 @@
     ============================================================ -->
     <div class="slide active" data-variant="cover" data-bg="blue">
       <div class="slide-inner is-night cover-inner">
-        <svg class="anim mark" viewBox="0 0 132 44" aria-hidden="true"><circle cx="16" cy="26" r="12" fill="#F5B544"/><circle cx="60" cy="16" r="9" fill="#FF9F5A"/><circle cx="106" cy="24" r="16" fill="#FFCB6B"/></svg>
+        <svg class="sv cover-suns" width="520" height="400" viewBox="0 0 520 400" aria-hidden="true"><defs>
+<radialGradient id="csun" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#FFE3A3"/><stop offset="55%" stop-color="#F5B544"/><stop offset="100%" stop-color="#F5B544" stop-opacity="0"/></radialGradient>
+<radialGradient id="csun2" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#FFD0A8"/><stop offset="55%" stop-color="#FF9F5A"/><stop offset="100%" stop-color="#FF9F5A" stop-opacity="0"/></radialGradient>
+<radialGradient id="csun3" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#FFF1C9"/><stop offset="55%" stop-color="#FFCB6B"/><stop offset="100%" stop-color="#FFCB6B" stop-opacity="0"/></radialGradient>
+<radialGradient id="cearth" cx="40%" cy="35%" r="65%"><stop offset="0%" stop-color="#BFD3FF"/><stop offset="100%" stop-color="#3D6FE0"/></radialGradient>
+</defs>
+<ellipse cx="260" cy="200" rx="230" ry="120" class="nf s-line" stroke-width="2" transform="rotate(-18 260 200)"/>
+<ellipse cx="260" cy="200" rx="160" ry="200" class="nf s-line" stroke-width="2" stroke-dasharray="6 10" transform="rotate(24 260 200)"/>
+<circle cx="170" cy="150" r="66" fill="url(#csun)" opacity="0.35"/><circle cx="170" cy="150" r="30" fill="url(#csun)"/><circle cx="330" cy="250" r="53" fill="url(#csun2)" opacity="0.35"/><circle cx="330" cy="250" r="24" fill="url(#csun2)"/><circle cx="300" cy="110" r="84" fill="url(#csun3)" opacity="0.35"/><circle cx="300" cy="110" r="38" fill="url(#csun3)"/><circle cx="460" cy="300" r="7" class="f-fg"/></svg>
         <h1 class="anim cover-title">黒暗森林と<span class="hl-b">競馬場</span></h1>
-        <p class="anim cover-name">YUDI SHI</p>
+        <div class="anim cover-sign"><p class="cover-name">YUDI SHI</p><span class="seal is-s" lang="zh-CN"><i>三</i><i>体</i></span></div>
       </div>
     </div>
 
@@ -35,8 +55,9 @@
     ============================================================ -->
     <div class="slide" data-variant="chapter" data-bg="blue">
       <div class="slide-inner is-forest chapter-inner">
+        <div class="vwm" aria-hidden="true" lang="zh-CN"><span class="vcol"><i>开</i><i>篇</i></span></div>
         <div class="anim chapter-rule"></div>
-        <div class="anim chapter-label">PART 01</div>
+        <div class="anim chapter-label">第一章</div>
         <h2 class="anim chapter-title">今日の話</h2>
       </div>
     </div>
@@ -50,19 +71,19 @@
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
       <div class="slide-inner is-forest">
-        <div class="anim kicker"><span class="k-part">01</span>はじめに</div>
+        <div class="anim kicker"><span class="k-part">一</span>はじめに</div>
         <h2 class="anim title">三体は中国のキングダム</h2>
         <div class="main">
           <div class="anim compare">
             <div class="cmp-col">
               <div class="cmp-label">JAPAN</div>
-              <h3 class="cmp-head">『キングダム』</h3>
+              <h3 class="cmp-head"><svg class="icon" width="72" height="72" viewBox="0 0 72 72" aria-hidden="true"><path d="M16 66 V6" class="nf s-hl" stroke-width="3"/><path d="M16 8 H58 L48 22 L58 36 H16" class="nf s-hl" stroke-width="3"/></svg>『キングダム』</h3>
               <ul class="cmp-list"><li>戦略</li><li>リーダーシップ</li></ul>
             </div>
             <div class="cmp-op">≒</div>
             <div class="cmp-col is-accent">
               <div class="cmp-label">CHINA</div>
-              <h3 class="cmp-head">『三体』</h3>
+              <h3 class="cmp-head"><svg class="icon" width="72" height="72" viewBox="0 0 72 72" aria-hidden="true"><ellipse cx="36" cy="36" rx="30" ry="14" class="nf s-hl" stroke-width="3" transform="rotate(-20 36 36)"/><circle cx="24" cy="30" r="6" class="f-hl"/><circle cx="46" cy="40" r="5" class="f-hl"/><circle cx="40" cy="22" r="4" class="f-hl"/></svg>『三体』</h3>
               <ul class="cmp-list"><li>競争</li><li>生き残り</li></ul>
             </div>
           </div>
@@ -79,9 +100,27 @@
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
       <div class="slide-inner is-forest">
-        <div class="anim kicker"><span class="k-part">01</span>結論</div>
+        <div class="anim kicker"><span class="k-part">一</span>結論</div>
         <div class="main">
           <p class="anim statement">外で撃つより<span class="hl-b">中で競う</span></p>
+          <svg class="sv anim diagram" width="1400" height="250" viewBox="0 0 1400 250" aria-hidden="true">
+<defs><marker id="arR" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="f-red"/></marker>
+<marker id="arB" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="f-blue"/></marker></defs>
+<text x="0" y="36" class="f-muted" font-size="24">外</text>
+<circle cx="80" cy="130" r="22" class="f-fg"/><circle cx="460" cy="130" r="22" class="f-fg"/>
+<path d="M108 112 Q 270 60 430 112" class="nf s-red" stroke-width="3" stroke-dasharray="10 8" marker-end="url(#arR)"/>
+<path d="M432 150 Q 270 202 110 150" class="nf s-red" stroke-width="3" stroke-dasharray="10 8" marker-end="url(#arR)"/>
+<text x="270" y="232" text-anchor="middle" class="f-muted" font-size="24">撃ち合う</text>
+<text x="640" y="36" class="f-muted" font-size="24">中</text>
+<rect x="640" y="56" width="760" height="150" rx="12" class="nf s-line" stroke-width="2"/>
+<line x1="680" y1="96" x2="1340" y2="96" class="s-line" stroke-width="2"/>
+<line x1="680" y1="131" x2="1340" y2="131" class="s-line" stroke-width="2"/>
+<line x1="680" y1="166" x2="1340" y2="166" class="s-line" stroke-width="2"/>
+<line x1="1340" y1="76" x2="1340" y2="186" class="s-fg" stroke-width="3" stroke-dasharray="6 6"/>
+<path d="M700 96 H1180" class="nf s-blue" stroke-width="4" marker-end="url(#arB)"/><circle cx="1196" cy="96" r="10" class="f-blue"/>
+<path d="M700 131 H1010" class="nf s-blue" stroke-width="4" marker-end="url(#arB)"/><circle cx="1026" cy="131" r="10" class="f-blue"/>
+<path d="M700 166 H1100" class="nf s-blue" stroke-width="4" marker-end="url(#arB)"/><circle cx="1116" cy="166" r="10" class="f-blue"/>
+<text x="1020" y="238" text-anchor="middle" class="f-muted" font-size="24">競わせる</text></svg>
         </div>
       </div>
     </div>
@@ -91,8 +130,9 @@
     ============================================================ -->
     <div class="slide" data-variant="chapter" data-bg="blue">
       <div class="slide-inner is-forest chapter-inner">
+        <div class="vwm" aria-hidden="true" lang="zh-CN"><span class="vcol"><i>三</i><i>体</i></span></div>
         <div class="anim chapter-rule"></div>
-        <div class="anim chapter-label">PART 02</div>
+        <div class="anim chapter-label">第二章</div>
         <h2 class="anim chapter-title">紹介する本</h2>
       </div>
     </div>
@@ -106,7 +146,7 @@
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
       <div class="slide-inner is-forest is-split">
-        <div class="anim kicker"><span class="k-part">02</span>1冊目</div>
+        <div class="anim kicker"><span class="k-part">二</span>1冊目</div>
         <div class="main">
           <h3 class="anim media-title">『三体』</h3>
           <p class="anim media-body">日本で100万部超え</p>
@@ -124,15 +164,24 @@
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
       <div class="slide-inner is-forest">
-        <div class="anim kicker"><span class="k-part">02</span>どんな話？</div>
+        <div class="anim kicker"><span class="k-part">二</span>どんな話？</div>
         <div class="main">
-          <svg class="anim three-suns" viewBox="0 0 640 200" aria-hidden="true">
-            <path d="M40 120 C 140 20, 220 190, 320 100 S 480 20, 600 110" fill="none" stroke="#2A3340" stroke-width="3" stroke-dasharray="8 10"/>
-            <circle cx="170" cy="70" r="34" fill="#F5B544"/>
-            <circle cx="330" cy="140" r="26" fill="#FF9F5A"/>
-            <circle cx="470" cy="60" r="40" fill="#FFCB6B"/>
-            <circle cx="600" cy="110" r="10" fill="#7AA2FF"/>
-          </svg>
+          <svg class="sv anim diagram is-top" width="1600" height="340" viewBox="0 0 1600 340" aria-hidden="true"><defs>
+<radialGradient id="tsun" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#FFE3A3"/><stop offset="55%" stop-color="#F5B544"/><stop offset="100%" stop-color="#F5B544" stop-opacity="0"/></radialGradient>
+<radialGradient id="tsun2" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#FFD0A8"/><stop offset="55%" stop-color="#FF9F5A"/><stop offset="100%" stop-color="#FF9F5A" stop-opacity="0"/></radialGradient>
+<radialGradient id="tsun3" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#FFF1C9"/><stop offset="55%" stop-color="#FFCB6B"/><stop offset="100%" stop-color="#FFCB6B" stop-opacity="0"/></radialGradient>
+<radialGradient id="tearth" cx="40%" cy="35%" r="65%"><stop offset="0%" stop-color="#BFD3FF"/><stop offset="100%" stop-color="#3D6FE0"/></radialGradient>
+</defs>
+<path d="M120 170 C 160 40, 330 60, 300 170 S 120 300, 200 220 S 420 120, 380 250 S 200 330, 160 240" class="nf s-line" stroke-width="2"/>
+<path d="M260 120 C 380 60, 420 230, 300 260 S 90 200, 180 110" class="nf s-line" stroke-width="2" stroke-dasharray="5 9"/>
+<circle cx="180" cy="130" r="66" fill="url(#tsun)" opacity="0.35"/><circle cx="180" cy="130" r="30" fill="url(#tsun)"/><circle cx="330" cy="230" r="53" fill="url(#tsun2)" opacity="0.35"/><circle cx="330" cy="230" r="24" fill="url(#tsun2)"/><circle cx="300" cy="100" r="79" fill="url(#tsun3)" opacity="0.35"/><circle cx="300" cy="100" r="36" fill="url(#tsun3)"/>
+<circle cx="250" cy="190" r="9" class="f-fg"/>
+<text x="250" y="330" text-anchor="middle" class="f-muted" font-size="24">三体星</text>
+<path d="M1380 180 C 1100 60, 700 60, 290 175" class="nf s-blue" stroke-width="2" stroke-dasharray="4 12"/>
+<path d="M1352 150 a 40 40 0 0 0 0 60 M1332 132 a 64 64 0 0 0 0 96 M1312 114 a 88 88 0 0 0 0 132" class="nf s-blue" stroke-width="2" opacity="0.8"/>
+<circle cx="1400" cy="180" r="22" fill="url(#tearth)"/>
+<text x="1400" y="250" text-anchor="middle" class="f-muted" font-size="24">地球</text>
+<text x="840" y="70" text-anchor="middle" class="f-muted" font-size="24">電波</text></svg>
           <p class="anim statement is-l">太陽が3つある星が<br><span class="hl">地球を見つけた</span></p>
           <p class="anim sub">タイトルは物理の難問「三体問題」から</p>
         </div>
@@ -148,20 +197,20 @@
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
       <div class="slide-inner is-forest">
-        <div class="anim kicker"><span class="k-part">02</span>ドラマ</div>
+        <div class="anim kicker"><span class="k-part">二</span>ドラマ</div>
         <h2 class="anim title">ドラマは2つ</h2>
         <div class="main">
           <div class="anim compare">
             <div class="cmp-col">
               <div class="cmp-label">NETFLIX</div>
               <h3 class="cmp-head">Netflix版</h3>
-              <ul class="cmp-list"><li>8話で駆け足</li><li>ほぼ別物</li></ul>
+              <ul class="cmp-list"><li>8話で駆け足</li><li>ほぼ別物</li></ul><svg class="sv eps" width="690" height="40" viewBox="0 0 690 40" aria-hidden="true"><rect x="0" y="0" width="17" height="40" rx="2" class="f-muted"/><rect x="23" y="0" width="17" height="40" rx="2" class="f-muted"/><rect x="46" y="0" width="17" height="40" rx="2" class="f-muted"/><rect x="69" y="0" width="17" height="40" rx="2" class="f-muted"/><rect x="92" y="0" width="17" height="40" rx="2" class="f-muted"/><rect x="115" y="0" width="17" height="40" rx="2" class="f-muted"/><rect x="138" y="0" width="17" height="40" rx="2" class="f-muted"/><rect x="161" y="0" width="17" height="40" rx="2" class="f-muted"/></svg>
             </div>
             <div class="cmp-op">vs</div>
             <div class="cmp-col is-accent">
               <div class="cmp-label">CHINA · U-NEXT</div>
               <h3 class="cmp-head">中国版 <span class="badge">推し</span></h3>
-              <ul class="cmp-list"><li>原作に忠実</li><li>全30話</li></ul>
+              <ul class="cmp-list"><li>原作に忠実</li><li>全30話</li></ul><svg class="sv eps" width="690" height="40" viewBox="0 0 690 40" aria-hidden="true"><rect x="0" y="0" width="17" height="40" rx="2" class="f-hl"/><rect x="23" y="0" width="17" height="40" rx="2" class="f-hl"/><rect x="46" y="0" width="17" height="40" rx="2" class="f-hl"/><rect x="69" y="0" width="17" height="40" rx="2" class="f-hl"/><rect x="92" y="0" width="17" height="40" rx="2" class="f-hl"/><rect x="115" y="0" width="17" height="40" rx="2" class="f-hl"/><rect x="138" y="0" width="17" height="40" rx="2" class="f-hl"/><rect x="161" y="0" width="17" height="40" rx="2" class="f-hl"/><rect x="184" y="0" width="17" height="40" rx="2" class="f-hl"/><rect x="207" y="0" width="17" height="40" rx="2" class="f-hl"/><rect x="230" y="0" width="17" height="40" rx="2" class="f-hl"/><rect x="253" y="0" width="17" height="40" rx="2" class="f-hl"/><rect x="276" y="0" width="17" height="40" rx="2" class="f-hl"/><rect x="299" y="0" width="17" height="40" rx="2" class="f-hl"/><rect x="322" y="0" width="17" height="40" rx="2" class="f-hl"/><rect x="345" y="0" width="17" height="40" rx="2" class="f-hl"/><rect x="368" y="0" width="17" height="40" rx="2" class="f-hl"/><rect x="391" y="0" width="17" height="40" rx="2" class="f-hl"/><rect x="414" y="0" width="17" height="40" rx="2" class="f-hl"/><rect x="437" y="0" width="17" height="40" rx="2" class="f-hl"/><rect x="460" y="0" width="17" height="40" rx="2" class="f-hl"/><rect x="483" y="0" width="17" height="40" rx="2" class="f-hl"/><rect x="506" y="0" width="17" height="40" rx="2" class="f-hl"/><rect x="529" y="0" width="17" height="40" rx="2" class="f-hl"/><rect x="552" y="0" width="17" height="40" rx="2" class="f-hl"/><rect x="575" y="0" width="17" height="40" rx="2" class="f-hl"/><rect x="598" y="0" width="17" height="40" rx="2" class="f-hl"/><rect x="621" y="0" width="17" height="40" rx="2" class="f-hl"/><rect x="644" y="0" width="17" height="40" rx="2" class="f-hl"/><rect x="667" y="0" width="17" height="40" rx="2" class="f-hl"/></svg>
             </div>
           </div>
         </div>
@@ -177,10 +226,20 @@
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
       <div class="slide-inner is-forest">
-        <div class="anim kicker"><span class="k-part">02</span>ドラマの裏側</div>
+        <div class="anim kicker"><span class="k-part">二</span>ドラマの裏側</div>
         <div class="main">
           <p class="anim statement is-l">版権会社のCEOが<br><span class="hl-r">親会社の創業者を毒殺</span></p>
-          <p class="anim sub">2020年</p>
+          <svg class="sv anim diagram" width="1060" height="210" viewBox="0 0 1060 210" aria-hidden="true">
+<defs><marker id="arP" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="f-red"/></marker></defs>
+<rect x="0" y="10" width="420" height="120" rx="10" class="nf s-line" stroke-width="2"/>
+<text x="32" y="58" class="f-muted" font-size="24">親会社（ゲーム会社）</text>
+<text x="32" y="104" class="f-fg" font-size="32" font-weight="700">創業者</text>
+<rect x="640" y="10" width="420" height="120" rx="10" class="nf s-line" stroke-width="2"/>
+<text x="672" y="58" class="f-muted" font-size="24">版権会社（子会社）</text>
+<text x="672" y="104" class="f-fg" font-size="32" font-weight="700">CEO</text>
+<path d="M420 70 H640" class="nf s-line" stroke-width="2"/>
+<path d="M660 118 C 560 190, 300 190, 170 136" class="nf s-red" stroke-width="3" marker-end="url(#arP)"/>
+<text x="420" y="196" text-anchor="middle" class="f-red" font-size="24" font-weight="700">2020年 毒殺</text></svg>
         </div>
       </div>
     </div>
@@ -194,13 +253,13 @@
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
       <div class="slide-inner is-forest">
-        <div class="anim kicker"><span class="k-part">02</span>著者</div>
+        <div class="anim kicker"><span class="k-part">二</span>著者</div>
         <h2 class="anim title">劉慈欣（リウ・ツーシン）</h2>
         <div class="main">
           <div class="anim facts">
-            <div class="fact"><div class="fact-big">エンジニア</div><p class="fact-cap">発電所で働きながら執筆</p></div>
-            <div class="fact"><div class="fact-big">2006</div><p class="fact-cap">雑誌で連載開始</p></div>
-            <div class="fact"><div class="fact-big">2015</div><p class="fact-cap">アジア初のヒューゴー賞</p></div>
+            <div class="fact"><svg class="icon" width="72" height="72" viewBox="0 0 72 72" aria-hidden="true"><path d="M10 62 V30 L26 22 V62 M26 40 L42 32 V62 M42 44 L58 36 V62 H10" class="nf s-hl" stroke-width="3"/><path d="M50 10 L44 26 H52 L46 40" class="nf s-hl" stroke-width="3"/></svg><div class="fact-big">エンジニア</div><p class="fact-cap">発電所で働きながら執筆</p></div>
+            <div class="fact"><svg class="icon" width="72" height="72" viewBox="0 0 72 72" aria-hidden="true"><rect x="14" y="8" width="44" height="56" rx="3" class="nf s-hl" stroke-width="3"/><path d="M22 22 H50 M22 32 H50 M22 42 H40" class="nf s-hl" stroke-width="3"/></svg><div class="fact-big">2006</div><p class="fact-cap">雑誌で連載開始</p></div>
+            <div class="fact"><svg class="icon" width="72" height="72" viewBox="0 0 72 72" aria-hidden="true"><path d="M36 6 C 48 18, 48 40, 44 52 H28 C 24 40, 24 18, 36 6 Z" class="nf s-hl" stroke-width="3"/><circle cx="36" cy="28" r="5" class="nf s-hl" stroke-width="3"/><path d="M28 44 L18 58 L28 54 M44 44 L54 58 L44 54 M32 56 L36 66 L40 56" class="nf s-hl" stroke-width="3"/></svg><div class="fact-big">2015</div><p class="fact-cap">アジア初のヒューゴー賞</p></div>
           </div>
         </div>
       </div>
@@ -215,26 +274,32 @@
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
       <div class="slide-inner is-forest">
-        <div class="anim kicker"><span class="k-part">02</span>著者の原点</div>
+        <div class="anim kicker"><span class="k-part">二</span>著者の原点</div>
         <h2 class="anim title">着想のもと</h2>
         <div class="main">
           <div class="anim cols">
-            <div class="col">
+            <div class="col"><svg class="icon" width="72" height="72" viewBox="0 0 72 72" aria-hidden="true"><ellipse cx="36" cy="36" rx="30" ry="14" class="nf s-hl" stroke-width="3" transform="rotate(-20 36 36)"/><circle cx="24" cy="30" r="6" class="f-hl"/><circle cx="46" cy="40" r="5" class="f-hl"/><circle cx="40" cy="22" r="4" class="f-hl"/></svg>
               <div class="col-num">物理の難問</div>
               <h3 class="col-title">三体問題</h3>
               <p class="col-body">3つの星の動きは解けない</p>
             </div>
-            <div class="col">
+            <div class="col"><svg class="icon" width="72" height="72" viewBox="0 0 72 72" aria-hidden="true"><path d="M6 44 C 16 34, 26 34, 36 44 S 56 54, 66 44" class="nf s-hl" stroke-width="3"/><path d="M6 58 C 16 48, 26 48, 36 58 S 56 68, 66 58" class="nf s-hl" stroke-width="3"/><path d="M24 36 L36 16 L48 36" class="nf s-hl" stroke-width="3"/></svg>
               <div class="col-num">日本のSF</div>
               <h3 class="col-title">『日本沈没』</h3>
               <p class="col-body">「中国版を書きたかった」</p>
             </div>
-            <div class="col">
+            <div class="col"><svg class="icon" width="72" height="72" viewBox="0 0 72 72" aria-hidden="true"><rect x="26" y="8" width="20" height="56" class="f-hl"/><path d="M8 64 H64" class="nf s-hl" stroke-width="3"/></svg>
               <div class="col-num">SFの古典</div>
               <h3 class="col-title">『2001年宇宙の旅』</h3>
               <p class="col-body">「全作品がこれの下手な模倣」</p>
             </div>
           </div>
+          <svg class="sv anim diagram" width="1600" height="130" viewBox="0 0 1600 130" aria-hidden="true">
+<path d="M253 0 C 253 70, 800 40, 800 96" class="nf s-line" stroke-width="2"/>
+<path d="M800 0 V96" class="nf s-line" stroke-width="2"/>
+<path d="M1347 0 C 1347 70, 800 40, 800 96" class="nf s-line" stroke-width="2"/>
+<circle cx="800" cy="104" r="10" class="f-hl"/>
+<text x="830" y="116" class="f-hl t-display" font-size="32" font-weight="700">『三体』</text></svg>
         </div>
       </div>
     </div>
@@ -248,7 +313,7 @@
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
       <div class="slide-inner is-forest">
-        <div class="anim kicker"><span class="k-part">02</span>ちなみに</div>
+        <div class="anim kicker"><span class="k-part">二</span>ちなみに</div>
         <h2 class="anim title">この本を読んだ人たち</h2>
         <div class="main">
           <div class="anim readers">
@@ -303,9 +368,9 @@
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
       <div class="slide-inner is-forest">
-        <div class="anim kicker"><span class="k-part">02</span>私と三体</div>
+        <div class="anim kicker"><span class="k-part">二</span>私と三体</div>
         <div class="main">
-          <p class="anim statement">小学校の<span class="hl">国語の先生</span>のすすめ</p>
+          <p class="anim statement">小学校の<span class="hl">国語の先生</span>のすすめ<span class="after-seal"><span class="seal" lang="zh-CN"><i>语</i><i>文</i></span></span></p>
         </div>
       </div>
     </div>
@@ -319,10 +384,15 @@
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
       <div class="slide-inner is-night">
-        <div class="anim kicker"><span class="k-part">02</span>質問</div>
+        <div class="anim kicker"><span class="k-part">二</span>質問</div>
         <div class="main">
           <p class="anim statement">宇宙人は<span class="hl">いる？</span></p>
         </div>
+        <svg class="sv night-art dish" width="460" height="380" viewBox="0 0 460 380" aria-hidden="true">
+<path d="M60 250 C 90 120, 230 60, 330 70 C 300 170, 190 250, 60 250 Z" class="f-line"/>
+<path d="M195 160 L 300 40" class="nf s-faint" stroke-width="4"/><circle cx="302" cy="38" r="8" class="f-faint"/>
+<path d="M190 200 L 240 360 M190 200 L 140 360 M120 360 H 260" class="nf s-line" stroke-width="10"/>
+<path d="M330 20 a 40 40 0 0 1 40 40 M340 -10 a 70 70 0 0 1 70 70 M350 -40 a 100 100 0 0 1 100 100" class="nf s-hl" stroke-width="3" opacity="0.8" transform="translate(-20 30)"/></svg>
       </div>
     </div>
 
@@ -335,9 +405,10 @@
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
       <div class="slide-inner is-night">
-        <div class="anim kicker"><span class="k-part">02</span>質問</div>
+        <div class="anim kicker"><span class="k-part">二</span>質問</div>
         <div class="main">
           <p class="anim statement">なぜ宇宙はこんなに静か？</p>
+          <svg class="sv anim diagram" width="1600" height="120" viewBox="0 0 1600 120" aria-hidden="true"><polyline points="0,60.0 8,66.6 16,66.8 24,56.9 32,47.1 40,51.7 48,69.7 56,80.3 64,66.4 72,40.6 80,34.7 88,60.2 96,88.9 104,84.8 112,50.3 120,26.3 128,42.0 136,78.0 144,91.3 152,68.2 160,38.7 168,36.8 176,60.2 184,78.7 192,73.4 200,55.5 208,47.0 216,54.2 224,64.9 232,67.1 240,61.5 248,56.6 256,56.9 264,60.0 272,61.8 280,61.1 288,59.7 296,59.3 304,59.7 312,60.2 320,60.2 328,60.0 336,59.9 344,59.9 352,60.0 360,60.0 368,60.0 376,60.0 384,60.0 392,60.0 400,60.0 408,60.0 416,60.0 424,60.0 432,60.0 440,60.0 448,60.0 456,60.0 464,60.0 472,60.0 480,60.0 488,60.0 496,60.0 504,60.0 512,60.0 520,60.0 528,60.0 536,60.0 544,60.0 552,60.0 560,60.0 568,60.0 576,60.0 584,60.0 592,60.0 600,60.0 608,60.0 616,60.0 624,60.0 632,60.0 640,60.0 648,60.0 656,60.0 664,60.0 672,60.0 680,60.0 688,60.0 696,60.0 704,60.0 712,60.0 720,60.0 728,60.0 736,60.0 744,60.0 752,60.0 760,60.0 768,60.0 776,60.0 784,60.0 792,60.0 800,60.0 808,60.0 816,60.0 824,60.0 832,60.0 840,60.0 848,60.0 856,60.0 864,60.0 872,60.0 880,60.0 888,60.0 896,60.0 904,60.0 912,60.0 920,60.0 928,60.0 936,60.0 944,60.0 952,60.0 960,60.0 968,60.0 976,60.0 984,60.0 992,60.0 1000,60.0 1008,60.0 1016,60.0 1024,60.0 1032,60.0 1040,60.0 1048,60.0 1056,60.0 1064,60.0 1072,60.0 1080,60.0 1088,60.0 1096,60.0 1104,60.0 1112,60.0 1120,60.0 1128,60.0 1136,60.0 1144,60.0 1152,60.0 1160,60.0 1168,60.0 1176,60.0 1184,60.0 1192,60.0 1200,60.0 1208,60.0 1216,60.0 1224,60.0 1232,60.0 1240,60.0 1248,60.0 1256,60.0 1264,60.0 1272,60.0 1280,60.0 1288,60.0 1296,60.0 1304,60.0 1312,60.0 1320,60.0 1328,60.0 1336,60.0 1344,60.0 1352,60.0 1360,60.0 1368,60.0 1376,60.0 1384,60.0 1392,60.0 1400,60.0 1408,60.0 1416,60.0 1424,60.0 1432,60.0 1440,60.0 1448,60.0 1456,60.0 1464,60.0 1472,60.0 1480,60.0 1488,60.0 1496,60.0 1504,60.0 1512,60.0 1520,60.0 1528,60.0 1536,60.0 1544,60.0 1552,60.0 1560,60.0 1568,60.0 1576,60.0 1584,60.0 1592,60.0 1600,60.0" class="nf s-faint" stroke-width="2"/><text x="1600" y="112" text-anchor="end" class="f-muted" font-size="24">SIGNAL 0</text></svg>
         </div>
       </div>
     </div>
@@ -350,8 +421,8 @@
         <div class="hb-left">PART 02<span class="sep">/</span>紹介する本</div>
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
-      <div class="slide-inner is-night">
-        <div class="anim kicker"><span class="k-part">02</span>三体の答え：黒暗森林</div>
+      <div class="slide-inner is-night has-forest">
+        <div class="anim kicker"><span class="k-part">二</span>三体の答え：黒暗森林</div>
         <div class="main">
           <p class="anim statement">見つけたら<span class="hl-r">撃つ</span><br>だからみんな隠れる</p>
           <div class="anim defs">
@@ -359,6 +430,10 @@
             <div class="def"><span class="def-term">技術爆発</span>急に強くなる</div>
           </div>
         </div>
+        <svg class="sv night-art forest" width="1920" height="360" viewBox="0 0 1920 360" aria-hidden="true"><path d="M-40 360 L0 180 L40 360 Z" fill="#101620"/><path d="M20 360 L60 140 L100 360 Z" fill="#101620"/><path d="M80 360 L120 191 L160 360 Z" fill="#101620"/><path d="M140 360 L180 175 L220 360 Z" fill="#101620"/><path d="M200 360 L240 159 L280 360 Z" fill="#101620"/><path d="M260 360 L300 197 L340 360 Z" fill="#101620"/><path d="M320 360 L360 196 L400 360 Z" fill="#101620"/><path d="M380 360 L420 148 L460 360 Z" fill="#101620"/><path d="M440 360 L480 166 L520 360 Z" fill="#101620"/><path d="M500 360 L540 194 L580 360 Z" fill="#101620"/><path d="M560 360 L600 177 L640 360 Z" fill="#101620"/><path d="M620 360 L660 163 L700 360 Z" fill="#101620"/><path d="M680 360 L720 197 L760 360 Z" fill="#101620"/><path d="M740 360 L780 142 L820 360 Z" fill="#101620"/><path d="M800 360 L840 168 L880 360 Z" fill="#101620"/><path d="M860 360 L900 187 L940 360 Z" fill="#101620"/><path d="M920 360 L960 198 L1000 360 Z" fill="#101620"/><path d="M980 360 L1020 195 L1060 360 Z" fill="#101620"/><path d="M1040 360 L1080 173 L1120 360 Z" fill="#101620"/><path d="M1100 360 L1140 174 L1180 360 Z" fill="#101620"/><path d="M1160 360 L1200 196 L1240 360 Z" fill="#101620"/><path d="M1220 360 L1260 185 L1300 360 Z" fill="#101620"/><path d="M1280 360 L1320 195 L1360 360 Z" fill="#101620"/><path d="M1340 360 L1380 165 L1420 360 Z" fill="#101620"/><path d="M1400 360 L1440 173 L1480 360 Z" fill="#101620"/><path d="M1460 360 L1500 197 L1540 360 Z" fill="#101620"/><path d="M1520 360 L1560 148 L1600 360 Z" fill="#101620"/><path d="M1580 360 L1620 164 L1660 360 Z" fill="#101620"/><path d="M1640 360 L1680 193 L1720 360 Z" fill="#101620"/><path d="M1700 360 L1740 140 L1780 360 Z" fill="#101620"/><path d="M1760 360 L1800 186 L1840 360 Z" fill="#101620"/><path d="M1820 360 L1860 160 L1900 360 Z" fill="#101620"/><path d="M1880 360 L1920 160 L1960 360 Z" fill="#101620"/><path d="M1940 360 L1980 163 L2020 360 Z" fill="#101620"/>
+<circle cx="1320" cy="262" r="30" fill="#F5B544" opacity="0.18"/><circle cx="1320" cy="262" r="7" fill="#FFD27A"/><path d="M-60 360 L-5 247 L50 360 Z" fill="#0B1017"/><path d="M30 360 L85 214 L140 360 Z" fill="#0B1017"/><path d="M120 360 L175 213 L230 360 Z" fill="#0B1017"/><path d="M210 360 L265 225 L320 360 Z" fill="#0B1017"/><path d="M300 360 L355 247 L410 360 Z" fill="#0B1017"/><path d="M390 360 L445 236 L500 360 Z" fill="#0B1017"/><path d="M480 360 L535 248 L590 360 Z" fill="#0B1017"/><path d="M570 360 L625 215 L680 360 Z" fill="#0B1017"/><path d="M660 360 L715 242 L770 360 Z" fill="#0B1017"/><path d="M750 360 L805 232 L860 360 Z" fill="#0B1017"/><path d="M840 360 L895 224 L950 360 Z" fill="#0B1017"/><path d="M930 360 L985 241 L1040 360 Z" fill="#0B1017"/><path d="M1020 360 L1075 216 L1130 360 Z" fill="#0B1017"/><path d="M1110 360 L1165 243 L1220 360 Z" fill="#0B1017"/><path d="M1200 360 L1255 214 L1310 360 Z" fill="#0B1017"/><path d="M1290 360 L1345 231 L1400 360 Z" fill="#0B1017"/><path d="M1380 360 L1435 215 L1490 360 Z" fill="#0B1017"/><path d="M1470 360 L1525 207 L1580 360 Z" fill="#0B1017"/><path d="M1560 360 L1615 239 L1670 360 Z" fill="#0B1017"/><path d="M1650 360 L1705 244 L1760 360 Z" fill="#0B1017"/><path d="M1740 360 L1795 213 L1850 360 Z" fill="#0B1017"/><path d="M1830 360 L1885 214 L1940 360 Z" fill="#0B1017"/><path d="M1920 360 L1975 210 L2030 360 Z" fill="#0B1017"/>
+<circle cx="1320" cy="262" r="46" class="nf s-red" stroke-width="3"/>
+<path d="M1320 196 V236 M1320 288 V328 M1254 262 H1294 M1346 262 H1386" class="nf s-red" stroke-width="3"/></svg>
       </div>
     </div>
 
@@ -367,8 +442,9 @@
     ============================================================ -->
     <div class="slide" data-variant="chapter" data-bg="blue">
       <div class="slide-inner is-forest chapter-inner">
+        <div class="vwm" aria-hidden="true" lang="zh-CN"><span class="vcol"><i>黑</i><i>暗</i></span><span class="vcol"><i>森</i><i>林</i></span></div>
         <div class="anim chapter-rule"></div>
-        <div class="anim chapter-label">PART 03</div>
+        <div class="anim chapter-label">第三章</div>
         <h2 class="anim chapter-title">本を読んで</h2>
       </div>
     </div>
@@ -382,8 +458,9 @@
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
       <div class="slide-inner is-forest">
-        <div class="anim kicker"><span class="k-part">03</span>問い</div>
+        <div class="anim kicker"><span class="k-part">三</span>問い</div>
         <div class="main">
+          <div class="anim icon-pair"><svg class="icon" width="96" height="96" viewBox="0 0 72 72" aria-hidden="true"><path d="M36 6 L14 34 H26 L10 56 H62 L46 34 H58 Z" class="nf s-hl" stroke-width="3"/><path d="M36 56 V68" class="nf s-hl" stroke-width="3"/></svg><span class="pair-arrow">→</span><svg class="icon" width="96" height="96" viewBox="0 0 72 72" aria-hidden="true"><path d="M10 28 L16 10 H56 L62 28 Z M14 28 V62 H58 V28" class="nf s-hl" stroke-width="3"/><path d="M30 62 V44 H42 V62" class="nf s-hl" stroke-width="3"/></svg></div>
           <p class="anim statement">森のルールは<br><span class="hl">会社で使える？</span></p>
         </div>
       </div>
@@ -398,19 +475,19 @@
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
       <div class="slide-inner is-forest">
-        <div class="anim kicker"><span class="k-part">03</span>答え</div>
+        <div class="anim kicker"><span class="k-part">三</span>答え</div>
         <h2 class="anim title">そのままでは使えない</h2>
         <div class="main">
           <div class="anim compare">
             <div class="cmp-col">
               <div class="cmp-label">DARK FOREST</div>
-              <h3 class="cmp-head">黒暗森林</h3>
+              <h3 class="cmp-head"><svg class="icon" width="72" height="72" viewBox="0 0 72 72" aria-hidden="true"><path d="M36 6 L14 34 H26 L10 56 H62 L46 34 H58 Z" class="nf s-hl" stroke-width="3"/><path d="M36 56 V68" class="nf s-hl" stroke-width="3"/></svg>黒暗森林</h3>
               <ul class="cmp-list"><li>一回きり</li><li>隠れる</li></ul>
             </div>
             <div class="cmp-op">vs</div>
             <div class="cmp-col is-accent">
               <div class="cmp-label">BUSINESS</div>
-              <h3 class="cmp-head">商売</h3>
+              <h3 class="cmp-head"><svg class="icon" width="72" height="72" viewBox="0 0 72 72" aria-hidden="true"><path d="M10 28 L16 10 H56 L62 28 Z M14 28 V62 H58 V28" class="nf s-hl" stroke-width="3"/><path d="M30 62 V44 H42 V62" class="nf s-hl" stroke-width="3"/></svg>商売</h3>
               <ul class="cmp-list"><li>何度も</li><li>見られている</li></ul>
             </div>
           </div>
@@ -427,10 +504,18 @@
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
       <div class="slide-inner is-forest">
-        <div class="anim kicker"><span class="k-part">03</span>三体Ⅱ：面壁計画</div>
+        <div class="anim kicker"><span class="k-part">三</span>三体Ⅱ：面壁計画</div>
         <div class="main">
           <p class="anim statement">1つの作戦に<span class="hl">賭けない</span></p>
-          <div class="anim plans"><span>作戦A</span><span>作戦B</span><span>作戦C</span><span>作戦D</span></div>
+          <svg class="sv anim diagram" width="1400" height="270" viewBox="0 0 1400 270" aria-hidden="true"><rect x="180" y="10" width="120" height="200" class="f-line"/>
+<circle cx="130" cy="92" r="16" class="nf s-hl" stroke-width="3"/><path d="M130 110 V168 M106 134 H154 M130 168 L114 206 M130 168 L146 206" class="nf s-hl" stroke-width="3"/>
+<text x="180" y="258" text-anchor="middle" class="f-hl t-mono" font-size="32" font-weight="700">作戦A</text><rect x="520" y="10" width="120" height="200" class="f-line"/>
+<circle cx="470" cy="92" r="16" class="nf s-hl" stroke-width="3"/><path d="M470 110 V168 M446 134 H494 M470 168 L454 206 M470 168 L486 206" class="nf s-hl" stroke-width="3"/>
+<text x="520" y="258" text-anchor="middle" class="f-hl t-mono" font-size="32" font-weight="700">作戦B</text><rect x="860" y="10" width="120" height="200" class="f-line"/>
+<circle cx="810" cy="92" r="16" class="nf s-hl" stroke-width="3"/><path d="M810 110 V168 M786 134 H834 M810 168 L794 206 M810 168 L826 206" class="nf s-hl" stroke-width="3"/>
+<text x="860" y="258" text-anchor="middle" class="f-hl t-mono" font-size="32" font-weight="700">作戦C</text><rect x="1200" y="10" width="120" height="200" class="f-line"/>
+<circle cx="1150" cy="92" r="16" class="nf s-hl" stroke-width="3"/><path d="M1150 110 V168 M1126 134 H1174 M1150 168 L1134 206 M1150 168 L1166 206" class="nf s-hl" stroke-width="3"/>
+<text x="1200" y="258" text-anchor="middle" class="f-hl t-mono" font-size="32" font-weight="700">作戦D</text></svg>
           <p class="anim tease">誰が勝つかは本の中で</p>
         </div>
       </div>
@@ -445,10 +530,11 @@
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
       <div class="slide-inner is-forest">
-        <div class="anim kicker"><span class="k-part">03</span>新しいメガネ</div>
+        <div class="anim kicker"><span class="k-part">三</span>新しいメガネ</div>
         <div class="main">
           <p class="anim statement">重複は<span class="hl">保険</span>になる</p>
-          <p class="anim sub">中国では「競馬」と呼ぶ</p>
+          <svg class="sv anim diagram" width="1600" height="308" viewBox="0 0 1600 308" aria-hidden="true"><line x1="0" y1="64" x2="1560" y2="64" class="s-line" stroke-width="2"/><line x1="0" y1="64" x2="1404" y2="64" class="s-hl" stroke-width="6" stroke-linecap="round"/><circle cx="1404" cy="64" r="14" class="f-hl"/><line x1="0" y1="160" x2="1560" y2="160" class="s-line" stroke-width="2"/><line x1="0" y1="160" x2="1092" y2="160" class="s-hl" stroke-width="6" stroke-linecap="round"/><circle cx="1092" cy="160" r="14" class="f-hl"/><line x1="0" y1="256" x2="1560" y2="256" class="s-line" stroke-width="2"/><line x1="0" y1="256" x2="858" y2="256" class="s-hl" stroke-width="6" stroke-linecap="round"/><circle cx="858" cy="256" r="14" class="f-hl"/><line x1="1560" y1="20" x2="1560" y2="276" class="s-fg" stroke-width="3" stroke-dasharray="8 8"/></svg>
+          <p class="anim sub">中国では「競馬」と呼ぶ<span class="after-seal"><span class="seal is-s" lang="zh-CN"><i>赛</i><i>马</i></span></span></p>
         </div>
       </div>
     </div>
@@ -458,8 +544,9 @@
     ============================================================ -->
     <div class="slide" data-variant="chapter" data-bg="blue">
       <div class="slide-inner is-blue chapter-inner">
+        <div class="vwm" aria-hidden="true" lang="zh-CN"><span class="vcol"><i>赛</i><i>马</i></span></div>
         <div class="anim chapter-rule"></div>
-        <div class="anim chapter-label">PART 04</div>
+        <div class="anim chapter-label">第四章</div>
         <h2 class="anim chapter-title">2010年11月</h2>
         <p class="anim chapter-sub">26卒の多くは小学1年生<br>Goodpatch創業の10か月前</p>
       </div>
@@ -474,7 +561,7 @@
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
       <div class="slide-inner is-track">
-        <div class="anim kicker"><span class="k-part">04</span>今日の主役</div>
+        <div class="anim kicker"><span class="k-part">四</span>今日の主役</div>
         <h2 class="anim title">テンセントってどんな会社？</h2>
         <div class="main">
           <div class="anim facts">
@@ -496,7 +583,7 @@
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
       <div class="slide-inner is-track">
-        <div class="anim kicker"><span class="k-part">04</span>会社の大きさ</div>
+        <div class="anim kicker"><span class="k-part">四</span>会社の大きさ</div>
         <h2 class="anim title">トヨタとソニーを足しても届かない</h2>
         <div class="main">
           <div class="anim bars">
@@ -517,14 +604,25 @@
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
       <div class="slide-inner is-track">
-        <div class="anim kicker"><span class="k-part">04</span>まず全体像</div>
+        <div class="anim kicker"><span class="k-part">四</span>まず全体像</div>
         <h2 class="anim title">3Q大戦</h2>
         <div class="main">
+          <svg class="sv anim diagram is-top" width="1600" height="180" viewBox="0 0 1600 180" aria-hidden="true">
+<defs><marker id="arQ" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="f-red"/></marker></defs>
+<image href="assets/icon-qq.svg" x="0" y="20" width="120" height="120"/>
+<image href="assets/icon-360.svg" x="1480" y="20" width="120" height="120"/>
+<rect x="720" y="34" width="160" height="104" rx="8" class="nf s-fg" stroke-width="4"/><path d="M770 160 H830 M800 138 V160" class="nf s-fg" stroke-width="4"/>
+<text x="800" y="96" text-anchor="middle" class="f-fg" font-size="24" font-weight="700">ユーザー</text>
+<path d="M150 70 H690" class="nf s-red" stroke-width="4" stroke-dasharray="14 10" marker-end="url(#arQ)"/>
+<path d="M1450 70 H910" class="nf s-red" stroke-width="4" stroke-dasharray="14 10" marker-end="url(#arQ)"/>
+<path d="M150 110 C 500 180, 1100 180, 1450 110" class="nf s-red" stroke-width="2" opacity="0.6"/>
+<text x="420" y="54" text-anchor="middle" class="f-red" font-size="24" font-weight="700">QQを選べ</text>
+<text x="1180" y="54" text-anchor="middle" class="f-red" font-size="24" font-weight="700">360を選べ</text></svg>
           <div class="anim cols">
             <div class="col">
               <div class="col-num">01</div>
               <h3 class="col-title">ケンカ</h3>
-              <p class="col-body"><img class="app-icon" src="assets/icon-qq.svg" alt="QQ">QQ対<img class="app-icon" src="assets/icon-360.svg" alt="360">360</p>
+              <p class="col-body">QQ対360</p>
             </div>
             <div class="col">
               <div class="col-num">02</div>
@@ -550,7 +648,7 @@
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
       <div class="slide-inner is-track is-split">
-        <div class="anim kicker"><span class="k-part">04</span>2010年11月3日のQQ</div>
+        <div class="anim kicker"><span class="k-part">四</span>2010年11月3日のQQ</div>
         <div class="main">
           <div class="anim icon-row"><img class="app-icon" src="assets/icon-qq.svg" alt="QQ"><img class="app-icon" src="assets/icon-360.svg" alt="360"></div>
           <h3 class="anim media-title">「苦渋の決断」</h3>
@@ -570,7 +668,7 @@
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
       <div class="slide-inner is-track">
-        <div class="anim kicker"><span class="k-part">04</span>2010年11月</div>
+        <div class="anim kicker"><span class="k-part">四</span>2010年11月</div>
         <h2 class="anim title">1か月に5つの日付</h2>
         <div class="main">
           <div class="anim timeline">
@@ -593,7 +691,7 @@
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
       <div class="slide-inner is-track">
-        <div class="anim kicker"><span class="k-part">04</span>11/3・11/4</div>
+        <div class="anim kicker"><span class="k-part">四</span>11/3・11/4</div>
         <h2 class="anim title"><img class="app-icon" src="assets/icon-qq.svg" alt="QQ">QQか<img class="app-icon" src="assets/icon-360.svg" alt="360">360か</h2>
         <div class="main">
           <div class="anim timeline">
@@ -616,7 +714,7 @@
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
       <div class="slide-inner is-track">
-        <div class="anim kicker"><span class="k-part">04</span>11/11</div>
+        <div class="anim kicker"><span class="k-part">四</span>11/11</div>
         <h2 class="anim title">最強より尊敬される会社へ</h2>
         <div class="main">
           <div class="anim timeline">
@@ -639,7 +737,7 @@
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
       <div class="slide-inner is-track">
-        <div class="anim kicker"><span class="k-part">04</span>11/20</div>
+        <div class="anim kicker"><span class="k-part">四</span>11/20</div>
         <h2 class="anim title">叱られた頃にWeChatが始まった</h2>
         <div class="main">
           <div class="anim timeline">
@@ -662,26 +760,10 @@
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
       <div class="slide-inner is-track">
-        <div class="anim kicker"><span class="k-part">04</span>実はこのとき</div>
+        <div class="anim kicker"><span class="k-part">四</span>実はこのとき</div>
         <h2 class="anim title">同じものを3チームで作っていた</h2>
         <div class="main">
-          <div class="anim cols">
-            <div class="col is-win">
-              <div class="col-num">01</div>
-              <h3 class="col-title"><img class="app-icon" src="assets/icon-wechat.svg" alt="WeChat">張小龍のチーム</h3>
-              <p class="col-body">勝ち残ってWeChatに</p>
-            </div>
-            <div class="col">
-              <div class="col-num">02</div>
-              <h3 class="col-title">スマホ版QQのチーム</h3>
-              <p class="col-body">QQの延長で作る</p>
-            </div>
-            <div class="col">
-              <div class="col-num">03</div>
-              <h3 class="col-title">QQ連絡帳のチーム</h3>
-              <p class="col-body">アドレス帳から作る</p>
-            </div>
-          </div>
+          <svg class="sv anim diagram" width="1600" height="348" viewBox="0 0 1600 348" aria-hidden="true"><line x1="400" y1="64" x2="1480" y2="64" class="s-line" stroke-width="2"/><text x="0" y="74" class="f-green" font-size="32" font-weight="700">張小龍のチーム</text><line x1="400" y1="64" x2="1480" y2="64" class="s-green" stroke-width="6" stroke-linecap="round"/><circle cx="1480" cy="64" r="14" class="f-green"/><line x1="400" y1="160" x2="1480" y2="160" class="s-line" stroke-width="2"/><text x="0" y="170" class="f-fg" font-size="32" font-weight="700">スマホ版QQのチーム</text><line x1="400" y1="160" x2="1070" y2="160" class="s-blue" stroke-width="6" stroke-linecap="round"/><circle cx="1070" cy="160" r="14" class="f-blue"/><line x1="400" y1="256" x2="1480" y2="256" class="s-line" stroke-width="2"/><text x="0" y="266" class="f-fg" font-size="32" font-weight="700">QQ連絡帳のチーム</text><line x1="400" y1="256" x2="886" y2="256" class="s-blue" stroke-width="6" stroke-linecap="round"/><circle cx="886" cy="256" r="14" class="f-blue"/><line x1="1480" y1="20" x2="1480" y2="276" class="s-fg" stroke-width="3" stroke-dasharray="8 8"/><image href="assets/icon-wechat.svg" x="1504" y="28" width="72" height="72"/><text x="1480" y="340" text-anchor="end" class="f-green" font-size="32" font-weight="700">勝ち残ってWeChatに</text></svg>
           <p class="anim sub">馬化騰が2年後に明かした</p>
         </div>
       </div>
@@ -696,10 +778,17 @@
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
       <div class="slide-inner is-track">
-        <div class="anim kicker"><span class="k-part">04</span>勝ったチーム</div>
+        <div class="anim kicker"><span class="k-part">四</span>勝ったチーム</div>
         <div class="main">
           <img class="anim hero-icon" src="assets/icon-wechat.svg" alt="WeChat">
           <p class="anim hero">10人で2か月</p>
+          <svg class="sv anim diagram" width="1600" height="124" viewBox="0 0 1600 124" aria-hidden="true"><circle cx="40" cy="22" r="14" class="f-green"/><path d="M20 78 C 20 48, 60 48, 60 78 Z" class="f-green"/><circle cx="104" cy="22" r="14" class="f-green"/><path d="M84 78 C 84 48, 124 48, 124 78 Z" class="f-green"/><circle cx="168" cy="22" r="14" class="f-green"/><path d="M148 78 C 148 48, 188 48, 188 78 Z" class="f-green"/><circle cx="232" cy="22" r="14" class="f-green"/><path d="M212 78 C 212 48, 252 48, 252 78 Z" class="f-green"/><circle cx="296" cy="22" r="14" class="f-green"/><path d="M276 78 C 276 48, 316 48, 316 78 Z" class="f-green"/><circle cx="360" cy="22" r="14" class="f-green"/><path d="M340 78 C 340 48, 380 48, 380 78 Z" class="f-green"/><circle cx="424" cy="22" r="14" class="f-green"/><path d="M404 78 C 404 48, 444 48, 444 78 Z" class="f-green"/><circle cx="488" cy="22" r="14" class="f-green"/><path d="M468 78 C 468 48, 508 48, 508 78 Z" class="f-green"/><circle cx="552" cy="22" r="14" class="f-green"/><path d="M532 78 C 532 48, 572 48, 572 78 Z" class="f-green"/><circle cx="616" cy="22" r="14" class="f-green"/><path d="M596 78 C 596 48, 636 48, 636 78 Z" class="f-green"/>
+<line x1="760" y1="50" x2="1560" y2="50" class="s-line" stroke-width="2"/>
+<rect x="760" y="36" width="390" height="28" rx="4" class="f-green"/><rect x="1154" y="36" width="390" height="28" rx="4" class="f-green" opacity="0.7"/>
+<text x="760" y="112" class="f-muted t-mono" font-size="24">2010.11.20</text>
+<text x="1544" y="112" text-anchor="end" class="f-muted t-mono" font-size="24">2011.01.21</text>
+<text x="955" y="112" text-anchor="middle" class="f-fg" font-size="24" font-weight="700">11月</text>
+<text x="1349" y="112" text-anchor="middle" class="f-fg" font-size="24" font-weight="700">12月</text></svg>
         </div>
       </div>
     </div>
@@ -713,7 +802,7 @@
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
       <div class="slide-inner is-track">
-        <div class="anim kicker"><span class="k-part">04</span>11/21</div>
+        <div class="anim kicker"><span class="k-part">四</span>11/21</div>
         <h2 class="anim title">「うちか他社か」と迫ったら？</h2>
         <div class="main">
           <div class="anim timeline">
@@ -736,7 +825,7 @@
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
       <div class="slide-inner is-track">
-        <div class="anim kicker"><span class="k-part">04</span>2010年11月</div>
+        <div class="anim kicker"><span class="k-part">四</span>2010年11月</div>
         <h2 class="anim title">森を出て競馬場へ</h2>
         <div class="main">
           <div class="anim timeline">
@@ -764,7 +853,7 @@
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
       <div class="slide-inner is-track is-split">
-        <div class="anim kicker"><span class="k-part">04</span>いま</div>
+        <div class="anim kicker"><span class="k-part">四</span>いま</div>
         <div class="main">
           <div class="anim icon-row"><img class="app-icon" src="assets/icon-wechat.svg" alt="WeChat"></div>
           <h3 class="anim media-title">14億人の日常</h3>
@@ -782,12 +871,13 @@
         <div class="hb-left">PART 04<span class="sep">/</span>2010年11月</div>
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
-      <div class="slide-inner is-blue">
-        <div class="anim kicker"><span class="k-part">04</span>馬化騰（テンセント創業者）2013年</div>
+      <div class="slide-inner is-blue has-vquote">
+        <div class="anim kicker"><span class="k-part">四</span>馬化騰（テンセント創業者）2013年</div>
         <div class="main">
           <p class="anim quote">「WeChatを他社が作っていたら<br>止められなかった」</p>
           <p class="anim sub">敵より先に自分で作る</p>
         </div>
+        <div class="vquote" aria-hidden="true" lang="zh-CN"><span class="vcol"><i>是</i><i>在</i><i>另</i><i>外</i><i>一</i><i>个</i><i>公</i><i>司</i></span><span class="vcol"><i>我</i><i>们</i><i>可</i><i>能</i><i>现</i><i>在</i><i>根</i><i>本</i><i>就</i><i>挡</i><i>不</i><i>住</i></span></div>
       </div>
     </div>
 
@@ -800,9 +890,13 @@
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
       <div class="slide-inner is-track">
-        <div class="anim kicker"><span class="k-part">04</span>営業のタブーを開発で</div>
+        <div class="anim kicker"><span class="k-part">四</span>営業のタブーを開発で</div>
         <div class="main">
-          <p class="anim statement">同じ客を<br><span class="hl-b">あえて3人で追う</span></p>
+          <p class="anim statement">同じ客を<span class="hl-b">あえて3人で追う</span></p>
+          <svg class="sv anim diagram" width="1100" height="220" viewBox="0 0 1100 220" aria-hidden="true">
+<defs><marker id="arC" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="f-blue"/></marker></defs>
+<circle cx="1020" cy="80" r="26" class="f-fg"/><path d="M976 170 C 976 110, 1064 110, 1064 170 Z" class="f-fg"/>
+<text x="1020" y="212" text-anchor="middle" class="f-muted" font-size="24">同じ客</text><circle cx="120" cy="40" r="16" class="f-blue"/><text x="80" y="49" text-anchor="end" class="f-fg" font-size="24" font-weight="700">チーム1</text><path d="M150 40 C 500 40, 700 110, 950 115" class="nf s-blue" stroke-width="3" marker-end="url(#arC)"/><circle cx="120" cy="110" r="16" class="f-blue"/><text x="80" y="119" text-anchor="end" class="f-fg" font-size="24" font-weight="700">チーム2</text><path d="M150 110 C 500 110, 700 110, 950 115" class="nf s-blue" stroke-width="3" marker-end="url(#arC)"/><circle cx="120" cy="180" r="16" class="f-blue"/><text x="80" y="189" text-anchor="end" class="f-fg" font-size="24" font-weight="700">チーム3</text><path d="M150 180 C 500 180, 700 110, 950 115" class="nf s-blue" stroke-width="3" marker-end="url(#arC)"/></svg>
         </div>
       </div>
     </div>
@@ -816,19 +910,19 @@
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
       <div class="slide-inner is-track">
-        <div class="anim kicker"><span class="k-part">04</span>社内コンテストと比べると</div>
+        <div class="anim kicker"><span class="k-part">四</span>社内コンテストと比べると</div>
         <h2 class="anim title">決めるのは誰？</h2>
         <div class="main">
           <div class="anim compare">
             <div class="cmp-col">
               <div class="cmp-label">CONTEST</div>
-              <h3 class="cmp-head">よくある社内コンテスト</h3>
+              <h3 class="cmp-head"><svg class="icon" width="72" height="72" viewBox="0 0 72 72" aria-hidden="true"><circle cx="18" cy="22" r="7" class="nf s-hl" stroke-width="3"/><circle cx="36" cy="18" r="7" class="nf s-hl" stroke-width="3"/><circle cx="54" cy="22" r="7" class="nf s-hl" stroke-width="3"/><path d="M6 42 H66 M12 42 V64 M60 42 V64" class="nf s-hl" stroke-width="3"/></svg>社内コンテスト</h3>
               <ul class="cmp-list"><li>審査員が決める</li><li>1案に絞る</li></ul>
             </div>
             <div class="cmp-op">vs</div>
             <div class="cmp-col is-accent">
               <div class="cmp-label">TENCENT</div>
-              <h3 class="cmp-head">テンセント</h3>
+              <h3 class="cmp-head"><svg class="icon" width="72" height="72" viewBox="0 0 72 72" aria-hidden="true"><circle cx="10" cy="24" r="5" class="f-hl"/><circle cx="23" cy="38" r="5" class="f-hl"/><circle cx="36" cy="24" r="5" class="f-hl"/><circle cx="49" cy="38" r="5" class="f-hl"/><circle cx="62" cy="24" r="5" class="f-hl"/><circle cx="16" cy="52" r="5" class="f-hl"/><circle cx="29" cy="58" r="5" class="f-hl"/><circle cx="42" cy="52" r="5" class="f-hl"/><circle cx="55" cy="58" r="5" class="f-hl"/></svg>テンセント</h3>
               <ul class="cmp-list"><li>ユーザーが決める</li><li>競わせる</li></ul>
             </div>
           </div>
@@ -845,10 +939,16 @@
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
       <div class="slide-inner is-track">
-        <div class="anim kicker"><span class="k-part">04</span>正直に言うと</div>
+        <div class="anim kicker"><span class="k-part">四</span>正直に言うと</div>
         <div class="main">
           <p class="anim statement">ケンカはまだ続いた</p>
-          <p class="anim sub">リンク封鎖は2021年まで</p>
+          <svg class="sv anim diagram" width="1200" height="170" viewBox="0 0 1200 170" aria-hidden="true">
+<image href="assets/icon-wechat.svg" x="0" y="10" width="112" height="112"/>
+<rect x="1088" y="10" width="112" height="112" rx="24" class="f-faint"/>
+<text x="1144" y="78" text-anchor="middle" fill="#FFFFFF" font-size="24" font-weight="700">他社</text>
+<path d="M140 66 H1060" class="nf s-faint" stroke-width="4" stroke-dasharray="16 12"/>
+<circle cx="600" cy="66" r="34" class="f-bg"/><path d="M578 44 L622 88 M622 44 L578 88" class="nf s-red" stroke-width="6" stroke-linecap="round"/>
+<text x="600" y="160" text-anchor="middle" class="f-muted" font-size="24">リンクを開けない（〜2021年）</text></svg>
         </div>
       </div>
     </div>
@@ -862,9 +962,18 @@
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
       <div class="slide-inner is-track">
-        <div class="anim kicker"><span class="k-part">04</span>競馬の限界</div>
+        <div class="anim kicker"><span class="k-part">四</span>競馬の限界</div>
         <div class="main">
           <p class="anim statement">競技が変われば<span class="hl-r">勝てない</span></p>
+          <svg class="sv anim diagram" width="1300" height="272" viewBox="0 0 1300 272" aria-hidden="true">
+<ellipse cx="220" cy="130" rx="150" ry="95" class="nf s-line" stroke-width="3"/>
+<ellipse cx="220" cy="130" rx="120" ry="70" class="nf s-line" stroke-width="2" stroke-dasharray="6 8"/>
+<circle cx="340" cy="130" r="10" class="f-blue"/><circle cx="324" cy="165" r="10" class="f-blue"/><circle cx="280" cy="191" r="10" class="f-blue"/><circle cx="220" cy="200" r="10" class="f-blue"/><circle cx="160" cy="191" r="10" class="f-blue"/><circle cx="116" cy="165" r="10" class="f-blue"/><circle cx="100" cy="130" r="10" class="f-blue"/><circle cx="116" cy="95" r="10" class="f-blue"/><circle cx="160" cy="69" r="10" class="f-blue"/><circle cx="220" cy="60" r="10" class="f-blue"/><circle cx="280" cy="69" r="10" class="f-blue"/><circle cx="324" cy="95" r="10" class="f-blue"/>
+<text x="0" y="262" class="f-fg" font-size="24" font-weight="700">友達から広がる（テンセントの十数本）</text>
+<path d="M620 230 H1300" class="nf s-line" stroke-width="3"/>
+<path d="M640 226 C 900 220, 1080 150, 1260 30" class="nf s-red" stroke-width="5"/>
+<circle cx="1264" cy="28" r="14" class="f-red"/>
+<text x="960" y="262" text-anchor="middle" class="f-fg" font-size="24" font-weight="700">おすすめで広がる（抖音）</text></svg>
           <p class="anim sub">抖音＝テンセントが出会った技術爆発</p>
         </div>
       </div>
@@ -879,9 +988,27 @@
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
       <div class="slide-inner is-forest">
-        <div class="anim kicker"><span class="k-part">05</span>今日の一言</div>
+        <div class="anim kicker"><span class="k-part">五</span>今日の一言</div>
         <div class="main">
           <p class="anim statement">外で撃つより<span class="hl-b">中で競う</span></p>
+          <svg class="sv anim diagram" width="1400" height="250" viewBox="0 0 1400 250" aria-hidden="true">
+<defs><marker id="arR" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="f-red"/></marker>
+<marker id="arB" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="f-blue"/></marker></defs>
+<text x="0" y="36" class="f-muted" font-size="24">外</text>
+<circle cx="80" cy="130" r="22" class="f-fg"/><circle cx="460" cy="130" r="22" class="f-fg"/>
+<path d="M108 112 Q 270 60 430 112" class="nf s-red" stroke-width="3" stroke-dasharray="10 8" marker-end="url(#arR)"/>
+<path d="M432 150 Q 270 202 110 150" class="nf s-red" stroke-width="3" stroke-dasharray="10 8" marker-end="url(#arR)"/>
+<text x="270" y="232" text-anchor="middle" class="f-muted" font-size="24">撃ち合う</text>
+<text x="640" y="36" class="f-muted" font-size="24">中</text>
+<rect x="640" y="56" width="760" height="150" rx="12" class="nf s-line" stroke-width="2"/>
+<line x1="680" y1="96" x2="1340" y2="96" class="s-line" stroke-width="2"/>
+<line x1="680" y1="131" x2="1340" y2="131" class="s-line" stroke-width="2"/>
+<line x1="680" y1="166" x2="1340" y2="166" class="s-line" stroke-width="2"/>
+<line x1="1340" y1="76" x2="1340" y2="186" class="s-fg" stroke-width="3" stroke-dasharray="6 6"/>
+<path d="M700 96 H1180" class="nf s-blue" stroke-width="4" marker-end="url(#arB)"/><circle cx="1196" cy="96" r="10" class="f-blue"/>
+<path d="M700 131 H1010" class="nf s-blue" stroke-width="4" marker-end="url(#arB)"/><circle cx="1026" cy="131" r="10" class="f-blue"/>
+<path d="M700 166 H1100" class="nf s-blue" stroke-width="4" marker-end="url(#arB)"/><circle cx="1116" cy="166" r="10" class="f-blue"/>
+<text x="1020" y="238" text-anchor="middle" class="f-muted" font-size="24">競わせる</text></svg>
         </div>
       </div>
     </div>
@@ -895,21 +1022,21 @@
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
       <div class="slide-inner is-forest">
-        <div class="anim kicker"><span class="k-part">05</span>最後に</div>
+        <div class="anim kicker"><span class="k-part">五</span>最後に</div>
         <h2 class="anim title">『三体』のおすすめポイント</h2>
         <div class="main">
           <div class="anim cols">
-            <div class="col">
+            <div class="col"><svg class="icon" width="72" height="72" viewBox="0 0 72 72" aria-hidden="true"><ellipse cx="36" cy="36" rx="30" ry="14" class="nf s-hl" stroke-width="3" transform="rotate(-20 36 36)"/><circle cx="24" cy="30" r="6" class="f-hl"/><circle cx="46" cy="40" r="5" class="f-hl"/><circle cx="40" cy="22" r="4" class="f-hl"/></svg>
               <div class="col-num">01</div>
               <h3 class="col-title">スケール</h3>
               <p class="col-body">400年先の敵に今から備える</p>
             </div>
-            <div class="col">
+            <div class="col"><svg class="icon" width="72" height="72" viewBox="0 0 72 72" aria-hidden="true"><rect x="36" y="6" width="26" height="60" class="nf s-hl" stroke-width="3"/><circle cx="18" cy="26" r="7" class="nf s-hl" stroke-width="3"/><path d="M18 34 V56 M10 44 H26" class="nf s-hl" stroke-width="3"/></svg>
               <div class="col-num">02</div>
               <h3 class="col-title">頭脳戦</h3>
               <p class="col-body">作戦は頭の中だけ</p>
             </div>
-            <div class="col">
+            <div class="col"><span class="seal is-s" lang="zh-CN"><i>中</i><i>国</i></span>
               <div class="col-num">03</div>
               <h3 class="col-title">中国</h3>
               <p class="col-body">中国の競争のルールがわかる</p>
@@ -928,7 +1055,7 @@
         <div class="hb-right">SHACHOKEN &nbsp;·&nbsp; 黒暗森林と競馬場</div>
       </div>
       <div class="slide-inner is-forest is-split">
-        <div class="anim kicker"><span class="k-part">05</span>最後の問い</div>
+        <div class="anim kicker"><span class="k-part">五</span>最後の問い</div>
         <div class="main">
           <h3 class="anim media-title is-l">人類は勝てるのか</h3>
           <p class="anim tease">答えは第2部『黒暗森林』に</p>
@@ -942,8 +1069,17 @@
     ============================================================ -->
     <div class="slide" data-variant="cover" data-bg="blue">
       <div class="slide-inner is-night cover-inner">
-        <svg class="anim mark" viewBox="0 0 132 44" aria-hidden="true"><circle cx="16" cy="26" r="12" fill="#F5B544"/><circle cx="60" cy="16" r="9" fill="#FF9F5A"/><circle cx="106" cy="24" r="16" fill="#FFCB6B"/></svg>
+        <svg class="sv cover-suns" width="520" height="400" viewBox="0 0 520 400" aria-hidden="true"><defs>
+<radialGradient id="csun" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#FFE3A3"/><stop offset="55%" stop-color="#F5B544"/><stop offset="100%" stop-color="#F5B544" stop-opacity="0"/></radialGradient>
+<radialGradient id="csun2" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#FFD0A8"/><stop offset="55%" stop-color="#FF9F5A"/><stop offset="100%" stop-color="#FF9F5A" stop-opacity="0"/></radialGradient>
+<radialGradient id="csun3" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#FFF1C9"/><stop offset="55%" stop-color="#FFCB6B"/><stop offset="100%" stop-color="#FFCB6B" stop-opacity="0"/></radialGradient>
+<radialGradient id="cearth" cx="40%" cy="35%" r="65%"><stop offset="0%" stop-color="#BFD3FF"/><stop offset="100%" stop-color="#3D6FE0"/></radialGradient>
+</defs>
+<ellipse cx="260" cy="200" rx="230" ry="120" class="nf s-line" stroke-width="2" transform="rotate(-18 260 200)"/>
+<ellipse cx="260" cy="200" rx="160" ry="200" class="nf s-line" stroke-width="2" stroke-dasharray="6 10" transform="rotate(24 260 200)"/>
+<circle cx="170" cy="150" r="66" fill="url(#csun)" opacity="0.35"/><circle cx="170" cy="150" r="30" fill="url(#csun)"/><circle cx="330" cy="250" r="53" fill="url(#csun2)" opacity="0.35"/><circle cx="330" cy="250" r="24" fill="url(#csun2)"/><circle cx="300" cy="110" r="84" fill="url(#csun3)" opacity="0.35"/><circle cx="300" cy="110" r="38" fill="url(#csun3)"/><circle cx="460" cy="300" r="7" class="f-fg"/></svg>
         <h1 class="anim cover-title is-thanks">ご清聴ありがとうございました</h1>
+        <div class="anim cover-sign"><span class="seal" lang="zh-CN"><i>谢</i><i>谢</i></span></div>
       </div>
     </div>
 

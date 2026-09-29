@@ -306,7 +306,7 @@ html, body {
 }
 
 .chapter-rule {
-  width: 100%;
+  width: 56%;
   height: 1px;
   margin-bottom: 48px;
   background: var(--line);
@@ -743,3 +743,177 @@ html, body {
   line-height: 1.5;
   text-indent: -0.5em;
 }
+
+
+/* ============================================================================
+   v4.1：中国らしさと、ページの中身に合わせた背景・図
+   - 三体の話：星の散る宇宙、3つの太陽、電波、黒暗森林の木々
+   - テンセントの話：宣紙のような生成りの紙、下端に回紋
+   - 中国の要素：印章（朱色の判子）、章扉の縦書きの筆文字、漢数字の章番号
+   ============================================================================ */
+
+:root {
+  --ff-brush: "Ma Shan Zheng", "Shippori Mincho B1", serif;
+  --ff-zh: "Noto Serif SC", "Shippori Mincho B1", serif;
+  --cinnabar: #C8322B;
+  --seal-ink: #FBF3E4;
+  --paper: #F3EDE1;
+}
+
+/* 森：うっすら星と星雲 */
+.is-forest {
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(900px 600px at 92% 8%, rgba(122, 162, 255, 0.07), transparent 70%),
+    radial-gradient(700px 500px at 4% 96%, rgba(245, 181, 68, 0.06), transparent 70%),
+    radial-gradient(1.4px 1.4px at 12% 22%, rgba(238, 241, 245, 0.45), transparent 60%),
+    radial-gradient(1.2px 1.2px at 34% 8%, rgba(238, 241, 245, 0.35), transparent 60%),
+    radial-gradient(1.4px 1.4px at 58% 16%, rgba(238, 241, 245, 0.4), transparent 60%),
+    radial-gradient(1.2px 1.2px at 76% 34%, rgba(238, 241, 245, 0.35), transparent 60%),
+    radial-gradient(1.4px 1.4px at 88% 62%, rgba(238, 241, 245, 0.4), transparent 60%),
+    radial-gradient(1.2px 1.2px at 66% 88%, rgba(238, 241, 245, 0.3), transparent 60%),
+    radial-gradient(1.2px 1.2px at 24% 70%, rgba(238, 241, 245, 0.3), transparent 60%),
+    radial-gradient(1.6px 1.6px at 46% 52%, rgba(245, 181, 68, 0.35), transparent 60%);
+}
+
+/* 競馬場：宣紙の手ざわり＋下端の回紋 */
+.is-track {
+  background-color: var(--paper);
+  background-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='24' viewBox='0 0 48 24'><path d='M2 22 V2 H22 V18 H8 V8 H16 V13 M26 2 V22 H46 V6 H32 V16 H40 V11' fill='none' stroke='%230052D9' stroke-opacity='0.22' stroke-width='2'/></svg>"),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.42 0 0 0 0 0.35 0 0 0 0 0.25 0 0 0 0.07 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  background-repeat: repeat-x, repeat;
+  background-position: left bottom 28px, 0 0;
+}
+
+/* 図（SVG）の色は CSS のクラスで。ページのテーマに合わせて変わる */
+.sv text { font-family: var(--ff-sans); }
+.sv .t-display { font-family: var(--ff-display); }
+.sv .t-mono { font-family: var(--ff-mono); }
+.nf { fill: none; }
+.f-fg { fill: var(--fg); }       .s-fg { stroke: var(--fg); }
+.f-muted { fill: var(--muted); } .s-muted { stroke: var(--muted); }
+.f-faint { fill: var(--faint); } .s-faint { stroke: var(--faint); }
+.f-line { fill: var(--line); }   .s-line { stroke: var(--line); }
+.f-hl { fill: var(--hl); }       .s-hl { stroke: var(--hl); }
+.f-red { fill: var(--red); }     .s-red { stroke: var(--red); }
+.f-blue { fill: var(--blue); }   .s-blue { stroke: var(--blue); }
+.f-green { fill: var(--green); } .s-green { stroke: var(--green); }
+.f-bg { fill: var(--bg); }
+
+.diagram { display: block; max-width: 100%; height: auto; margin-top: 56px; }
+.diagram.is-top { margin: 0 0 48px; }
+
+.icon { display: block; width: 72px; height: 72px; }
+.cmp-head .icon { width: 56px; height: 56px; }
+.col .icon, .fact .icon { margin-bottom: 8px; }
+
+/* 印章（白文：朱の地に白い字）。縦書きなので2文字で1列、4文字なら2列（右から読む） */
+.seal {
+  display: inline-grid;
+  grid-template-rows: repeat(2, 1.05em);
+  grid-auto-flow: column;
+  grid-auto-columns: 1.05em;
+  direction: rtl;
+  padding: 0.18em;
+  border-radius: 6px;
+  background: var(--cinnabar);
+  box-shadow: inset 0 0 0 3px var(--cinnabar), inset 0 0 0 5px rgba(251, 243, 228, 0.85);
+  color: var(--seal-ink);
+  font-family: var(--ff-zh);
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: 0;
+  transform: rotate(-4deg);
+  vertical-align: middle;
+}
+
+.seal i { display: block; font-style: normal; text-align: center; line-height: 1.05em; }
+.seal.is-s { font-size: 32px; }
+
+.after-seal { margin-left: 32px; }
+
+/* 章扉：縦書きの筆文字 */
+/* 縦書きは1文字ずつ並べる（フォントを必要な字だけ読み込むと縦書きの情報が落ちるため） */
+.vwm, .vquote { display: flex; flex-direction: row-reverse; }
+.vcol { display: flex; flex-direction: column; }
+.vcol i { display: block; font-style: normal; text-align: center; line-height: 1.08; }
+
+.vwm {
+  position: absolute;
+  top: 88px;
+  right: 136px;
+  gap: 0.05em;
+  font-family: var(--ff-brush);
+  font-size: 300px;
+  color: var(--hl);
+  opacity: 0.16;
+  pointer-events: none;
+}
+
+.is-blue .vwm { color: #FFFFFF; opacity: 0.18; }
+
+.chapter-label { font-family: var(--ff-display); font-size: var(--fs-body); letter-spacing: 0.2em; }
+
+.kicker .k-part { font-family: var(--ff-display); font-weight: 800; }
+
+/* 表紙と最後の1枚：3つの太陽と落款 */
+.cover-suns { position: absolute; top: 40px; right: 80px; }
+.cover-sign { display: flex; align-items: center; gap: 28px; margin-top: 56px; }
+.cover-sign .cover-name { margin-top: 0; }
+
+/* 夜の絵（背景として下や右に置く） */
+.night-art { position: absolute; pointer-events: none; }
+.night-art.dish { right: 120px; bottom: 40px; }
+.night-art.forest { left: 0; bottom: 0; }
+.has-forest .main { justify-content: flex-start; padding-top: 56px; }
+
+/* 読んだ人：有名な人ほど明るい星 */
+.reader-name { position: relative; }
+
+.reader-name::before {
+  content: '';
+  position: absolute;
+  left: -0.5em;
+  top: 0.52em;
+  width: 0.2em;
+  height: 0.2em;
+  border-radius: 50%;
+  background: var(--hl);
+}
+
+.reader.is-xl .reader-name::before { left: -0.42em; width: 0.16em; height: 0.16em; }
+
+.reader.is-xl .reader-name::before { box-shadow: 0 0 24px 6px rgba(245, 181, 68, 0.45); }
+.reader.is-l .reader-name::before { box-shadow: 0 0 12px 3px rgba(245, 181, 68, 0.35); }
+.reader.is-s .reader-name::before { opacity: 0.7; }
+
+/* ドラマの話数 */
+.eps { display: block; margin-top: 28px; }
+
+/* 創業者の言葉：右に原文（中国語）を縦書きで */
+.vquote {
+  position: absolute;
+  top: 220px;
+  right: 180px;
+  height: 640px;
+  gap: 0.9em;
+  padding-right: 40px;
+  border-right: 2px solid var(--line);
+  font-family: var(--ff-zh);
+  font-size: var(--fs-s);
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.vquote .vcol i { line-height: 1.22; }
+
+.col > .seal { align-self: flex-start; }
+
+.has-vquote .main { padding-right: 280px; }
+
+/* 問い：森 → 会社 */
+.icon-pair { display: flex; align-items: center; gap: 32px; margin-bottom: 48px; }
+.icon-pair .icon { width: 96px; height: 96px; }
+.pair-arrow { font-family: var(--ff-display); font-size: var(--fs-m); color: var(--muted); }
