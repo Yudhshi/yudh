@@ -291,3 +291,140 @@
   top: 30px;
   width: 18px;
 }
+
+
+/* ---------------------------------------------------------------------------
+   講演者が埋める所の目印（赤い小ラベル）と、埋める前の問い
+   --------------------------------------------------------------------------- */
+
+.fill-tag {
+  display: inline-block;
+  margin: var(--space-sm) auto 0;
+  padding: 6px 20px;
+  border: 2px solid var(--red);
+  border-radius: 999px;
+  font-family: var(--ff-ja);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--red);
+}
+
+.fill-tag.is-left {
+  margin-left: 0;
+}
+
+.compare-grid.is-large .compare-list li.is-prompt {
+  font-size: 32px;
+  color: var(--gray);
+}
+
+.compare-side.dark .compare-list li.is-prompt {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+
+/* ---------------------------------------------------------------------------
+   選書の動機（s08）：左から右へ、2つの考えをつなぐ
+   --------------------------------------------------------------------------- */
+
+.motive {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+}
+
+.motive-pill {
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  background: var(--sf-blue);
+  color: var(--white);
+  font-family: var(--ff-ja);
+  font-size: 44px;
+  font-weight: 700;
+  line-height: 1.45;
+  text-align: center;
+}
+
+.motive-pill.is-accent {
+  background: var(--light-red);
+  color: var(--black);
+}
+
+.motive-arrow {
+  color: var(--gray);
+  width: 60px;
+  flex: 0 0 60px;
+}
+
+
+/* ---------------------------------------------------------------------------
+   聞いてみた（s13）：吹き出しの対話
+   --------------------------------------------------------------------------- */
+
+.chat {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-lg);
+  width: 100%;
+  align-items: start;
+}
+
+.chat-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.bubble {
+  position: relative;
+  width: 100%;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: 28px;
+  background: var(--light-gray);
+  font-family: var(--ff-ja);
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--sf-blue);
+  text-align: center;
+}
+
+.bubble::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -22px;
+  margin-left: -22px;
+  border-width: 22px 22px 0;
+  border-style: solid;
+  border-color: var(--light-gray) transparent transparent;
+}
+
+.bubble.is-empty {
+  background: var(--white);
+  border: 3px dashed var(--gray);
+  color: var(--gray);
+  font-weight: 500;
+}
+
+.bubble.is-empty::after {
+  border-color: var(--gray) transparent transparent;
+}
+
+.chat .who {
+  margin-top: 40px;
+  font-family: var(--ff-ja);
+  font-size: 28px;
+  font-weight: 500;
+  color: var(--black);
+}
+
+.slide[data-bg="gray"] .bubble:not(.is-empty) {
+  background: var(--white);
+}
+
+.slide[data-bg="gray"] .bubble:not(.is-empty)::after {
+  border-color: var(--white) transparent transparent;
+}
