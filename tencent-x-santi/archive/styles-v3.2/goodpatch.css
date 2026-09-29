@@ -1,0 +1,233 @@
+/* ============================================================================
+   goodpatch.css — slide-builder スタイルプリセット
+   ============================================================================
+   出典: Goodpatch Google Slide Template スタイルガイド
+        (cross-numano-team/members/numa/2026-04-07/style_goodpatch.md)
+
+   このファイルの責務: デザイン規約のみ
+     - 色トークン
+     - フォントトークン
+     - スライドキャンバス
+     - 余白・角丸・シャドウのスケール
+     - タイポグラフィ階層 (.t-* utility classes)
+     - スライド背景バリアント
+
+   含まないもの (components.css の責務):
+     - .reasons / .flow / .compare-grid 等のコンポーネント配置 CSS
+     - これらは別ファイルに分離されており、トークン参照のみで実装される
+
+   差し替え可能性:
+     このファイルを minimal.css などに差し替えるだけで、
+     コンポーネント側のマークアップ修正なしに見た目が変わる。
+     コンポーネントは var(--sf-blue) 等のトークン経由で色を参照しているため。
+   ============================================================================ */
+
+
+:root {
+  /* ==========================================================================
+     Colors — Goodpatch Style Guide
+     ========================================================================== */
+
+  /* Main palette */
+  --sf-blue:    #096FCA;   /* メインカラー: 表紙背景・章扉背景・見出し・アクセント */
+  --light-blue: #76B7ED;   /* サブカラー: 補助アクセント・区切り線 */
+  --black:      #3A3E40;   /* メインテキスト (純黒 #000000 は禁則) */
+  --gray:       #96A0A6;   /* 補足テキスト・ページ番号 */
+  --red:        #FF7669;   /* 強調・警告 */
+  --light-red:  #FFABA3;   /* 補助強調 */
+  --light-gray: #F5F7F9;   /* コンテンツ背景・カード背景 */
+  --white:      #FFFFFF;
+
+  /* Code block dark palette */
+  --code-bg:     #2A2D30;
+  --code-bg-2:   #22252A;
+  --code-border: #3A3E44;
+  --code-text:   #E8ECF1;
+  --code-muted:  #8A939B;
+  --code-accent: #76B7ED;
+
+
+  /* ==========================================================================
+     Fonts
+     ========================================================================== */
+
+  --ff-ja:   "M PLUS 1p", "Noto Sans JP", "Hiragino Sans", "ヒラギノ角ゴシック", sans-serif;
+  --ff-en:   "Montserrat", "M PLUS 1p", -apple-system, sans-serif;
+  --ff-mono: "JetBrains Mono", "SFMono-Regular", "Menlo", "Consolas", monospace;
+
+
+  /* ==========================================================================
+     Slide canvas — 1920×1080 (16:9)
+     ========================================================================== */
+
+  --slide-w: 1920px;
+  --slide-h: 1080px;
+
+
+  /* ==========================================================================
+     Spacing scale
+     1スライドの内側構成で頻出する余白値をトークン化
+     ========================================================================== */
+
+  --space-xs: 24px;   /* セクション内の細かい間隔 */
+  --space-sm: 40px;   /* カード内パディング */
+  --space-md: 56px;   /* セクション間 */
+  --space-lg: 80px;   /* スライド主要要素間 */
+  --space-xl: 120px;  /* スライド外周パディング */
+
+
+  /* ==========================================================================
+     Border radius scale
+     ========================================================================== */
+
+  --radius-sm: 4px;   /* ボタン・小さなチップ */
+  --radius-md: 8px;   /* カード・コードブロック */
+  --radius-lg: 12px;  /* 図解カード */
+
+
+  /* ==========================================================================
+     Shadow scale
+     カード/コードブロック/ステージの浮き沈みを表現する
+     ========================================================================== */
+
+  --shadow-sm:    0 4px 12px rgba(0, 0, 0, 0.15);     /* コードブロック等の沈み */
+  --shadow-md:    0 8px 24px rgba(58, 62, 64, 0.06);  /* カードの軽い浮き */
+  --shadow-lg:    0 10px 32px rgba(58, 62, 64, 0.08); /* カードの強い浮き */
+  --shadow-stage: 0 50px 160px rgba(0, 0, 0, 0.6),
+                  0 0 0 1px rgba(255, 255, 255, 0.04); /* ステージ全体 */
+}
+
+
+/* ============================================================================
+   Typography utility classes
+   style_goodpatch.md のタイポグラフィ階層を CSS化 (個別記述)
+   pt → px の換算は ×1.333 (例: 80pt × 1.333 ≈ 107px)
+   ============================================================================ */
+
+/* 表紙タイトル 80pt */
+.t-cover-title {
+  font-family: var(--ff-ja);
+  font-size: 107px;
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--white);
+  letter-spacing: -0.01em;
+  text-align: left;
+}
+
+/* 表紙サブ 32pt */
+.t-cover-sub {
+  font-family: var(--ff-ja);
+  font-size: 43px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--white);
+}
+
+/* 中表紙(章扉)タイトル 40pt */
+.t-chapter-title {
+  font-family: var(--ff-ja);
+  font-size: 53px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--white);
+}
+
+/* 中表紙(章扉)サブ 28pt */
+.t-chapter-sub {
+  font-family: var(--ff-ja);
+  font-size: 37px;
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--white);
+  opacity: 0.92;
+}
+
+/* セクション見出し(大話題) 24pt */
+.t-section-head {
+  font-family: var(--ff-en);
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--sf-blue);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+/* 話題タイトル 32pt */
+.t-topic-title {
+  font-family: var(--ff-ja);
+  font-size: 64px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--black);
+  letter-spacing: -0.01em;
+}
+
+/* 強調文(大) 60pt */
+.t-emphasis {
+  font-family: var(--ff-ja);
+  font-size: 80px;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--black);
+  text-align: center;
+  letter-spacing: -0.01em;
+}
+
+/* 強調文(小) 44pt */
+.t-emphasis-sm {
+  font-family: var(--ff-ja);
+  font-size: 60px;
+  font-weight: 700;
+  line-height: 1.45;
+  color: var(--black);
+  letter-spacing: -0.01em;
+}
+
+/* 目次テキスト 40pt */
+.t-toc-text {
+  font-family: var(--ff-ja);
+  font-size: 53px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--black);
+}
+
+/* 本文 28pt */
+.t-body {
+  font-family: var(--ff-ja);
+  font-size: 37px;
+  font-weight: 400;
+  line-height: 1.7;
+  color: var(--black);
+}
+
+/* 補足テキスト 24pt */
+.t-caption {
+  font-family: var(--ff-ja);
+  font-size: 32px;
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--gray);
+}
+
+
+/* ============================================================================
+   Color helpers
+   テキスト中で部分的に色を変えたい時のヘルパークラス
+   ============================================================================ */
+
+.t-blue { color: var(--sf-blue); }
+.t-red  { color: var(--red); }
+
+
+/* ============================================================================
+   Slide background variants
+   slide 要素に data-bg="..." 属性を付けることで背景色を切り替える
+   ============================================================================ */
+
+.slide[data-bg="blue"]  { background: var(--sf-blue); }
+.slide[data-bg="white"] { background: var(--white); }
+.slide[data-bg="gray"]  { background: var(--light-gray); }
+</content>
+</invoke>
