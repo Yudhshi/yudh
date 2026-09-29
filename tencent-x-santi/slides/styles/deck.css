@@ -701,3 +701,30 @@
   margin-top: var(--space-xs);
   font-size: 26px;
 }
+
+
+/* v2.9: no punctuation, fewer captions */
+
+/* カレンダーの下の小さなラベルは出さない（色と最後の凡例で伝える） */
+.cal .flow-step.is-fight .flow-caption,
+.cal .flow-step.is-answer .flow-caption {
+  visibility: hidden;
+}
+
+/* 2人だけの「読んだ人」 */
+.facts.is-two {
+  grid-template-columns: repeat(2, 1fr);
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* 最後の1枚は「ご清聴ありがとうございました」だけ */
+.cover-inner.is-thanks {
+  align-items: center;
+  text-align: center;
+}
+
+.cover-inner.is-thanks .cover-title {
+  margin: 0;
+  font-size: 96px;
+}
