@@ -917,3 +917,22 @@ html, body {
 .icon-pair { display: flex; align-items: center; gap: 32px; margin-bottom: 48px; }
 .icon-pair .icon { width: 96px; height: 96px; }
 .pair-arrow { font-family: var(--ff-display); font-size: var(--fs-m); color: var(--muted); }
+
+/* テンセントの章の入口：話のもとになった本 */
+.source-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-top: 64px;
+  padding-top: 32px;
+  border-top: 1px solid var(--line);
+}
+
+.source-fact { font-size: var(--fs-body); color: var(--muted); }
+
+.book { display: flex; align-items: center; gap: 24px; }
+.book-icon { flex: none; }
+.book-text { display: flex; flex-direction: column; gap: 4px; }
+.book-label { font-size: var(--fs-min); color: var(--muted); }
+.book-title { font-family: var(--ff-display); font-size: var(--fs-body); font-weight: 800; }
+.book-note { font-size: var(--fs-min); color: var(--muted); }
