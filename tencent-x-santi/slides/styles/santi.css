@@ -3,9 +3,11 @@
    goodpatch テンプレートから離れて、このテーマのために作ったもの
 
    コンセプト：話の流れと同じ順に「暗 → 明 → 暗」
-   - 森（Part 1–3・最後）：宇宙のような暗い背景。アクセントは三体の3つの太陽の琥珀色
-   - 競馬場（Part 4 テンセント）：昼の明るい紙色。アクセントはテンセントの企業カラー
-   - 夜（黒暗森林の3枚）：さらに暗く、星を散らす
+   v4.2 から、暗すぎず明るすぎない落ち着いた色に（真っ黒・真っ白は使わない）
+   - 森（Part 1–3・最後）：墨に森の緑を少し混ぜた炭色。アクセントは三体の太陽の黄土色
+   - 競馬場（Part 4 テンセント）：暖かい石の色。アクセントはテンセントの企業カラー
+   - 夜（黒暗森林の3枚・表紙・最後）：森より一段だけ暗く、星を散らす
+   - 赤は朱に近いテラコッタ（撃つ・毒殺・勝てない）
 
    文字：大きな一文は明朝（小説の手ざわり）、説明はゴシック、日付と数字は等幅（三体の「カウントダウン」）
    サイズは7段階だけ：136 / 96 / 72 / 56 / 40 / 32 / 24（px, 1920×1080 基準）
@@ -25,24 +27,24 @@
   --fs-min: 24px;
 
   /* 森（暗） */
-  --forest-bg: #0A0D12;
-  --forest-fg: #EEF1F5;
-  --forest-muted: #9AA6B6;
-  --forest-line: #2A3340;
-  --sun: #F5B544;
-  --forest-blue: #7AA2FF;
-  --forest-red: #FF6A5E;
-  --forest-green: #3FD68A;
+  --forest-bg: #262B29;
+  --forest-fg: #E6E1D6;
+  --forest-muted: #A3A89F;
+  --forest-line: #3E4541;
+  --sun: #D8A451;
+  --forest-blue: #93AEE6;
+  --forest-red: #E0806A;
+  --forest-green: #6CC596;
 
   /* 競馬場（明） */
-  --paper: #F5F5F1;
-  --ink: #15181D;
-  --ink-muted: #5A6371;
-  --ink-faint: #7D8590;
-  --paper-line: #D6D6CF;
+  --paper: #E4DED1;
+  --ink: #24292A;
+  --ink-muted: #5A5E57;
+  --ink-faint: #72756D;
+  --paper-line: #C9C2B3;
   --tencent: #0052D9;
-  --paper-red: #D0382C;
-  --paper-green: #007A3D;
+  --paper-red: #9E4333;
+  --paper-green: #1E7042;
   --wechat: #07C160;
 }
 
@@ -56,7 +58,7 @@ html, body {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background: #05070A;
+  background: #151817;
   font-family: var(--ff-sans);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -113,7 +115,7 @@ html, body {
   --bg: var(--forest-bg);
   --fg: var(--forest-fg);
   --muted: var(--forest-muted);
-  --faint: #6B7788;
+  --faint: #7E857F;
   --line: var(--forest-line);
   --hl: var(--sun);
   --blue: var(--forest-blue);
@@ -123,21 +125,21 @@ html, body {
 
 /* 夜：もう一段暗く、星を散らす */
 .is-night {
-  --bg: #06080C;
+  --bg: #1D2120;
   background-color: var(--bg);
   background-image:
-    radial-gradient(1.6px 1.6px at 8% 18%, rgba(238, 241, 245, 0.75), transparent 60%),
-    radial-gradient(1.2px 1.2px at 22% 72%, rgba(238, 241, 245, 0.55), transparent 60%),
-    radial-gradient(2px 2px at 35% 30%, rgba(245, 181, 68, 0.7), transparent 60%),
-    radial-gradient(1.2px 1.2px at 48% 86%, rgba(238, 241, 245, 0.5), transparent 60%),
-    radial-gradient(1.6px 1.6px at 61% 12%, rgba(238, 241, 245, 0.7), transparent 60%),
-    radial-gradient(1.2px 1.2px at 73% 64%, rgba(238, 241, 245, 0.5), transparent 60%),
-    radial-gradient(1.8px 1.8px at 84% 26%, rgba(238, 241, 245, 0.65), transparent 60%),
-    radial-gradient(1.2px 1.2px at 92% 80%, rgba(238, 241, 245, 0.5), transparent 60%),
-    radial-gradient(1px 1px at 15% 45%, rgba(238, 241, 245, 0.45), transparent 60%),
-    radial-gradient(1px 1px at 55% 50%, rgba(238, 241, 245, 0.35), transparent 60%),
-    radial-gradient(1px 1px at 78% 44%, rgba(238, 241, 245, 0.45), transparent 60%),
-    radial-gradient(1px 1px at 30% 92%, rgba(238, 241, 245, 0.4), transparent 60%);
+    radial-gradient(1.6px 1.6px at 8% 18%, rgba(230, 225, 214, 0.75), transparent 60%),
+    radial-gradient(1.2px 1.2px at 22% 72%, rgba(230, 225, 214, 0.55), transparent 60%),
+    radial-gradient(2px 2px at 35% 30%, rgba(216, 164, 81, 0.7), transparent 60%),
+    radial-gradient(1.2px 1.2px at 48% 86%, rgba(230, 225, 214, 0.5), transparent 60%),
+    radial-gradient(1.6px 1.6px at 61% 12%, rgba(230, 225, 214, 0.7), transparent 60%),
+    radial-gradient(1.2px 1.2px at 73% 64%, rgba(230, 225, 214, 0.5), transparent 60%),
+    radial-gradient(1.8px 1.8px at 84% 26%, rgba(230, 225, 214, 0.65), transparent 60%),
+    radial-gradient(1.2px 1.2px at 92% 80%, rgba(230, 225, 214, 0.5), transparent 60%),
+    radial-gradient(1px 1px at 15% 45%, rgba(230, 225, 214, 0.45), transparent 60%),
+    radial-gradient(1px 1px at 55% 50%, rgba(230, 225, 214, 0.35), transparent 60%),
+    radial-gradient(1px 1px at 78% 44%, rgba(230, 225, 214, 0.45), transparent 60%),
+    radial-gradient(1px 1px at 30% 92%, rgba(230, 225, 214, 0.4), transparent 60%);
 }
 
 .is-track {
@@ -153,7 +155,7 @@ html, body {
 }
 
 .is-blue {
-  --bg: var(--tencent);
+  --bg: #003CAB;
   --fg: #FFFFFF;
   --muted: rgba(255, 255, 255, 0.82);
   --faint: rgba(255, 255, 255, 0.7);
@@ -542,7 +544,7 @@ html, body {
   position: absolute;
   left: 0;
   right: 0;
-  top: 107px;
+  top: 139px;
   height: 2px;
   background: var(--line);
 }
@@ -550,18 +552,18 @@ html, body {
 .tl-node { position: relative; display: flex; flex-direction: column; color: var(--faint); }
 
 .tl-date {
-  height: 88px;
+  height: 112px;
   font-family: var(--ff-mono);
-  font-size: var(--fs-m);
+  font-size: var(--fs-l);
   font-weight: 700;
-  line-height: 88px;
+  line-height: 112px;
 }
 
-.tl-mark { display: flex; align-items: center; height: 40px; }
+.tl-mark { display: flex; align-items: center; height: 56px; }
 
 .tl-dot {
-  width: 18px;
-  height: 18px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   background: var(--faint);
   box-shadow: 0 0 0 6px var(--bg);
@@ -569,7 +571,7 @@ html, body {
 
 .tl-label {
   margin-top: 28px;
-  font-size: var(--fs-body);
+  font-size: var(--fs-s);
   font-weight: 700;
   line-height: 1.4;
 }
@@ -583,7 +585,7 @@ html, body {
 
 .tl-node.is-fight .tl-dot,
 .tl-node.is-answer .tl-dot,
-.tl-node.is-inside .tl-dot { width: 36px; height: 36px; }
+.tl-node.is-inside .tl-dot { width: 44px; height: 44px; }
 
 .tl-node.is-fight .tl-dot  { background: var(--red); }
 .tl-node.is-answer .tl-dot { background: var(--blue); }
@@ -593,7 +595,7 @@ html, body {
   display: flex;
   gap: 56px;
   margin-top: 72px;
-  font-size: var(--fs-min);
+  font-size: var(--fs-body);
   color: var(--muted);
 }
 
@@ -620,7 +622,7 @@ html, body {
 
 .bar { height: 88px; border-radius: 4px; background: var(--ink); }
 .bar.is-tencent { background: var(--tencent); }
-.bar.is-toyota  { background: #2B313A; }
+.bar.is-toyota  { background: #34393A; }
 .bar.is-sony    { background: var(--ink-faint); }
 
 /* トヨタ＋ソニーがテンセントに届かない分（ラベルは右端にそろえる） */
@@ -666,7 +668,7 @@ html, body {
   width: 420px;
   height: 900px;
   transform: translateY(-50%);
-  border: 14px solid #1C2027;
+  border: 14px solid #2F3432;
   border-radius: 64px;
   background-size: cover;
   background-position: top center;
@@ -741,7 +743,6 @@ html, body {
   font-size: var(--fs-l);
   font-weight: 800;
   line-height: 1.5;
-  text-indent: -0.5em;
 }
 
 
@@ -755,32 +756,32 @@ html, body {
 :root {
   --ff-brush: "Ma Shan Zheng", "Shippori Mincho B1", serif;
   --ff-zh: "Noto Serif SC", "Shippori Mincho B1", serif;
-  --cinnabar: #C8322B;
-  --seal-ink: #FBF3E4;
-  --paper: #F3EDE1;
+  --cinnabar: #B4442F;
+  --seal-ink: #F6EEE0;
+  --paper: #E4DED1;
 }
 
 /* 森：うっすら星と星雲 */
 .is-forest {
   background-color: var(--bg);
   background-image:
-    radial-gradient(900px 600px at 92% 8%, rgba(122, 162, 255, 0.07), transparent 70%),
-    radial-gradient(700px 500px at 4% 96%, rgba(245, 181, 68, 0.06), transparent 70%),
-    radial-gradient(1.4px 1.4px at 12% 22%, rgba(238, 241, 245, 0.45), transparent 60%),
-    radial-gradient(1.2px 1.2px at 34% 8%, rgba(238, 241, 245, 0.35), transparent 60%),
-    radial-gradient(1.4px 1.4px at 58% 16%, rgba(238, 241, 245, 0.4), transparent 60%),
-    radial-gradient(1.2px 1.2px at 76% 34%, rgba(238, 241, 245, 0.35), transparent 60%),
-    radial-gradient(1.4px 1.4px at 88% 62%, rgba(238, 241, 245, 0.4), transparent 60%),
-    radial-gradient(1.2px 1.2px at 66% 88%, rgba(238, 241, 245, 0.3), transparent 60%),
-    radial-gradient(1.2px 1.2px at 24% 70%, rgba(238, 241, 245, 0.3), transparent 60%),
-    radial-gradient(1.6px 1.6px at 46% 52%, rgba(245, 181, 68, 0.35), transparent 60%);
+    radial-gradient(900px 600px at 92% 8%, rgba(147, 174, 230, 0.07), transparent 70%),
+    radial-gradient(700px 500px at 4% 96%, rgba(216, 164, 81, 0.06), transparent 70%),
+    radial-gradient(1.4px 1.4px at 12% 22%, rgba(230, 225, 214, 0.45), transparent 60%),
+    radial-gradient(1.2px 1.2px at 34% 8%, rgba(230, 225, 214, 0.35), transparent 60%),
+    radial-gradient(1.4px 1.4px at 58% 16%, rgba(230, 225, 214, 0.4), transparent 60%),
+    radial-gradient(1.2px 1.2px at 76% 34%, rgba(230, 225, 214, 0.35), transparent 60%),
+    radial-gradient(1.4px 1.4px at 88% 62%, rgba(230, 225, 214, 0.4), transparent 60%),
+    radial-gradient(1.2px 1.2px at 66% 88%, rgba(230, 225, 214, 0.3), transparent 60%),
+    radial-gradient(1.2px 1.2px at 24% 70%, rgba(230, 225, 214, 0.3), transparent 60%),
+    radial-gradient(1.6px 1.6px at 46% 52%, rgba(216, 164, 81, 0.35), transparent 60%);
 }
 
 /* 競馬場：宣紙の手ざわり＋下端の回紋 */
 .is-track {
   background-color: var(--paper);
   background-image:
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='24' viewBox='0 0 48 24'><path d='M2 22 V2 H22 V18 H8 V8 H16 V13 M26 2 V22 H46 V6 H32 V16 H40 V11' fill='none' stroke='%230052D9' stroke-opacity='0.22' stroke-width='2'/></svg>"),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='24' viewBox='0 0 48 24'><path d='M2 22 V2 H22 V18 H8 V8 H16 V13 M26 2 V22 H46 V6 H32 V16 H40 V11' fill='none' stroke='%2324292A' stroke-opacity='0.16' stroke-width='2'/></svg>"),
     url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.42 0 0 0 0 0.35 0 0 0 0 0.25 0 0 0 0.07 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
   background-repeat: repeat-x, repeat;
   background-position: left bottom 28px, 0 0;
@@ -818,7 +819,7 @@ html, body {
   padding: 0.18em;
   border-radius: 6px;
   background: var(--cinnabar);
-  box-shadow: inset 0 0 0 3px var(--cinnabar), inset 0 0 0 5px rgba(251, 243, 228, 0.85);
+  box-shadow: inset 0 0 0 3px var(--cinnabar), inset 0 0 0 5px rgba(246, 238, 224, 0.85);
   color: var(--seal-ink);
   font-family: var(--ff-zh);
   font-size: 40px;
@@ -848,11 +849,11 @@ html, body {
   font-family: var(--ff-brush);
   font-size: 300px;
   color: var(--hl);
-  opacity: 0.16;
+  opacity: 0.24;
   pointer-events: none;
 }
 
-.is-blue .vwm { color: #FFFFFF; opacity: 0.18; }
+.is-blue .vwm { color: #FFFFFF; opacity: 0.22; }
 
 .chapter-label { font-family: var(--ff-display); font-size: var(--fs-body); letter-spacing: 0.2em; }
 
@@ -885,8 +886,8 @@ html, body {
 
 .reader.is-xl .reader-name::before { left: -0.42em; width: 0.16em; height: 0.16em; }
 
-.reader.is-xl .reader-name::before { box-shadow: 0 0 24px 6px rgba(245, 181, 68, 0.45); }
-.reader.is-l .reader-name::before { box-shadow: 0 0 12px 3px rgba(245, 181, 68, 0.35); }
+.reader.is-xl .reader-name::before { box-shadow: 0 0 24px 6px rgba(216, 164, 81, 0.45); }
+.reader.is-l .reader-name::before { box-shadow: 0 0 12px 3px rgba(216, 164, 81, 0.35); }
 .reader.is-s .reader-name::before { opacity: 0.7; }
 
 /* ドラマの話数 */
@@ -936,3 +937,46 @@ html, body {
 .book-label { font-size: var(--fs-min); color: var(--muted); }
 .book-title { font-family: var(--ff-display); font-size: var(--fs-body); font-weight: 800; }
 .book-note { font-size: var(--fs-min); color: var(--muted); }
+
+
+/* ============================================================================
+   v4.2：落ち着いた配色と、視覚監査の修正
+   ============================================================================ */
+
+/* 明朝の見出しは字間を少し詰める（このフォントには仮名の詰め情報がないため letter-spacing で）
+   行頭の「『 は半角ぶん左に出して、左端をそろえる（.hang はビルドで付ける） */
+.title, .statement, .hero, .media-title, .quote, .cmp-head, .col-title, .fact-big,
+.reader-name, .chapter-title, .book-title, .callout {
+  letter-spacing: -0.04em;
+}
+
+.cover-title { letter-spacing: 0.02em; }
+.hang { margin-left: -0.5em; }
+
+/* 印章は「押した」と分かる大きさに */
+.seal { font-size: 56px; border-radius: 8px; }
+.seal.is-s { font-size: 40px; }
+
+/* オバマの星は名前の上に（左の余白にはみ出さない） */
+.reader.is-xl .reader-name::before {
+  position: static;
+  display: block;
+  width: 20px;
+  height: 20px;
+  margin: 0 0 24px 8px;
+}
+
+/* 3Q大戦：図の下に「同じ月」の一行だけ */
+.callout {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-top: 56px;
+  padding: 20px 0 20px 28px;
+  border-left: 6px solid var(--green);
+  font-family: var(--ff-display);
+  font-size: var(--fs-s);
+  font-weight: 800;
+}
+
+.callout .app-icon { margin: 0; }

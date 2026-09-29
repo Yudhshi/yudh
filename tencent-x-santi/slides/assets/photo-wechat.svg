@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="900" height="1950" viewBox="0 0 900 1950">
   <!-- 仮置き。assets/photo-wechat.jpg（自分のWeChat画面、個人情報はぼかす）を置くと自動で差し替わる -->
-  <rect width="900" height="1950" fill="#E4E4DE"/>
-  <text x="450" y="940" text-anchor="middle" font-family="'Noto Sans JP','Hiragino Sans',sans-serif" font-size="56" font-weight="700" fill="#5A6371">WeChatのスクショ</text>
-  <text x="450" y="1020" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="34" fill="#5A6371">assets/photo-wechat.jpg</text>
+  <rect width="900" height="1950" fill="#D6D0C3"/>
+  <text x="450" y="940" text-anchor="middle" font-family="'Noto Sans JP','Hiragino Sans',sans-serif" font-size="56" font-weight="700" fill="#5A5E57">WeChatのスクショ</text>
+  <text x="450" y="1020" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="34" fill="#5A5E57">assets/photo-wechat.jpg</text>
 </svg>
