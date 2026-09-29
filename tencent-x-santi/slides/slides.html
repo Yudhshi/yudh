@@ -5,12 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>黒暗森林と競馬場 — 2010年11月にテンセントが選んだ道</title>
 
-<!-- Google Fonts（オフラインでは Mac のヒラギノ明朝・ヒラギノ角ゴに置き換わる） -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;700;800&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@700&text=%E4%B8%80%E4%B8%89%E4%B8%8D%E4%B8%AA%E4%B8%AD%E4%BB%AC%E4%BD%8F%E4%BD%93%E5%85%AC%E5%8F%A6%E5%8F%AF%E5%8F%B8%E5%9B%BD%E5%9C%A8%E5%A4%96%E5%B0%B1%E6%88%91%E6%8C%A1%E6%96%87%E6%98%AF%E6%9C%AC%E6%A0%B9%E7%8E%B0%E8%83%BD%E8%AF%AD%E8%B0%A2%E8%B5%9B%E9%A9%AC&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&text=%E4%B8%89%E4%BD%93%E5%BC%80%E6%9A%97%E6%9E%97%E6%A3%AE%E7%AF%87%E8%B5%9B%E9%A9%AC%E9%BB%91&display=swap" rel="stylesheet">
+<!-- 字体は assets/fonts に自前で置いてある（v4.3）。ネットワークが無い部屋でも、Mac 以外の機械でも同じ字体で出る。
+     中身は Google Fonts から必要な字だけ切り出した woff2（日本語2書体は JIS 第1水準＋この資料の全部の字、約5MB）。
+     字を書き足して収録外の字が出たら python3 ../tools/build-fonts.py で作り直す。 -->
+<link rel="stylesheet" href="assets/fonts/fonts.css">
 
 <!-- このデッキ専用のスタイル（v4.0 でテンプレートから独立、v4.1 で中国の要素と図を追加） -->
 <link rel="stylesheet" href="styles/santi.css">
@@ -19,7 +17,7 @@
 <script>
 window.addEventListener('load', function () {
   if (!document.fonts) return;
-  var zh = '一三不个中们住体公另可司国在外就我挡文是本根现能语谢赛马', brush = '三体开暗林森篇赛马黑';
+  var zh = '一三不个中们住体公另可司国在外就我挡文是本根现能语谢赛马', brush = '三体开暗林森篇赛马黑谢';
   document.fonts.load('300px "Ma Shan Zheng"', brush);
   document.fonts.load('700 40px "Noto Serif SC"', zh);
 });
@@ -686,6 +684,7 @@ window.addEventListener('load', function () {
       <div class="slide-inner is-track">
         <div class="anim kicker"><span class="k-part">四</span>11/3・11/4</div>
         <h2 class="anim title"><img class="app-icon" src="assets/icon-qq.svg" alt="QQ">QQか<img class="app-icon" src="assets/icon-360.svg" alt="360">360か</h2>
+        <p class="anim term-tag">三体でいう<b>猜疑連鎖</b></p>
         <div class="main">
           <div class="anim timeline">
             <div class="tl-node is-fight"><span class="tl-date">11/3</span><span class="tl-mark"><span class="tl-dot"></span></span><span class="tl-label"><img class="app-icon" src="assets/icon-qq.svg" alt="QQ">QQか360か</span></div>
@@ -709,6 +708,7 @@ window.addEventListener('load', function () {
       <div class="slide-inner is-track">
         <div class="anim kicker"><span class="k-part">四</span>11/11</div>
         <h2 class="anim title">最強より尊敬される会社へ</h2>
+        <p class="anim term-tag"><b>猜疑連鎖</b>を自分から断つ</p>
         <div class="main">
           <div class="anim timeline">
             <div class="tl-node"><span class="tl-date">11/3</span><span class="tl-mark"><span class="tl-dot"></span></span><span class="tl-label"><img class="app-icon" src="assets/icon-qq.svg" alt="QQ">QQか360か</span></div>
@@ -965,7 +965,7 @@ window.addEventListener('load', function () {
 <path d="M640 226 C 900 220, 1080 150, 1260 30" class="nf s-red" stroke-width="5"/>
 <circle cx="1264" cy="28" r="14" class="f-red"/>
 <text x="1300" y="276" text-anchor="end" class="f-fg" font-size="32" font-weight="700">おすすめで広がる（抖音）</text></svg>
-          <p class="anim sub">抖音＝テンセントが出会った技術爆発</p>
+          <p class="anim term-tag">抖音はテンセントが出会った<b>技術爆発</b></p>
         </div>
       </div>
     </div>
@@ -1056,7 +1056,7 @@ window.addEventListener('load', function () {
     </div>
 
     <!-- ============================================================
-         SLIDE 44 / ご清聴ありがとうございました
+         SLIDE 44 / 谢谢（縦書き）
     ============================================================ -->
     <div class="slide" data-variant="cover" data-bg="blue">
       <div class="slide-inner is-night cover-inner">
@@ -1069,8 +1069,8 @@ window.addEventListener('load', function () {
 <ellipse cx="260" cy="200" rx="230" ry="120" class="nf s-line" stroke-width="2" transform="rotate(-18 260 200)"/>
 <ellipse cx="260" cy="200" rx="160" ry="200" class="nf s-line" stroke-width="2" stroke-dasharray="6 10" transform="rotate(24 260 200)"/>
 <circle cx="170" cy="150" r="66" fill="url(#c2sun)" opacity="0.35"/><circle cx="170" cy="150" r="30" fill="url(#c2sun)"/><circle cx="330" cy="250" r="53" fill="url(#c2sun2)" opacity="0.35"/><circle cx="330" cy="250" r="24" fill="url(#c2sun2)"/><circle cx="300" cy="110" r="84" fill="url(#c2sun3)" opacity="0.35"/><circle cx="300" cy="110" r="38" fill="url(#c2sun3)"/><circle cx="460" cy="300" r="7" class="f-fg"/></svg>
-        <h1 class="anim cover-title is-thanks">ご清聴ありがとうございました</h1>
-        <div class="anim cover-sign"><span class="seal" lang="zh-CN"><i>谢</i><i>谢</i></span></div>
+        <h1 class="anim thanks" lang="zh-CN" aria-label="谢谢"><span class="vcol"><i>谢</i><i>谢</i></span></h1>
+        <div class="anim cover-sign"><p class="cover-name">YUDI SHI</p><span class="seal is-s" lang="zh-CN"><i>三</i><i>体</i></span></div>
       </div>
     </div>
 

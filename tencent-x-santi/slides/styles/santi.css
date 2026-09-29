@@ -267,7 +267,6 @@ html, body {
   letter-spacing: 0.02em;
 }
 
-.cover-title.is-thanks { font-size: var(--fs-xl); }
 
 .cover-name {
   margin-top: 56px;
@@ -719,8 +718,8 @@ html, body {
   text-align: left;
 }
 
-.def { padding-top: 24px; border-top: 2px solid var(--red); font-size: var(--fs-body); line-height: 1.5; }
-.def-term { display: block; margin-bottom: 8px; font-weight: 700; color: var(--red); }
+.def { padding-top: 24px; border-top: 2px solid var(--gold); font-size: var(--fs-body); line-height: 1.5; }
+.def-term { display: block; margin-bottom: 8px; font-family: var(--ff-display); font-weight: 800; color: var(--gold); }
 
 .plans { display: flex; gap: 24px; margin-top: 56px; }
 
@@ -980,3 +979,47 @@ html, body {
 }
 
 .callout .app-icon { margin: 0; }
+
+/* ============================================================================
+   v4.3：本の言葉を戻す札、最後の1枚、字体の自前配信
+   ============================================================================ */
+
+/* 本の色は、暗い面では太陽の琥珀、紙の上では古い金（#E4DED1 の上で 5.2:1）。
+   琥珀そのものは紙の上では読めない（1.9:1）ので、紙では必ずこちらを使う */
+:root { --paper-gold: #75530F; }
+.is-forest, .is-night { --gold: var(--sun); }
+.is-track { --gold: var(--paper-gold); }
+.is-blue { --gold: #FFFFFF; }
+
+/* 三体の言葉を、テンセントの出来事に当てる札（s28・s29・s40）。
+   s16 で出した「猜疑連鎖」「技術爆発」を、使う場面でもう一度画面に出す。
+   語だけ明朝・本の色。左の細い縦棒も本の色 */
+.term-tag {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35em;
+  margin-top: 24px;
+  padding-left: 28px;
+  border-left: 6px solid var(--gold);
+  font-size: var(--fs-body);
+  line-height: 1.4;
+  color: var(--muted);
+}
+.term-tag b { font-family: var(--ff-display); font-weight: 800; letter-spacing: -0.04em; color: var(--gold); }
+.main .term-tag { margin-top: 0; margin-bottom: 40px; align-self: flex-start; }
+.diagram + .term-tag { margin-top: 48px; margin-bottom: 0; }   /* 図のあとに置くとき（s40） */
+
+/* 最後の1枚：縦書きの「谢谢」だけ。章扉の筆文字と同じ書体・同じ 300px（唯一の例外サイズ）。
+   落款は表紙と同じ「三体」で、最初と最後をそろえる */
+.thanks {
+  display: flex;
+  flex-direction: row-reverse;
+  font-family: var(--ff-brush);
+  font-size: 300px;
+  font-weight: 400;
+  line-height: 1;
+  color: var(--fg);
+  letter-spacing: 0;
+}
+.thanks .vcol i { line-height: 1.0; }
+
