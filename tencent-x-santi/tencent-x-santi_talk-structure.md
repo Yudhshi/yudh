@@ -49,6 +49,7 @@ v4.2 起参考讲者给的样例（炭灰 × 暖石、墨绿灰 × 羊皮纸）�
 - **版式**：不再用卡片、阴影、下划线小标题。左上角是等宽小字「01 はじめに」，下面是明朝标题；内容用细线和留白分隔。一句话的页左对齐；夜里的三页居中，当成「场景」。表紙和最后一页同一个版式：三个太阳的小标记＋居中的一行字。
 - **图表**（按 dataviz 的规则）：颜色只给点和条，文字保持正文色；时间轴的红／蓝／绿在暖石底上通过了色盲检查（`#9E4333`／`#0052D9`／`#1E7042`）；横条之间 2px 间隙，差额用斜线虚框表示「约 13 兆日元不够」。
 - **照片**：右半边满版。把同名的 `.jpg` 放进 `slides/assets/`（`photo-santi.jpg`、`photo-santi-2.jpg`、`photo-wechat.jpg`）就会自动盖住虚线占位图，不用改 HTML。WeChat 截图放在手机外框里。
+- **导出 Keynote／PowerPoint**：`node tools/export-pptx.js` → `export/santi-deck.pptx`（git 不跟踪）。文字是可编辑的文本框（字体・字号・颜色・位置取自 Chromium 的实测值），图表・墨・印章・章扉毛笔字・纸纹是每页的背景图；讲者笔记进备注栏。Keynote 直接打开 .pptx 再存成 .key；要和网页一样的字形，先在 Mac 上装 Google Fonts 的 Shippori Mincho B1・Noto Sans JP・Noto Serif SC・Ma Shan Zheng・JetBrains Mono。
 - **不变的规则**：只放关键词和短句；不用「、」「。」和全角空格；一句话一行；不显示页码、脚注、出处（唯一例外：s23 按讲者要求介绍腾讯部分依据的书『テンセント』）。
 - 样式文件只有 `slides/styles/santi.css`；旧的模板 CSS 移到了 `archive/styles-v3.2/`。
 
