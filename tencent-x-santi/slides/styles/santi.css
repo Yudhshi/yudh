@@ -188,7 +188,7 @@ html, body {
   pointer-events: none;
 }
 .seam.is-left { clip-path: polygon(0 0, calc(var(--x0) + var(--seam-dx)) 0, var(--x0) 100%, 0 100%); }            /* 帯が左、同じ 16° */
-.seam.is-left.is-mirror { clip-path: polygon(0 0, var(--x0) 0, calc(var(--x0) - var(--seam-dx)) 100%, 0 100%); }  /* 最後の1枚だけ −16° */
+.seam.is-left.is-mirror { clip-path: polygon(0 0, calc(var(--x0) - var(--seam-dx)) 0, var(--x0) 100%, 0 100%); }  /* 最後の1枚だけ −16°：上が狭く下が広い */
 /* ステッチ：縫い目に沿って回転させた細い帯 */
 .stitch {
   position: absolute; z-index: 1;
@@ -353,6 +353,7 @@ html, body {
 .term-tag b { font-family: var(--ff-display); font-weight: 800; letter-spacing: -0.04em; color: var(--hl); }
 .m-paper .term-tag b { padding: 0 0.15em; background: var(--saffron); color: var(--night); }
 .main .term-tag { margin-top: 0; margin-bottom: 40px; align-self: flex-start; }
+.slide-inner > .term-tag { position: absolute; top: 284px; left: 160px; margin: 0; }
 .diagram + .term-tag { margin-top: 48px; margin-bottom: 0; }
 .defs { display: flex; gap: 32px; margin-top: 56px; }
 .defs .term-tag { margin: 0; }
@@ -449,12 +450,15 @@ html, body {
 .fact-big { display: flex; align-items: center; gap: 20px; font-family: var(--ff-display); font-size: var(--fs-l); font-weight: 800; line-height: 1.2; letter-spacing: -0.04em; }
 .fact-cap { margin-top: 20px; font-size: var(--fs-body); line-height: 1.55; }
 .facts + .sub { margin-top: 64px; }
-.col > .seal { align-self: flex-start; }
+.col > .seal { align-self: flex-start; margin-bottom: -18px; }
 
 /* アプリのアイコン：紙の上では 3px の墨の枠と 6px の影 */
 .app-icon { display: inline-block; width: 56px; height: 56px; margin-right: 16px; vertical-align: -0.2em; }
 .fact-big .app-icon, .col-title .app-icon, .cmp-head .app-icon { margin-right: 0; }
+.title .app-icon { margin: 0 12px 0 20px; }
+.title .app-icon:first-child { margin-left: 0; }
 .m-paper .app-icon { outline: 3px solid var(--night); outline-offset: 0; box-shadow: 6px 6px 0 var(--night); border-radius: 0; }
+.m-paper .on-dark .app-icon { outline-color: var(--paper); box-shadow: 6px 6px 0 var(--paper); }
 .icon-row { display: flex; gap: 32px; margin-bottom: 40px; }
 .icon-row .app-icon { width: 120px; height: 120px; margin: 0; }
 .hero-icon { width: 144px; height: 144px; margin-bottom: 48px; }
@@ -496,7 +500,8 @@ html, body {
 }
 .tl-mark { display: flex; align-items: center; height: 56px; }
 .tl-dot { width: 22px; height: 22px; border-radius: 50%; border: 3px solid var(--muted); background: var(--bg); box-shadow: 0 0 0 6px var(--bg); }
-.tl-ink { width: 96px; height: 96px; margin: -20px 0 -20px -28px; }
+.tl-ink { width: 96px; height: 96px; margin: -8px 0 -32px -28px; }
+.tl-node:first-child .tl-ink { margin-left: -19px; }
 .tl-ink.is-streak { width: 132px; height: 52px; margin: 2px 0 2px -30px; }
 .tl-label { margin-top: 28px; font-size: var(--fs-s); font-weight: 700; line-height: 1.4; }
 .tl-node.is-on, .tl-node.is-fight, .tl-node.is-answer, .tl-node.is-inside { color: var(--fg); }
@@ -516,7 +521,7 @@ html, body {
    時価総額（横棒）：平らな面に 3px の輪郭と 8px の影
    --------------------------------------------------------------------------- */
 .bars { display: flex; flex-direction: column; gap: 64px; width: 100%; }
-.bar-row { display: flex; gap: 6px; align-items: flex-end; }
+.bar-row { display: flex; gap: 14px; align-items: flex-end; }
 .bar-seg { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
 .bar-label { display: flex; align-items: baseline; gap: 16px; white-space: nowrap; }
 .bar-label b { font-size: var(--fs-body); font-weight: 700; color: var(--fg); }
@@ -526,7 +531,7 @@ html, body {
 .bar.is-toyota  { background: var(--charcoal); }
 .bar.is-sony    { background: var(--muted-paper); }
 .bar-gap .bar-label { justify-content: flex-end; }
-.bar-gap .bar { background: repeating-linear-gradient(135deg, transparent 0 10px, var(--night) 10px 13px); border: 3px dashed var(--night); box-shadow: none; }
+.bar-gap .bar { background: transparent; border: 3px dashed var(--night); box-shadow: none; }
 .bars + .sub { margin-top: 56px; font-size: var(--fs-min); }
 
 /* ---------------------------------------------------------------------------
@@ -534,7 +539,6 @@ html, body {
    --------------------------------------------------------------------------- */
 .is-split { padding-right: calc(46% + 96px); }
 .bleed { position: absolute; top: 0; right: 0; bottom: 0; width: 46%; background-size: cover; background-position: center; border-left: 4px solid var(--fg); z-index: 1; }
-.bleed::before { content: ''; position: absolute; top: 0; bottom: 0; left: 14px; width: 4px; background: repeating-linear-gradient(to bottom, var(--stitch) 0 22px, transparent 22px 38px); }
 .panel { position: absolute; top: 50%; right: 128px; width: 820px; transform: translateY(-50%); border: 3px solid var(--night); box-shadow: 12px 12px 0 var(--night); background: #FFFFFF; z-index: 1; }
 .panel img { display: block; width: 100%; height: auto; border-radius: 0; box-shadow: none; }
 .phone { position: absolute; top: 50%; right: 240px; width: 420px; height: 900px; transform: translateY(-50%); border: 3px solid var(--night); box-shadow: 12px 12px 0 var(--night); border-radius: 0; background-size: cover; background-position: top center; z-index: 1; }
@@ -568,7 +572,7 @@ html, body {
 
 /* 夜の絵（背景として置く） */
 .night-art { position: absolute; pointer-events: none; z-index: 0; }
-.night-art.dish { right: 120px; bottom: 40px; }
+.night-art.dish { right: 160px; bottom: 40px; }
 .night-art.forest { left: 0; bottom: 0; }
 .has-forest .main { justify-content: flex-start; padding-top: 40px; }
 
@@ -631,6 +635,7 @@ html, body {
 
 /* 明朝の見出しの行頭「『 は半角ぶん左へ */
 .hang { margin-left: -0.5em; }
+.col-title > .hang, .cmp-head > .hang { margin-right: -16px; }
 
 /* ---------------------------------------------------------------------------
    動き。全部 .slide.active の入りだけ。700ms で止まる
