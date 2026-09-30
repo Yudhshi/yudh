@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450" viewBox="0 0 800 450">
+  <!-- 仮置き。assets/uma-chapter.jpg を置くと自動で差し替わる（16:9 が収まりがよい） -->
+  <rect width="800" height="450" fill="#D9D2C2"/>
+  <rect x="24" y="24" width="752" height="402" fill="none" stroke="#A8A08F" stroke-width="3" stroke-dasharray="16 14"/>
+  <text x="400" y="216" text-anchor="middle" font-family="'Noto Sans JP','Hiragino Sans',sans-serif" font-size="36" font-weight="700" fill="#5A5E57">ウマ娘の画像</text>
+  <text x="400" y="268" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="22" fill="#72756D">assets/uma-chapter.jpg</text>
+</svg>

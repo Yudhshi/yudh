@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="880" height="1080" viewBox="0 0 880 1080">
   <!-- 仮置き。assets/photo-santi.jpg を置くと自動で差し替わる -->
-  <rect width="880" height="1080" fill="#E6DFCF"/>
-  <rect x="48" y="48" width="784" height="984" fill="none" stroke="#B8B09F" stroke-width="3" stroke-dasharray="16 14"/>
-  <text x="440" y="520" text-anchor="middle" font-family="'Noto Sans JP','Hiragino Sans',sans-serif" font-size="40" font-weight="700" fill="#5B5F5A">『三体』三部作の写真</text>
-  <text x="440" y="584" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="26" fill="#7A7E77">assets/photo-santi.jpg</text>
+  <rect width="880" height="1080" fill="#2E3431"/>
+  <rect x="48" y="48" width="784" height="984" fill="none" stroke="#4A514D" stroke-width="3" stroke-dasharray="16 14"/>
+  <text x="440" y="520" text-anchor="middle" font-family="'Noto Sans JP','Hiragino Sans',sans-serif" font-size="40" font-weight="700" fill="#A3A89F">『三体』三部作の写真</text>
+  <text x="440" y="584" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="26" fill="#8A9089">assets/photo-santi.jpg</text>
 </svg>
